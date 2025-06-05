@@ -1,14 +1,19 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #171717;
+  --foreground: #fff7e3;
+
+
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #faedcd;
+
+  --primary-color: #1f242f;
+  --secondary-color: #2a2e3e;
   }
-}
+} */
 
 html,
 body {
@@ -19,21 +24,43 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
+  font-family: monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-* {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
+
+
 a {
   color: inherit;
   text-decoration: none;
 }
+
+.row{
+  border-radius: 0rem;
+  display : grid;
+  grid-template-columns: 0.2fr 1fr 1fr 1fr 1fr 2fr;
+  gap: 1rem;
+  padding : 0.75rem;
+  padding-left : 1rem;
+  padding-right : 1rem;
+  text-align: left;
+  position : relative;
+  transition: background-color 0.2s ease-out, color 0.2s ease-out, padding-left 0.2s ease-out, padding-right 0.2s ease-out;
+
+}
+
+/* .row:hover {
+
+  background-color: var(--foreground);
+  color : var(--background);
+  transition: background-color 0.2s ease-out, color 0.2s ease-out, padding-left 0.2s ease-out, padding-right 0.2s ease-out;
+} */
+
 
 @media (prefers-color-scheme: dark) {
   html {
