@@ -32,3 +32,5 @@ export const linkTable = pgTable("links", {
     index("from_idx").on(table.from_id)   
 ])
 
+
+

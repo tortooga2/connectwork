@@ -1,14 +1,11 @@
 "use client"
 
-const getFileType = (filename) => {
-    if (!filename) return "Bundle";
-    const ext = filename.split(".").pop().toLowerCase();
-    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "Image";
-    if (["mp4", "webm", "ogg", "mp3", "wav"].includes(ext)) return "Recording";
-    if (["pdf", "doc", "docx", "xls", "xlsx", "pptx"].includes(ext))
+export const getFileType = (fileType) => {
+    if (!fileType) return "Bundle";
+    if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileType)) return "Image";
+    if (["mp4", "webm", "ogg", "mp3", "wav"].includes(fileType)) return "Recording";
+    if (["pdf", "doc", "docx", "xls", "xlsx", "pptx"].includes(fileType))
         return "Document";
-    if (["txt", "text", "md"].includes(ext)) return "Note";
+    if (["txt", "text", "md"].includes(fileType)) return "Note";
     return "Bundle";
 };
-
-export default getFileType;

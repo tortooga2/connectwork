@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import crypto from "crypto"
-import {genPresignedUrl} from "@/lib/s3/module.genPresignedUrl"
+import {genPresignedUrl} from "@/lib/server/s3/module.genPresignedUrl"
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request : NextRequest) {

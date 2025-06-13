@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { s3Client, bucketName } from '@/lib/s3/module.s3client'; // Update path as needed
+import { s3Client, bucketName } from '@/lib/server/s3/module.s3client'; // Update path as needed
 import { HeadObjectCommand } from '@aws-sdk/client-s3';
-import { auth, clerkClient } from '@clerk/nextjs/server'; // Or your auth solution
+import { auth } from '@clerk/nextjs/server'; // Or your auth solution
 import { db } from '@/db'; // Update path to your Drizzle db instance
-import { entryTable } from '@/db/schema'; // Update path to your schema
 import { S3ServiceException } from "@aws-sdk/client-s3";
+import { createFile } from '@/lib/server/createFile';
+import type { FileData } from '@/lib/server/Types';
 
 
 // Types
-interface FileData {
-  owner_id: string;
-  creator_id: string;
-  name: string;
-  type: string;
-  file_id: string;
-  creator_email : string;
-}
+
 
 interface RequestBody {
   keys: string[];
@@ -71,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     // Use Drizzle transaction
     const result = await db.transaction(async (tx) => {
-      const sentFiles: FileData[] = []; // All existing files will be copied to this array for bulk creation
+      const sentFiles: FileData[] = [];
 
       if (!Array.isArray(keys) || !Array.isArray(fileNames)) {
         throw new Error("keys and fileNames must be arrays!");
@@ -84,25 +78,14 @@ export async function POST(request: NextRequest) {
             throw new Error("All values within fileNames must be strings!");
           }
 
-          let email = ""
-
-           const client = await clerkClient()
-
-        const user = await client.users.getUser(userId)
-
-        const emailObj = user.primaryEmailAddress
-        if(emailObj?.emailAddress){
-           email = emailObj?.emailAddress
-        }
-
-          sentFiles.push({
+          sentFiles.push( {
             owner_id: userId,
             creator_id: userId,
             name: fileNames[index],
             type: fileNames[index].split('.').pop() || 'unknown',
             file_id: keys[index], // Store the S3 key as file_id,
-            creator_email: email
-          });
+          })
+
         }
       }
 
@@ -111,7 +94,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Bulk insert files into database using Drizzle
-      const createdEntries = await tx.insert(entryTable).values(sentFiles).returning();
+      const createdEntries = await createFile(sentFiles, userId);
       
       return {
         createdEntries,

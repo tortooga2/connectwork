@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react";
-import { useFileStore } from "../ctx.fileManager";
+import { useFileStore } from "../State Manager/appManager";
 
 const ListItem = ({ index, name, remove, percentage }) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -36,7 +36,7 @@ const ListItem = ({ index, name, remove, percentage }) => {
                     position: "absolute",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    borderRadius: "0.5rem",
+                    borderRadius: "0rem",
                     paddingLeft: "0.5rem",
                     paddingRight: "0.5rem",
                     zIndex: 1000,
@@ -96,7 +96,7 @@ const ListItem = ({ index, name, remove, percentage }) => {
                     width: `${percentage}%`,
                     backgroundColor: "var(--background)",
                     opacity: "0.5",
-                    borderRadius: "0.25rem"
+                    borderRadius: "0rem"
                 }}
             ></div>
         </div>
@@ -136,7 +136,7 @@ const UploadArea = () => {
         <div
             style={{
                 border: "1px solid var(--foreground)",
-                borderRadius: "0.5rem",
+                borderRadius: "0rem",
                 padding: "1rem",
             }}
         >
@@ -167,8 +167,8 @@ const UploadArea = () => {
             <div
                 style={{
                     padding: "0.5rem",
-                    border: "1px solid var(--background)",
-                    borderRadius: "0.5rem",
+                    border: "1px solid var(--foreground)",
+                    borderRadius: "0rem",
                     marginTop: "0.5rem",
                 }}
             >

@@ -21,26 +21,41 @@
 
 .tag {
     display: flex;
-    width: 8rem;
-    min-width: 8rem;
+
     gap: 1rem;
     align-items: center;
+    justify-content: center;
+
+
 }
 
-.tag.small {
-    width: 2rem;
-    gap: 0rem;
-    margin-left: 0.5rem;
-}
+
 
 .tag .marker {
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 1rem;
+    width: 0.5rem;
+    min-width: 0.5rem;
+    height: 0.5rem;
+    min-height: 0.5rem;
+    border-radius: 0rem;
 }
-/* .text {
-    margin-left: 1rem;
-} */
+
+.tag .text {
+    overflow: hidden;
+    width: 100%;
+    transition: width 0.1s ease-in-out;
+}
+
+.tag .text.small {
+    width: 0%;
+    transition: width 0.1s ease-in-out;
+}
+
+@media (width < 768px) {
+    .tag .text {
+        width: 0%;
+        transition: width 0.1s ease-in-out;
+    }
+}
 
 .bundle {
     color: var(--bundle-color-2);

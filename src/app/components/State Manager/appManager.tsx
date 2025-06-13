@@ -7,10 +7,10 @@ export type File = {
     creator_id: string,
     name: string,
     type: string,
-    description?: string,
-    file_id: string, // S3 key
+    description: string | null,
+    file_id: string | null, // S3 key
     createdAt: string,
-    creator_email : string
+    creator_email : string | null
 }
 
 interface FileManagerState {
@@ -25,6 +25,8 @@ interface FileManagerState {
     selectedFiles: Set<string>,
     SelectFile: (fileId: string, selected: boolean) => void,
     ClearSelection: () => void,
+    previewedFile : File | undefined,
+    SetPreviewedFile : (file : File | undefined) => void,
     error: string | null,
     SetError: (error: string | null) => void,
 }
@@ -51,6 +53,7 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
             return { files: updatedFiles };
         });
     },
+    
 
     loading: false,
     SetLoading: (loading) => set({ loading }),
@@ -64,10 +67,20 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
             } else {
                 newSelectedFiles.delete(fileId);
             }
+            console.log(newSelectedFiles)
             return { selectedFiles: newSelectedFiles };
         });
     },
     ClearSelection: () => set({ selectedFiles: new Set() }),
+
+
+    previewedFile : undefined,
+    SetPreviewedFile : ( file ) => {
+        console.log(file)
+        set({previewedFile : file})
+    },
+
+
 
     error: null,
     SetError: (error) => set({ error }),
