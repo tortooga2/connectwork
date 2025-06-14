@@ -1,7 +1,7 @@
 "use server"
 import { auth } from "@clerk/nextjs/server";
 import { createFile } from "../createFile";
-import type { FileData } from "../Types";
+import type { FileData } from "../../Types/Types";
 import { linkFiles } from "../linkFiles";
 
 const Bundle = async (file_ids : string[]) => {

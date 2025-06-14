@@ -5,7 +5,7 @@ import { auth } from '@clerk/nextjs/server'; // Or your auth solution
 import { db } from '@/db'; // Update path to your Drizzle db instance
 import { S3ServiceException } from "@aws-sdk/client-s3";
 import { createFile } from '@/lib/server/createFile';
-import type { FileData } from '@/lib/server/Types';
+import type { FileData } from '@/lib/Types/Types';
 
 
 // Types

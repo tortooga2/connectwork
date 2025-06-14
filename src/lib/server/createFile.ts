@@ -1,7 +1,7 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { entryTable } from "@/db/schema";
 import { db } from "@/db";
-import type { FileData } from "./Types";
+import type { FileData } from "../Types/Types";
 
 
 

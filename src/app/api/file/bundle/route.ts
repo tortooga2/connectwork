@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createFile } from "@/lib/server/createFile";
-import type { FileData } from "@/lib/server/Types";
+import type { FileData } from "@/lib/Types/Types";
 import { linkFiles } from "@/lib/server/linkFiles";
 
 

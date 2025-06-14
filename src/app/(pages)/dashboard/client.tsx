@@ -6,6 +6,7 @@ import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
 import Bundle from "@/lib/server/Bundle/bundle"
 import { ButtonBundle } from "@/app/components/buttonBundle"
+import UploadArea from "@/app/components/Uploads/UploadArea"
 export const Dashboard = ({}) => {
     const layoutState = useFileStore((state)=>state.layoutState)
     
@@ -38,6 +39,7 @@ export const Dashboard = ({}) => {
                             </div>
                         </div>
                         <ButtonBundle/>
+                        <UploadArea/>
                     </VerticalDiv>
                     
                     <FilesList />

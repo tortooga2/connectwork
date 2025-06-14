@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useFileStore } from "../State Manager/appManager";
 import { getFileUrl } from "@/lib/server/getPreview";
 import { getFileType } from "@/lib/client/getFileType"
@@ -9,11 +9,12 @@ import { VerticalDiv } from "../UILayout";
 export const Preview = () => {
     const previewedFile = useFileStore((state) => state.previewedFile)
     const SetLayoutState = useFileStore((state)=>state.SetLayoutState)
+    const layoutState = useFileStore((state)=>state.layoutState)
 
     const [fileUrl, SetFileUrl] = useState<string | undefined>(undefined);
-    const [fileType, SetFileType] = useState<string>(getFileType(File.name))
+    const [fileType, SetFileType] = useState<string>(getFileType(previewedFile?.name!))
 
-
+    const videoRef = useRef<HTMLVideoElement>(null);
 
 
     useEffect(()=>{
@@ -29,11 +30,22 @@ export const Preview = () => {
         }
 
 
-        if(previewedFile){
+        if(previewedFile && previewedFile.type !== "Bundle"){
             GetFileUrl(previewedFile)
-            
+        }else{
+            console.log("Bundle file")
         }
     }, [previewedFile])
+
+
+    useEffect(()=>{
+        if(layoutState === 1 && videoRef.current){
+            videoRef.current.play()
+        }
+        else if(layoutState === 0 && videoRef.current){
+            videoRef.current.pause()
+        }
+    }, [layoutState, videoRef])
 
 
     const DisplayFile = () => {
@@ -59,6 +71,15 @@ export const Preview = () => {
             case "Image" : {
                 return (
                     <img src={fileUrl} />
+                )
+            }
+
+            case "Recording" : {
+                return (
+                    <video src={fileUrl} ref={videoRef} autoPlay={true} muted={true} style={{
+                        width : "90%",
+                        height : "100%"
+                    }} controls={true}/>
                 )
             }
 
