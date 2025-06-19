@@ -29,8 +29,8 @@ export const FilesList = () => {
     }, [files])
 
     return(
-        <VerticalDiv padding="0rem" gap="0.5rem" >
-            <div className={"row"} style={{backgroundColor : "var(--foreground)", color : "var(--background)"}}>
+        <VerticalDiv style={{border : "var(--border-width) solid var(--foreground)", borderRadius : "var(--border-rad)", padding : "1rem"}}>
+            <div className={"row"} style={{backgroundColor : "var(--foreground)", color : "var(--background)", borderRadius : "var(--border-rad)"}}>
                 <div></div>
                 <div className={"column"} style={{ fontWeight: "bold"}}>ID:</div>
                 <div className={"column"} style={{ fontWeight: "bold"}}>CREATED AT:</div>
@@ -40,7 +40,7 @@ export const FilesList = () => {
                 <div></div>
             </div>
 
-            <VerticalDiv style={{gap: "0.25rem", borderRadius : "0rem", border : "1px solid var(--foreground)"}}>
+            <VerticalDiv style={{gap: "0.25rem"}} padding="0rem">
                 {sortedFiles.map((file) => (
                     <FileItem key={file.id} file={file} />
                 ))}

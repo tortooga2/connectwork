@@ -65,7 +65,7 @@ export const FileItem = ({file} : {file : File}) => {
                 <div className={"column"}>{file.creator_email}</div>
                 <div className={"column"}>{file.name}</div>
                 <div>
-                    <button onClick={()=>{SetPreviewFile(file); SetLayoutState(1); }}>view</button>
+                    <button onClick={()=>{ console.log(file); SetPreviewFile(file); SetLayoutState(1); }}>view</button>
                 </div>
                 <div style={{position : "absolute", right: "0", height : "100%", ...onEnter, backgroundColor : "var(--background)", transition : "width 0.5s ease-in-out 0.2s"}}></div>     
             </div>      

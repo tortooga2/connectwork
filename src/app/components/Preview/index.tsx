@@ -5,13 +5,51 @@ import { useFileStore } from "../State Manager/appManager";
 import { getFileUrl } from "@/lib/server/getPreview";
 import { getFileType } from "@/lib/client/getFileType"
 import { VerticalDiv } from "../UILayout";
+import Bundle from "./Views/Bundle";
+import { FileType } from "../TypeTags";
+
+
+
+const NoteView = ({fileUrl}: {fileUrl: string}) => {
+    const [fileSrc, setFileSrc] = useState<string | undefined>(undefined)
+    useEffect(()=>{
+        const GetFileSrc = async () => {
+            const fileSrc = await fetch(fileUrl as string)
+            const fileText = await fileSrc.text()
+            setFileSrc(fileText)
+        }
+        GetFileSrc()
+    }, [fileUrl])
+
+    if(!fileSrc){
+        return <div>
+            Loading...
+        </div>
+    }
+    return (
+        <div style={{
+            width : "100%",
+            height : "100%",
+            display : "flex",
+            flexDirection : "column",
+            gap : "1rem",
+            alignItems : "left",
+        }}>
+            
+            <div dangerouslySetInnerHTML={{__html: fileSrc}} />
+        </div>
+    )
+}
+
+
+
 
 export const Preview = () => {
     const previewedFile = useFileStore((state) => state.previewedFile)
     const SetLayoutState = useFileStore((state)=>state.SetLayoutState)
     const layoutState = useFileStore((state)=>state.layoutState)
 
-    const [fileUrl, SetFileUrl] = useState<string | undefined>(undefined);
+    const [fileUrl, SetFileUrl] = useState<{url: string | undefined, data: any}[] | undefined>(undefined);
     const [fileType, SetFileType] = useState<string>(getFileType(previewedFile?.name!))
 
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -21,19 +59,16 @@ export const Preview = () => {
 
         const GetFileUrl = async (file) => {
             console.log(file)
-            const file_url = await getFileUrl(file);
+            const file_url = await getFileUrl(file, false);
             const file_type = getFileType(file.type);
             SetFileUrl(file_url)
             SetFileType(file_type)
-            console.log("File Url", file_url, file_type)
             return file_url
         }
 
 
-        if(previewedFile && previewedFile.type !== "Bundle"){
+        if(previewedFile){
             GetFileUrl(previewedFile)
-        }else{
-            console.log("Bundle file")
         }
     }, [previewedFile])
 
@@ -57,12 +92,15 @@ export const Preview = () => {
         console.log(fileType)
         switch (fileType){
             case "Document": {
-                const fileSrc = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+                const fileSrc = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl[0].url as string)}&embedded=true`;
                 return(
                     
-                        <iframe src={fileSrc} style={{
-                            width : "90%",
-                            height : "100%"
+                        <object type="application/pdf" data={fileSrc} style={{
+                            width : "100%",
+                            height : "100%",
+                            borderRadius : "var(--border-rad)",
+                            objectFit : "contain",
+                            objectPosition : "center",
                         }} />
                     
                 )
@@ -70,16 +108,39 @@ export const Preview = () => {
 
             case "Image" : {
                 return (
-                    <img src={fileUrl} />
+                    <img src={fileUrl[0].url as string} style={{
+                        width : "100%",
+                        borderRadius : "var(--border-rad)",
+                        objectFit : "contain",
+                        objectPosition : "center",
+                    }} />
                 )
             }
 
             case "Recording" : {
                 return (
-                    <video src={fileUrl} ref={videoRef} autoPlay={true} muted={true} style={{
-                        width : "90%",
-                        height : "100%"
+                    <video src={fileUrl[0].url as string} ref={videoRef} autoPlay={true} muted={true} style={{
+                        width : "100%",
+                        borderRadius : "var(--border-rad)",
+                        objectFit : "contain",
+                        objectPosition : "center",
                     }} controls={true}/>
+                )
+            }
+
+            case "Bundle" : {
+                return (
+                    
+                    <Bundle bundle_data={fileUrl} />
+                    
+                )
+            }
+
+            case "Note" : {
+                return (
+                    <>
+                        <NoteView fileUrl={fileUrl[0].url as string} />
+                    </>
                 )
             }
 
@@ -96,10 +157,17 @@ export const Preview = () => {
 
 
     return (<VerticalDiv style={{
+        width : "100%",
+        height : "100%",
         alignItems : "center",
+        borderRadius : "var(--border-rad)",
+        border : "var(--border-width) solid white",
+        padding : "1rem",
     }}>
-        <button onClick={()=>SetLayoutState(0)}>Close</button>
-        {DisplayFile()}
+        <div>
+            {DisplayFile()}
+        </div>
+        
     </VerticalDiv>)
     
 }

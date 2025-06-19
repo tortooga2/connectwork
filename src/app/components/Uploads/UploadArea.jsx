@@ -36,7 +36,7 @@ const ListItem = ({ index, name, remove, percentage }) => {
                     position: "absolute",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    borderRadius: "0rem",
+                    borderRadius: "var(--border-rad)",
                     paddingLeft: "0.5rem",
                     paddingRight: "0.5rem",
                     zIndex: 1000,
@@ -96,7 +96,7 @@ const ListItem = ({ index, name, remove, percentage }) => {
                     width: `${percentage}%`,
                     backgroundColor: "var(--background)",
                     opacity: "0.5",
-                    borderRadius: "0rem"
+                    borderRadius: "var(--border-rad)"
                 }}
             ></div>
         </div>
@@ -135,15 +135,14 @@ const UploadArea = () => {
     return (
         <div
             style={{
-                border: "1px solid var(--foreground)",
-                borderRadius: "0rem",
+                border: "var(--border-width) solid var(--foreground)",
+                
                 padding: "1rem",
+                borderRadius: "var(--border-rad)"
             }}
         >
             <div
-                style={{
-                    paddingBottom: "1rem",
-                }}
+                
             >
                 File Upload
             </div>
@@ -167,9 +166,10 @@ const UploadArea = () => {
             <div
                 style={{
                     padding: "0.5rem",
-                    border: "1px solid var(--foreground)",
-                    borderRadius: "0rem",
+                    border: "var(--border-width) solid var(--foreground)",
+                    
                     marginTop: "0.5rem",
+                    borderRadius: "var(--border-rad)"
                 }}
             >
                 <div
