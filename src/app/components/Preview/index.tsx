@@ -7,6 +7,7 @@ import { getFileType } from "@/lib/client/getFileType"
 import { VerticalDiv } from "../UILayout";
 import Bundle from "./Views/Bundle";
 import { FileType } from "../TypeTags";
+import Image from "next/image";
 
 
 
@@ -97,11 +98,11 @@ export const Preview = () => {
                     
                         <object type="application/pdf" data={fileSrc} style={{
                             width : "100%",
-                            height : "100%",
+                            aspectRatio : "1/1.29",
                             borderRadius : "var(--border-rad)",
                             objectFit : "contain",
                             objectPosition : "center",
-                        }} />
+                        }}/>
                     
                 )
             }
@@ -159,7 +160,7 @@ export const Preview = () => {
     return (<VerticalDiv style={{
         width : "100%",
         height : "100%",
-        alignItems : "center",
+        // alignItems : "center",
         borderRadius : "var(--border-rad)",
         border : "var(--border-width) solid white",
         padding : "1rem",

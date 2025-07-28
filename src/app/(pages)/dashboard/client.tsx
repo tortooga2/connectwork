@@ -63,9 +63,11 @@ export const Dashboard = ({}) => {
                 
                 <VerticalDiv style={{position : "absolute", right : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)"}} padding="0rem">
                     <div style={{display : "flex", flexDirection : "column", gap : "1rem", width : "100%"}}>
-                        <div style={{display : "flex", flexDirection : "row", width : "100%", justifyContent : "space-between"}}>
+                        <div style={{display : "flex", flexDirection : "row", width : "100%", justifyContent : "space-between", alignItems : "center"}}>
                             <h1 style={{fontSize : "2.5rem"}}>{previewedFile?.name}</h1>
-                            <button onClick={()=>SetLayoutState(0)} style={{    }}>Close</button>
+                            <div>
+                                <button onClick={()=>SetLayoutState(0)} style={{  }}>Close</button>
+                            </div>
                         </div>
                         <div style={{display : "flex", flexDirection : "column", gap : "0.5rem"}}>
                             {FileType(previewedFile?.type)}

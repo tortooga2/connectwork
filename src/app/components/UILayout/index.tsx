@@ -81,24 +81,24 @@ export const VerticalDiv = ({
             return;
         }
 
-        const lenis = new Lenis({
-            wrapper: scrollableRef.current, // Target the div
-            content: scrollableRef.current, // if your children are direct
-            // you can also point at a nested ref
-            orientation: "vertical",
-            gestureOrientation: "vertical",
-            autoRaf : true
-        });
+        // const lenis = new Lenis({
+        //     wrapper: scrollableRef.current, // Target the div
+        //     content: scrollableRef.current, // if your children are direct
+        //     // you can also point at a nested ref
+        //     orientation: "vertical",
+        //     gestureOrientation: "vertical",
+        //     autoRaf : true
+        // });
 
-        // function raf(time) {
-        //     lenis.raf(time);
-        //     requestAnimationFrame(raf);
-        // }
-        // requestAnimationFrame(raf);
+        // // function raf(time) {
+        // //     lenis.raf(time);
+        // //     requestAnimationFrame(raf);
+        // // }
+        // // requestAnimationFrame(raf);
 
-        return () => {
-            lenis.destroy();
-        };
+        // return () => {
+        //     lenis.destroy();
+        // };
     });
 
     return (
@@ -163,20 +163,20 @@ export const HorizontalDiv = ({
             return;
         }
 
-        const lenis = new Lenis({
-            wrapper: scrollableRef.current, // Target the div
-            content: scrollableRef.current, // if your children are direct
-            // you can also point at a nested ref
-            orientation: "vertical",
-            gestureOrientation: "vertical",
-            autoRaf: true
-        });
+        // const lenis = new Lenis({
+        //     wrapper: scrollableRef.current, // Target the div
+        //     content: scrollableRef.current, // if your children are direct
+        //     // you can also point at a nested ref
+        //     orientation: "vertical",
+        //     gestureOrientation: "vertical",
+        //     autoRaf: true
+        // });
 
         
 
-        return () => {
-            lenis.destroy();
-        };
+        // return () => {
+        //     lenis.destroy();
+        // };
     });
 
     useEffect(() => {
