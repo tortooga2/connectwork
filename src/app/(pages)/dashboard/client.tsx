@@ -61,7 +61,7 @@ export const Dashboard = ({}) => {
                     
                 </HorizontalDiv>
                 
-                <VerticalDiv style={{position : "absolute", right : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)"}} padding="0rem">
+                <VerticalDiv style={{position : "absolute", right : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)", height : "100%"}} padding="0rem">
                     <div style={{display : "flex", flexDirection : "column", gap : "1rem", width : "100%"}}>
                         <div style={{display : "flex", flexDirection : "row", width : "100%", justifyContent : "space-between", alignItems : "center"}}>
                             <h1 style={{fontSize : "2.5rem"}}>{previewedFile?.name}</h1>

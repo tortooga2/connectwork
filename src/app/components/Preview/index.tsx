@@ -6,8 +6,13 @@ import { getFileUrl } from "@/lib/server/getPreview";
 import { getFileType } from "@/lib/client/getFileType"
 import { VerticalDiv } from "../UILayout";
 import Bundle from "./Views/Bundle";
-import { FileType } from "../TypeTags";
-import Image from "next/image";
+
+import { DocumentViewer } from 'react-documents';
+import { url } from "inspector";
+
+
+
+
 
 
 
@@ -50,10 +55,14 @@ export const Preview = () => {
     const SetLayoutState = useFileStore((state)=>state.SetLayoutState)
     const layoutState = useFileStore((state)=>state.layoutState)
 
-    const [fileUrl, SetFileUrl] = useState<{url: string | undefined, data: any}[] | undefined>(undefined);
+    const [fileUrl, SetFileUrl] = useState<{url: string | undefined, data: any}[]>([{url: "", data: null}]);
     const [fileType, SetFileType] = useState<string>(getFileType(previewedFile?.name!))
 
     const videoRef = useRef<HTMLVideoElement>(null);
+
+
+
+  
 
 
     useEffect(()=>{
@@ -84,8 +93,11 @@ export const Preview = () => {
     }, [layoutState, videoRef])
 
 
+
+
+
     const DisplayFile = () => {
-        if(!fileUrl){
+        if(!fileUrl || fileUrl[0].url === "" ){
             return (<div>
                 File not Found or something else when wrong...sorrry!
             </div>)
@@ -94,17 +106,31 @@ export const Preview = () => {
         switch (fileType){
             case "Document": {
                 const fileSrc = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl[0].url as string)}&embedded=true`;
+                
+                
+                
+                
+                
+                
+
                 return(
                     
-                        <object type="application/pdf" data={fileSrc} style={{
+                    
+                    <DocumentViewer
+                        queryParams="hl=Nl"
+                        url={fileUrl[0].url as string}
+                        style={{
                             width : "100%",
-                            aspectRatio : "1/1.29",
+                            height : "100%",
+                            
                             borderRadius : "var(--border-rad)",
                             objectFit : "contain",
                             objectPosition : "center",
-                        }}/>
-                    
+                        }}>
+                    </DocumentViewer>
+                
                 )
+                    
             }
 
             case "Image" : {
@@ -160,14 +186,14 @@ export const Preview = () => {
     return (<VerticalDiv style={{
         width : "100%",
         height : "100%",
-        // alignItems : "center",
+        alignItems : "center",
         borderRadius : "var(--border-rad)",
         border : "var(--border-width) solid white",
         padding : "1rem",
     }}>
-        <div>
-            {DisplayFile()}
-        </div>
+       {fileType==="Bundle" && fileUrl !== undefined ? (
+            DisplayFile()
+        ) : (<Bundle bundle_data={fileUrl} />)}
         
     </VerticalDiv>)
     

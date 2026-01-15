@@ -1,8 +1,8 @@
 import { File, useFileStore } from "@/app/components/State Manager/appManager";
 import { VerticalDiv } from "@/app/components/UILayout";
 import { getFileType } from "@/lib/client/getFileType";
-import { useEffect, useRef, useState } from "react";
-
+import { use, useEffect, useRef, useState } from "react";
+import { DocumentViewer } from "react-documents";
 
 const NoteView = ({fileUrl, title}: {fileUrl: string, title: string}) => {
     const [fileSrc, setFileSrc] = useState<string | undefined>(undefined)
@@ -38,6 +38,8 @@ const NoteView = ({fileUrl, title}: {fileUrl: string, title: string}) => {
 
 const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any}[]}) => {
 
+    
+
     const videoRef = useRef<HTMLVideoElement>(null);
     const layoutState = useFileStore((state)=>state.layoutState)
 
@@ -51,19 +53,27 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
     }, [layoutState, videoRef])
 
 
+
     const DisplayFile = (index: number, file: any, url: string | undefined) => {
         switch (getFileType(file.type)) {
             case "Document": {
                 const fileSrc = `https://docs.google.com/gview?url=${encodeURIComponent(url as string)}&embedded=true`;
                 return(
                     
-                        <object key={index} type="application/pdf" data={fileSrc} style={{
-                            width : "100%",
-                            aspectRatio : "1/1.29",
-                            borderRadius : "var(--border-rad)",
-                            objectFit : "contain",
-                            objectPosition : "center",
-                        }}/>
+                                            <DocumentViewer
+                                                key={index}
+                                                queryParams="hl=Nl"
+                                                url={url as string}
+                                                style={{
+                                                    width : "100%",
+                                                    aspectRatio : "1/1.1",
+                 
+                                                    flex: 1,
+                                                    borderRadius : "var(--border-rad)",
+                                                    objectFit : "contain",
+                                                    objectPosition : "center",
+                                                }}>
+                                            </DocumentViewer>
                     
                 )
             }
@@ -74,6 +84,7 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
                         borderRadius : "var(--border-rad)",
                         objectFit : "contain",
                         objectPosition : "center",
+                        flex: 1,
                     }}/>
                 )
             }
@@ -84,6 +95,7 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
                         borderRadius : "var(--border-rad)",
                         objectFit : "contain",
                         objectPosition : "center",
+                        flex: 1,
 
                     }}/>
                 )
@@ -101,7 +113,7 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
     return (
             <div style={{
                 width : "100%",
-                height : "100%",
+                
                 display : "flex",
                 flexDirection : "column",
                 gap : "1rem",
