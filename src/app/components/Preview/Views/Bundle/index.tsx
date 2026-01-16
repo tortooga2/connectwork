@@ -1,8 +1,8 @@
-import { File, useFileStore } from "@/app/components/State Manager/appManager";
-import { VerticalDiv } from "@/app/components/UILayout";
+import { useFileStore } from "@/app/components/State Manager/appManager";
 import { getFileType } from "@/lib/client/getFileType";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DocumentViewer } from "react-documents";
+
 
 const NoteView = ({fileUrl, title}: {fileUrl: string, title: string}) => {
     const [fileSrc, setFileSrc] = useState<string | undefined>(undefined)
@@ -36,7 +36,7 @@ const NoteView = ({fileUrl, title}: {fileUrl: string, title: string}) => {
 }
 
 
-const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any}[]}) => {
+const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any}[] | undefined}) => {
 
     
 
@@ -54,16 +54,19 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
 
 
 
-    const DisplayFile = (index: number, file: any, url: string | undefined) => {
+
+
+    const DisplayFile = (index: number, file: any, url?: string) => {
+        const safeUrl = (typeof url === "string" && url.trim() !== "") ? url : undefined;
         switch (getFileType(file.type)) {
             case "Document": {
-                const fileSrc = `https://docs.google.com/gview?url=${encodeURIComponent(url as string)}&embedded=true`;
+                if (!safeUrl) return <div key={index}>Loading...</div>;
                 return(
                     
                                             <DocumentViewer
                                                 key={index}
                                                 queryParams="hl=Nl"
-                                                url={url as string}
+                                                url={safeUrl}
                                                 style={{
                                                     width : "100%",
                                                     aspectRatio : "1/1.1",
@@ -79,19 +82,26 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
             }
 
             case "Image" : {
+                if (!safeUrl) return <div key={index}>Loading...</div>;
                 return (
-                    <img key={index} src={url as string} width="100%" style={{
-                        borderRadius : "var(--border-rad)",
-                        objectFit : "contain",
-                        objectPosition : "center",
-                        flex: 1,
-                    }}/>
+                    <img 
+                    key={index}
+                    src={safeUrl}
+                    width="100%"
+                    style={{
+                            borderRadius : "var(--border-rad)",
+                            objectFit : "contain",
+                            objectPosition : "center",
+                            flex: 1,
+                        }}
+                    />
                 )
             }
 
             case "Recording" : {
+                if (!safeUrl) return <div key={index}>Loading...</div>;
                 return (
-                    <video key={index} src={url as string} ref={videoRef} autoPlay={false} muted={true} width="100%"  controls={true} style={{
+                    <video key={index} src={safeUrl} ref={videoRef} autoPlay={false} muted={true} width="100%"  controls={true} style={{
                         borderRadius : "var(--border-rad)",
                         objectFit : "contain",
                         objectPosition : "center",
@@ -118,7 +128,7 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
                 flexDirection : "column",
                 gap : "1rem",
             }}>
-                {bundle_data.map((file, index) => {
+                {bundle_data?.map((file, index) => {
                     return DisplayFile(index, file.data, file.url)
                 })}
                 

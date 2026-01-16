@@ -8,8 +8,6 @@ import { VerticalDiv } from "../UILayout";
 import Bundle from "./Views/Bundle";
 
 import { DocumentViewer } from 'react-documents';
-import { url } from "inspector";
-
 
 
 
@@ -52,11 +50,10 @@ const NoteView = ({fileUrl}: {fileUrl: string}) => {
 
 export const Preview = () => {
     const previewedFile = useFileStore((state) => state.previewedFile)
-    const SetLayoutState = useFileStore((state)=>state.SetLayoutState)
     const layoutState = useFileStore((state)=>state.layoutState)
 
-    const [fileUrl, SetFileUrl] = useState<{url: string | undefined, data: any}[]>([{url: "", data: null}]);
-    const [fileType, SetFileType] = useState<string>(getFileType(previewedFile?.name!))
+    const [fileUrl, SetFileUrl] = useState<{url: string | undefined, data: any}[] | undefined>([{url: "", data: null}]);
+    const [fileType, SetFileType] = useState<string>(getFileType(previewedFile?.name || ""))
 
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -105,14 +102,7 @@ export const Preview = () => {
         console.log(fileType)
         switch (fileType){
             case "Document": {
-                const fileSrc = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl[0].url as string)}&embedded=true`;
-                
-                
-                
-                
-                
-                
-
+                // const fileSrc = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl[0].url as string)}&embedded=true`;
                 return(
                     
                     
@@ -193,7 +183,7 @@ export const Preview = () => {
     }}>
        {fileType==="Bundle" && fileUrl !== undefined ? (
             DisplayFile()
-        ) : (<Bundle bundle_data={fileUrl} />)}
+        ) : (<Bundle bundle_data={fileUrl || undefined} />)}
         
     </VerticalDiv>)
     

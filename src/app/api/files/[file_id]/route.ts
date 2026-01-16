@@ -5,16 +5,15 @@ import { auth } from "@clerk/nextjs/server";
 
 import { genPresignedUrl } from "@/lib/server/s3/module.genPresignedUrl";
 
-export async function GET(request : NextRequest) {
+export async function GET(request : NextRequest, {params} : {params : {file_id : string}}) {
     const { userId } = await auth()
     
     if(!userId){
         redirect("/")
     }
 
-    const params = request.nextUrl.searchParams;
-    const file_id = params.get("file_id");
-
+    
+    const file_id = params.file_id;
 
 
     const presigned_url = await genPresignedUrl(userId, file_id, "GET", 60).catch(err => {

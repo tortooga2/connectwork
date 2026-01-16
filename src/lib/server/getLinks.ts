@@ -7,7 +7,7 @@ export const getLinks = async (file_id: string) => {
         .select()
         .from(linkTable)
         .where(eq(linkTable.from_id, file_id))
-        .innerJoin(entryTable, eq(linkTable.to_id, entryTable.id))
+        .innerJoin(entryTable, eq(linkTable.to_id, entryTable.id));
         // .innerJoin(entryTable, eq(linkTable.to_id, entryTable.id))
 
 

@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
@@ -10,14 +10,14 @@ export const FilesList = () => {
 
     useEffect(()=>{
         const getFiles = async () => {
-            const response = await fetch("/api/file/get-all")
+            const response = await fetch("/api/files/")
             const {data} = await response.json()
             SetFiles(data)
             console.log(data)
         }
 
         getFiles()
-    }, [])
+    }, [SetFiles])
 
     const sortedFiles = useMemo(() => {
         return Array.from(files.values()).sort((a, b) => {

@@ -27,7 +27,10 @@ const Bundle = async (file_ids : string[]) => {
     return {
         bundle : createdEntries[0],
         links : links,
-    }
+    } as {bundle: FileData, links: {
+            to_id : string,
+            from_id : string,
+        }[]};
 }
 
 export default Bundle;

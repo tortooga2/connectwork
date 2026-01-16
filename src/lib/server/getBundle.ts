@@ -8,7 +8,7 @@ export const getBundle = async (file_id : string) => {
 
     const files_data : {url: string | undefined, data: any}[] = []
 
-    const file_urls = await Promise.all(linked_files.map(async (file) => {
+    await Promise.all(linked_files.map(async (file) => {
         const file_url = await getFileUrl(file.entries as any, true)
         files_data.push({
             url: file_url?.[0]?.url,
