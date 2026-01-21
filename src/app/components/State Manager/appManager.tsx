@@ -100,7 +100,7 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
         try {
             // Get presigned URLs
             const response = await fetch(
-                `/api/file/upload-helper?count=${files.length}`,
+                `/api/files/upload-helper?count=${files.length}`,
                 {
                     method: "GET",
                     credentials: "include",
@@ -125,7 +125,7 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
                                 onProgress(file.name, 100);
                             }
                             
-                            const fileVerResponse = await fetch("/api/file/verify", {
+                            const fileVerResponse = await fetch("/api/files/verify", {
                                                     method: "POST",
                                                     credentials: "include",
                                                     headers: {

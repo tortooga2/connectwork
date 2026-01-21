@@ -8,16 +8,16 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - ./data:/var/lib/postgresql/data
+            - postgres_data:/var/lib/postgresql
             # - ./init-scripts:/docker-entrypoint-initdb.d
     redis:
         image: redis:latest
         ports:
             - "6379:6379"
         volumes:
-            - ./redis:/data
+            - redis_data:/data
         command: redis-server --appendonly yes
         restart: always
 volumes:
-    data:
-    redis:
+    postgres_data:
+    redis_data:
