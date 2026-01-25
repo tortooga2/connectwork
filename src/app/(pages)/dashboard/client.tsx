@@ -9,6 +9,7 @@ import { ButtonBundle } from "@/app/components/buttonBundle"
 import UploadArea from "@/app/components/Uploads/UploadArea"
 import Tiptap from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
+import { DeleteButton } from "@/app/components/DeleteButton"
 
 
 export const Dashboard = ({}) => {
@@ -51,6 +52,7 @@ export const Dashboard = ({}) => {
                             </div>
                         </div>
                         <ButtonBundle/>
+                        <DeleteButton/>
                         <UploadArea/>
                         <button onClick={()=>{
                             setLayoutState(2)

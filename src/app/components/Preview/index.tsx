@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useFileStore } from "../State Manager/appManager";
-import { getFileUrl } from "@/lib/server/getPreview";
+import { getFileUrl } from "@/lib/server/getFileUrl";
 import { getFileType } from "@/lib/client/getFileType"
 import { VerticalDiv } from "../UILayout";
 import Bundle from "./Views/Bundle";

@@ -11,7 +11,7 @@ export const ButtonBundle = () => {
         if(selectedFiles.size > 0) {
             const bundle = await Bundle(Array.from(selectedFiles)) as {bundle: FileData, links: {to_id: string, from_id: string}[]}
             ClearSelection()
-            UpdateFiles([bundle?.bundle as File])
+            UpdateFiles([bundle?.bundle as any])
            
         }
     }}>Bundle ({selectedFiles.size}) </button>)
