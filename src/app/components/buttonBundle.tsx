@@ -24,29 +24,29 @@ export const ButtonBundle = () => {
                 alignItems: "center",
                 gap: "0.5rem",
                 padding: "0.875rem 1.75rem",
-                border: "var(--theme-border-width) solid #D7827E",
+                border: "var(--theme-border-width) solid var(--theme-btn-linq-border)",
                 borderRadius: "var(--theme-border-radius)",
-                backgroundColor: "var(--theme-bg-secondary)",
-                color: "#D7827E",
+                backgroundColor: "var(--theme-btn-linq-bg)",
+                color: "var(--theme-btn-linq-text)",
                 cursor: selectedFiles.size > 0 ? "pointer" : "not-allowed",
                 fontSize: "1.125rem",
                 fontWeight: "500",
                 transition: "all 0.2s ease",
-                opacity: selectedFiles.size > 0 ? 1 : 0.6
+                opacity: selectedFiles.size > 0 ? "1" : "0.6"
             }}
             onMouseEnter={(e) => {
                 if(selectedFiles.size > 0) {
-                    e.currentTarget.style.backgroundColor = "var(--theme-bg-tertiary)"
-                    e.currentTarget.style.opacity = "0.9"
+                    e.currentTarget.style.backgroundColor = "var(--theme-btn-linq-hover-bg)"
+                    e.currentTarget.style.opacity = "var(--theme-btn-linq-hover-opacity)"
                 }
             }}
             onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--theme-bg-secondary)"
-                e.currentTarget.style.opacity = selectedFiles.size > 0 ? 1 : 0.6
+                e.currentTarget.style.backgroundColor = "var(--theme-btn-linq-bg)"
+                e.currentTarget.style.opacity = selectedFiles.size > 0 ? "1" : "0.6"
             }}
             disabled={selectedFiles.size === 0}
         >
-            <FontAwesomeIcon icon={faLink} style={{ color: "#D7827E" }} />
+            <FontAwesomeIcon icon={faLink} style={{ color: "var(--theme-btn-linq-icon)" }} />
             Linq ({selectedFiles.size})
         </button>
     )

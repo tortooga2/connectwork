@@ -25,7 +25,7 @@ export default async function Home() {
                         padding: "1rem 2rem",
                     }}
                 >
-                    <h1>Connectwork</h1>
+                    <h1>Linquiq</h1>
                     <div style={{ display: "flex", gap: "1rem" }}>
                         <SignedOut>
                             <SignInButton />

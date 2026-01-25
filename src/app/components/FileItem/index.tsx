@@ -83,12 +83,12 @@ export const FileItem = ({file} : {file : File}) => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            transition: "opacity 0.2s ease",
+                            transition: "opacity 0.2s ease, color 0.2s ease-out, background-color 0.2s ease",
                             borderRadius: "var(--theme-border-radius)"
                         }}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.opacity = "0.7"
-                            e.currentTarget.style.backgroundColor = "var(--theme-bg-tertiary)"
+                            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)"
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.opacity = "1"

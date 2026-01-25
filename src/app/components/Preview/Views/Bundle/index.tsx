@@ -57,10 +57,10 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
 
 
     const DisplayFile = (index: number, file: any, url?: string) => {
-        const safeUrl = (typeof url === "string" && url.trim() !== "") ? url : undefined;
+        const safeUrl = (url && typeof url === "string" && url.trim() !== "") ? url : null;
         switch (getFileType(file.type)) {
             case "Document": {
-                if (!safeUrl) return <div key={index}>Loading...</div>;
+                if (!safeUrl || safeUrl === "" || safeUrl.trim() === "") return <div key={index}>Loading...</div>;
                 return(
                     
                                             <DocumentViewer

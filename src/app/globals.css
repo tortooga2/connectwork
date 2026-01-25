@@ -79,7 +79,10 @@ a {
   align-items: center;
   text-align: left;
   border-radius: 10px;
-  transition: background-color 0.2s ease-out, color 0.2s ease-out, padding-left 0.2s ease-out, padding-right 0.2s ease-out;
+  background-color: var(--theme-list-row-bg);
+  color: var(--theme-list-row-text);
+  border: var(--theme-list-row-border);
+  transition: var(--theme-list-row-hover-transition), padding-left 0.2s ease-out, padding-right 0.2s ease-out;
 
 }
 
@@ -101,7 +104,18 @@ a {
 .row:hover {
   background-color: var(--theme-list-row-hover-bg);
   color: var(--theme-list-row-hover-text);
-  transition: background-color 0.2s ease-out, color 0.2s ease-out, padding-left 0.2s ease-out, padding-right 0.2s ease-out;
+  border: var(--theme-list-row-hover-border);
+  transition: var(--theme-list-row-hover-transition), padding-left 0.2s ease-out, padding-right 0.2s ease-out;
+}
+
+.row:hover button {
+  color: var(--theme-list-row-hover-text);
+}
+
+.row:hover button svg,
+.row:hover button svg path {
+  color: var(--theme-list-row-hover-text);
+  fill: var(--theme-list-row-hover-text);
 }
 
 .column {

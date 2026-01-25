@@ -34,9 +34,8 @@ export const FilesList = () => {
         <VerticalDiv style={{ border: "var(--theme-border-width) solid var(--theme-border-primary)", borderRadius: "var(--theme-border-radius)", padding: "1rem", width: "100%" }}>
             <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
                 <ButtonBundle />
-                <DeleteButton />
             </div>
-            <div className={"row"} style={{ backgroundColor: "var(--theme-list-header-bg)", color: "var(--theme-list-header-text)", borderRadius: "var(--theme-border-radius)" }}>
+            <div className={"row"} style={{ backgroundColor: "var(--theme-list-header-bg)", color: "var(--theme-list-header-text)", borderRadius: "var(--theme-list-header-border-radius)", border: "var(--theme-list-header-border)" }}>
                 <div></div>
                 <div className={"column"} style={{ fontWeight: "bold" }}>ID</div>
                 <div className={"column"} style={{ fontWeight: "bold" }}>CREATED AT</div>
