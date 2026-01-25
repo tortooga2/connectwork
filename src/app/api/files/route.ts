@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 
 
 
+
 export async function GET() {
     const {userId} = await auth();
 

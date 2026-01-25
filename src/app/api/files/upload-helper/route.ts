@@ -11,7 +11,6 @@ export async function GET(request : NextRequest) {
   }
 
   const params = request.nextUrl.searchParams;
-  console.log(params)
   const count = params.get('count');
 
   if(!count){
@@ -30,6 +29,7 @@ export async function GET(request : NextRequest) {
   try {
     for (let i = 0; i < fileCount; i++) {
       const key = crypto.randomBytes(16).toString("hex");
+      
 
       urls.push(await genPresignedUrl(userId, key, "PUT"));
 

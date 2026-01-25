@@ -20,6 +20,7 @@ interface FileManagerState {
     SetFiles: (files: File[]) => void,
     UpdateFiles: (files: File[]) => void,
     uploadFiles: (files: FileList, onProgress: null | ((name: string, percent: number) => void)) => Promise<void>,
+    deleteFiles: () => Promise<void>,
     loading: boolean,
     SetLoading: (loading: boolean) => void,
     selectedFiles: Set<string>,
@@ -100,7 +101,7 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
         try {
             // Get presigned URLs
             const response = await fetch(
-                `/api/file/upload-helper?count=${files.length}`,
+                `/api/files/upload-helper?count=${files.length}`,
                 {
                     method: "GET",
                     credentials: "include",
@@ -125,7 +126,7 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
                                 onProgress(file.name, 100);
                             }
                             
-                            const fileVerResponse = await fetch("/api/file/verify", {
+                            const fileVerResponse = await fetch("/api/files/verify", {
                                                     method: "POST",
                                                     credentials: "include",
                                                     headers: {
@@ -195,4 +196,24 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
             SetLoading(false);
         }
     },
+
+    deleteFiles: async () => {
+        const { selectedFiles, SetFiles, ClearSelection } = get();
+        const fileIds = Array.from(selectedFiles);
+        
+        await Promise.all(fileIds.map(async (fileId) => {
+            const response = await fetch(`/api/files/${fileId}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                console.error(`Failed to delete file with ID: ${fileId}`);
+            }
+        }));
+
+        // Update the store to remove deleted files
+        SetFiles(Array.from(get().files.values()).filter(file => !selectedFiles.has(file.id)));
+        ClearSelection();
+    }
 }));
