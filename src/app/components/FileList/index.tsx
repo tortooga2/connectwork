@@ -4,6 +4,7 @@ import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
 import { ButtonBundle } from "@/app/components/buttonBundle"
+import { DeleteButton } from "@/app/components/DeleteButton"
 
 export const FilesList = () => {
     const files = useFileStore((state) => state.files)
@@ -31,8 +32,9 @@ export const FilesList = () => {
 
     return (
         <VerticalDiv style={{ border: "var(--theme-border-width) solid var(--theme-border-primary)", borderRadius: "var(--theme-border-radius)", padding: "1rem", width: "100%" }}>
-            <div style={{ marginBottom: "1rem" }}>
+            <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
                 <ButtonBundle />
+                <DeleteButton />
             </div>
             <div className={"row"} style={{ backgroundColor: "var(--theme-list-header-bg)", color: "var(--theme-list-header-text)", borderRadius: "var(--theme-border-radius)" }}>
                 <div></div>

@@ -9,6 +9,7 @@ import { FileType } from "@/app/components/TypeTags"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faX, faFile, faPaperclip } from "@fortawesome/free-solid-svg-icons"
 import { useRef } from "react"
+import { DeleteButton } from "@/app/components/DeleteButton"
 
 // Simple Upload Button Component
 const UploadButton = () => {

@@ -1,5 +1,5 @@
 "use server"
-import { getFileUrl } from "./getPreview"
+import { getFileUrl } from "./getFileUrl"
 import { getLinks } from "./getLinks"
 
 
