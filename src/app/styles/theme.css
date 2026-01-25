@@ -1,0 +1,202 @@
+/**
+ * Linquiq Theme - Modular Color Scheme
+ * 
+ * This file contains all color variables for easy customization.
+ * Based on the dark blue-grey design with colored type indicators.
+ * 
+ * To change the theme, simply update the color values below.
+ */
+
+:root {
+    /* ============================================
+     BASE COLORS
+     ============================================ */
+
+    /* Background Colors */
+    --theme-bg-primary: #1a1d29;
+    /* Main dark blue-grey background */
+    --theme-bg-secondary: #252936;
+    /* Secondary background (panels, cards) */
+    --theme-bg-tertiary: #2d3142;
+    /* Tertiary background (hover states) */
+    --theme-bg-overlay: rgba(0, 0, 0, 0.5);
+    /* Overlay backgrounds */
+
+    /* Text Colors */
+    --theme-text-primary: #ffffff;
+    /* Primary text (white) */
+    --theme-text-secondary: #b8bcc8;
+    /* Secondary text (light grey) */
+    --theme-text-tertiary: #8b8f9a;
+    /* Tertiary text (muted grey) */
+    --theme-text-inverse: #1a1d29;
+    /* Text on light backgrounds */
+
+    /* Border Colors */
+    --theme-border-primary: #3d4154;
+    /* Primary borders */
+    --theme-border-secondary: #4a4f64;
+    /* Secondary borders (hover) */
+    --theme-border-accent: #5a5f7a;
+    /* Accent borders */
+
+    /* ============================================
+     TYPE COLORS (File Type Indicators)
+     ============================================ */
+
+    /* Linq (Bundle) - Pink */
+    --theme-type-linq: D7827E;
+    /* Pink dot and text */
+    --theme-type-linq-bg: rgba(233, 30, 99, 0.1);
+    /* Light pink background */
+
+    /* Image - Light Blue */
+    --theme-type-image: #42a5f5;
+    /* Light blue dot and text */
+    --theme-type-image-bg: rgba(66, 165, 245, 0.1);
+    /* Light blue background */
+
+    /* Recording - Dark Blue */
+    --theme-type-recording: #d22519;
+    /* Dark blue dot and text */
+    --theme-type-recording-bg: rgba(25, 118, 210, 0.1);
+    /* Dark blue background */
+
+    /* Document - Orange */
+    --theme-type-document: #ff9800;
+    /* Orange dot and text */
+    --theme-type-document-bg: rgba(255, 152, 0, 0.1);
+    /* Orange background */
+
+    /* Note - Green */
+    --theme-type-note: #4caf50;
+    /* Green dot and text */
+    --theme-type-note-bg: rgba(76, 175, 80, 0.1);
+    /* Green background */
+
+    /* ============================================
+     UI ELEMENT COLORS
+     ============================================ */
+
+    /* Buttons */
+    --theme-btn-primary-bg: transparent;
+    --theme-btn-primary-border: var(--theme-border-primary);
+    --theme-btn-primary-text: var(--theme-text-primary);
+    --theme-btn-primary-hover-bg: var(--theme-text-primary);
+    --theme-btn-primary-hover-text: var(--theme-text-inverse);
+
+    /* Buttons - Accent */
+    --theme-btn-accent-bg: var(--theme-text-primary);
+    --theme-btn-accent-text: var(--theme-text-inverse);
+    --theme-btn-accent-hover-bg: var(--theme-bg-tertiary);
+    --theme-btn-accent-hover-text: var(--theme-text-primary);
+
+    /* Table/List */
+    --theme-list-header-bg: var(--theme-text-primary);
+    --theme-list-header-text: var(--theme-text-inverse);
+    --theme-list-row-hover-bg: var(--theme-text-primary);
+    --theme-list-row-hover-text: var(--theme-text-inverse);
+
+    /* Input Fields */
+    --theme-input-bg: var(--theme-bg-secondary);
+    --theme-input-border: var(--theme-border-primary);
+    --theme-input-text: var(--theme-text-primary);
+    --theme-input-focus-border: var(--theme-border-accent);
+
+    /* Links */
+    --theme-link-color: var(--theme-text-primary);
+    --theme-link-hover-color: var(--theme-text-secondary);
+
+    /* ============================================
+     STATE COLORS
+     ============================================ */
+
+    /* Success */
+    --theme-success: #4caf50;
+    --theme-success-bg: rgba(76, 175, 80, 0.1);
+
+    /* Error */
+    --theme-error: #f44336;
+    --theme-error-bg: rgba(244, 67, 54, 0.1);
+
+    /* Warning */
+    --theme-warning: #ff9800;
+    --theme-warning-bg: rgba(255, 152, 0, 0.1);
+
+    /* Info */
+    --theme-info: #2196f3;
+    --theme-info-bg: rgba(33, 150, 243, 0.1);
+
+    /* ============================================
+     SHADOWS
+     ============================================ */
+
+    --theme-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+    --theme-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --theme-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.2);
+    --theme-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
+
+    /* ============================================
+     SPACING & SIZING (for consistency)
+     ============================================ */
+
+    --theme-border-radius: 0.5rem;
+    --theme-border-width: 0.15rem;
+    --theme-spacing-xs: 0.25rem;
+    --theme-spacing-sm: 0.5rem;
+    --theme-spacing-md: 1rem;
+    --theme-spacing-lg: 1.5rem;
+    --theme-spacing-xl: 2rem;
+
+    /* ============================================
+     LEGACY COMPATIBILITY
+     (Maps old variables to new theme)
+     ============================================ */
+
+    --background: var(--theme-bg-primary);
+    --foreground: var(--theme-text-primary);
+    --border-rad: var(--theme-border-radius);
+    --border-width: var(--theme-border-width);
+
+    /* Legacy type colors for backward compatibility */
+    --bundle-color-1: var(--theme-type-linq-bg);
+    --bundle-color-2: var(--theme-type-linq);
+    --doc-color-1: var(--theme-type-document-bg);
+    --doc-color-2: var(--theme-type-document);
+    --note-color-1: var(--theme-type-note-bg);
+    --note-color-2: var(--theme-type-note);
+    --rec-color-1: var(--theme-type-recording-bg);
+    --rec-color-2: var(--theme-type-recording);
+    --img-color-1: var(--theme-type-image-bg);
+    --img-color-2: var(--theme-type-image);
+}
+
+/* ============================================
+   DARK MODE VARIATIONS (Optional)
+   ============================================ */
+
+/* Dark mode is the default theme */
+/* Override colors here if you need a different dark mode variant */
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --theme-bg-primary: #0a0a0a;
+    --theme-text-primary: #faedcd;
+  }
+} */
+
+/* ============================================
+   LIGHT MODE VARIATIONS (Optional)
+   ============================================ */
+
+[data-theme="light"] {
+    --theme-bg-primary: #f5f5f5;
+    --theme-bg-secondary: #ffffff;
+    --theme-bg-tertiary: #e0e0e0;
+    --theme-text-primary: #1a1d29;
+    --theme-text-secondary: #4a4f64;
+    --theme-text-tertiary: #6b6f7a;
+    --theme-text-inverse: #ffffff;
+    --theme-border-primary: #d0d0d0;
+    --theme-border-secondary: #b0b0b0;
+    --theme-border-accent: #909090;
+}

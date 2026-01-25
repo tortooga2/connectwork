@@ -3,15 +3,16 @@ import { useEffect, useMemo } from "react"
 import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
+import { ButtonBundle } from "@/app/components/buttonBundle"
 
 export const FilesList = () => {
-    const files = useFileStore((state)=>state.files)
-    const SetFiles = useFileStore((state)=>state.SetFiles)
+    const files = useFileStore((state) => state.files)
+    const SetFiles = useFileStore((state) => state.SetFiles)
 
-    useEffect(()=>{
+    useEffect(() => {
         const getFiles = async () => {
             const response = await fetch("/api/files/")
-            const {data} = await response.json()
+            const { data } = await response.json()
             SetFiles(data)
             console.log(data)
         }
@@ -28,19 +29,22 @@ export const FilesList = () => {
         })
     }, [files])
 
-    return(
-        <VerticalDiv style={{border : "var(--border-width) solid var(--foreground)", borderRadius : "var(--border-rad)", padding : "1rem"}}>
-            <div className={"row"} style={{backgroundColor : "var(--foreground)", color : "var(--background)", borderRadius : "var(--border-rad)"}}>
+    return (
+        <VerticalDiv style={{ border: "var(--theme-border-width) solid var(--theme-border-primary)", borderRadius: "var(--theme-border-radius)", padding: "1rem", width: "100%" }}>
+            <div style={{ marginBottom: "1rem" }}>
+                <ButtonBundle />
+            </div>
+            <div className={"row"} style={{ backgroundColor: "var(--theme-list-header-bg)", color: "var(--theme-list-header-text)", borderRadius: "var(--theme-border-radius)" }}>
                 <div></div>
-                <div className={"column"} style={{ fontWeight: "bold"}}>ID:</div>
-                <div className={"column"} style={{ fontWeight: "bold"}}>CREATED AT:</div>
-                <div className={"column"} style={{ fontWeight: "bold"}}>TYPE:</div>
-                <div className={"column"} style={{ fontWeight: "bold"}}>CREATOR:</div>
-                <div className={"column"} style={{ fontWeight: "bold"}}>NAME:</div>
-                <div></div>
+                <div className={"column"} style={{ fontWeight: "bold" }}>ID</div>
+                <div className={"column"} style={{ fontWeight: "bold" }}>CREATED AT</div>
+                <div className={"column"} style={{ fontWeight: "bold" }}>TYPE</div>
+                <div className={"column"} style={{ fontWeight: "bold" }}>CREATOR</div>
+                <div className={"column"} style={{ fontWeight: "bold" }}>NAME</div>
+                <div className={"column"} style={{ fontWeight: "bold" }}>QUICKVIEW</div>
             </div>
 
-            <VerticalDiv style={{gap: "0.25rem"}} padding="0rem">
+            <VerticalDiv style={{ gap: "0.25rem" }} padding="0rem">
                 {sortedFiles.map((file) => (
                     <FileItem key={file.id} file={file} />
                 ))}

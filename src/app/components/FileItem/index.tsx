@@ -3,6 +3,8 @@ import {useState, useEffect, useRef} from "react"
 import type { File } from "../State Manager/appManager"
 import { useFileStore } from "../State Manager/appManager"
 import {FileType} from "../TypeTags"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faEye } from "@fortawesome/free-solid-svg-icons"
 
 
 
@@ -65,7 +67,36 @@ export const FileItem = ({file} : {file : File}) => {
                 <div className={"column"}>{file.creator_email}</div>
                 <div className={"column"}>{file.name}</div>
                 <div>
-                    <button onClick={()=>{ console.log(file); SetPreviewFile(file); SetLayoutState(1); }}>view</button>
+                    <button 
+                        onClick={()=>{ 
+                            console.log(file); 
+                            SetPreviewFile(file); 
+                            SetLayoutState(1); 
+                        }}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            color: "var(--theme-text-primary)",
+                            cursor: "pointer",
+                            padding: "0.5rem",
+                            fontSize: "1.25rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transition: "opacity 0.2s ease",
+                            borderRadius: "var(--theme-border-radius)"
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.opacity = "0.7"
+                            e.currentTarget.style.backgroundColor = "var(--theme-bg-tertiary)"
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.opacity = "1"
+                            e.currentTarget.style.backgroundColor = "transparent"
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faEye} />
+                    </button>
                 </div>
                 <div style={{position : "absolute", right: "0", height : "100%", ...onEnter, backgroundColor : "var(--background)", transition : "width 0.5s ease-in-out 0.2s"}}></div>     
             </div>      
