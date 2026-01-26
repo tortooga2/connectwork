@@ -76,7 +76,7 @@ export const Dashboard = ({}) => {
                         <div style={{display : "flex", flexDirection : "column", gap : "0.5rem"}}>
                             {FileType(previewedFile?.type)}
                             <span><span style={{fontWeight : "bold"}}>ID:</span> {previewedFile?.id}</span>
-                            <span><span style={{fontWeight : "bold"}}>Created:</span> {previewedFile?.createdAt}</span>
+                            <span><span style={{fontWeight : "bold"}}>Created:</span> {(previewedFile?.createdAt)?.toString()}</span>
                             <span><span style={{fontWeight : "bold"}}>Creator:</span> {previewedFile?.creator_email}</span>
                         </div>
                     </div>
