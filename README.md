@@ -1,7 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Getting Started
 
+
+### Starting the Database
+
+First you need to set up the database using the drizzle-kit untilities.
+Within you .env you need to set `DATABASE_URL` to the proper postgresql url. 
+
+Then you need to run the following commands:
+
+```bash
+npx drizzle-kit generate: #Creates SQL migration files based on schema changes.
+npx drizzle-kit migrate: #Runs the generated migration files against the database.
+# or (but not recomended)
+npx drizzle-kit push: #Instantly syncs the schema without needing migration files. 
+```
+
+### Clerk!
+ Pretty clear steps for this one! 
+
+ [Getting Started with Clerk](https://clerk.com/docs/nextjs/getting-started/quickstart)
+
+
+### Starting the Web App
 First, run the development server:
 
 ```bash
@@ -16,21 +36,21 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Key API endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+| Endpoint | METHOD | Description | Use |
+|---|---|---|
+| /api/files/  | GET | Get all of a users files  | |
+| /api/files/{:file_id} | GET | Returns all information (including a temporary link) to the file and its data | params - file id |
+| /api/files/{:file_id} | DELETE | Deletes a file | params - file id |
+| /api/files/connect  | POST | Connects files under a new name 'default = Bundle' | {file_ids} as string[] passed through body |
+| /api/files/upload-helper | GET | Gets the presigned upload url from AWS as well as the key for that file | params - count |
+| /api/files/verify | POST | Checks to see if objects where uploaded to S3, once verified, we create the corresponding files in our DB and send those back to user | {keys, fileNames} as {string[], string[]} |
 
-To learn more about Next.js, take a look at the following resources:
+and I think that is it!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+### TODO: Fiz error when displaying a linq within a linq (a hyper-linq ;) )
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

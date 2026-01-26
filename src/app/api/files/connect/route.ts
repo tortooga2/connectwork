@@ -18,6 +18,8 @@ export async function POST(request : NextRequest) {
 
     const {file_ids} = await request.json();
 
+    console.log("file_ids", file_ids);
+
 
 
     const newBunde : FileData = {
