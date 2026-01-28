@@ -12,7 +12,5 @@ export const deleteFile = async (file_id: string) => {
     await db.delete(entryTable)
     .where(eq(entryTable.id, file_id));
 
-
     return;
-
 }
