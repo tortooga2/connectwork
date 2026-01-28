@@ -211,6 +211,15 @@ a {
   }
 }
 
+/* Standalone preview page – note content */
+.preview-note-content {
+  color: var(--theme-text-primary);
+  font-family: "Noto Sans", sans-serif;
+  line-height: 1.6;
+}
+.preview-note-content p { margin: 0 0 0.75rem; }
+.preview-note-content h1, .preview-note-content h2, .preview-note-content h3 { margin: 1rem 0 0.5rem; }
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

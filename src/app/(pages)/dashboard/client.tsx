@@ -6,6 +6,7 @@ import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
 import Tiptap from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
+import { getFileType } from "@/lib/client/getFileType"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faX, faFile, faPaperclip } from "@fortawesome/free-solid-svg-icons"
 import { useRef } from "react"
@@ -166,10 +167,10 @@ export const Dashboard = ({ }) => {
 
                 {/* Preview Panel - Right Side */}
                 {layoutState === 1 && (
-                    <VerticalDiv style={{ position: "absolute", right: "1rem", top: "4rem", bottom: "1rem", width: "calc(40% - 1rem)", height: "calc(100% - 5rem)" }} padding="0rem">
+                    <VerticalDiv style={{ position: "absolute", right: "1rem", top: "5rem", bottom: "1rem", width: "calc(40% - 1rem)", height: "calc(100% - 5rem)" }} padding="0rem">
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%", height: "100%" }}>
                             <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "center", paddingBottom: "1rem", borderBottom: "var(--theme-border-width) solid var(--theme-border-primary)" }}>
-                                <h1 style={{ fontSize: "2.5rem", margin: 0 }}>{previewedFile?.name}</h1>
+                                <h1 style={{ fontSize: "2.5rem", margin: 0 }}>{getFileType(previewedFile?.type ?? "") === "Bundle" ? "Linq" : previewedFile?.name}</h1>
                                 <button
                                     onClick={() => SetLayoutState(0)}
                                     style={{

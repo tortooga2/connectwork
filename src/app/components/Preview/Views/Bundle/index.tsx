@@ -123,15 +123,26 @@ const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any
     return (
             <div style={{
                 width : "100%",
-                
                 display : "flex",
                 flexDirection : "column",
                 gap : "1rem",
             }}>
                 {bundle_data?.map((file, index) => {
-                    return DisplayFile(index, file.data, file.url)
+                    const isLast = index === (bundle_data?.length ?? 1) - 1;
+                    return (
+                        <div
+                            key={index}
+                            style={{
+                                width: "100%",
+                                paddingBottom: isLast ? 0 : "1rem",
+                                marginBottom: isLast ? 0 : "1rem",
+                                borderBottom: isLast ? "none" : "1px solid var(--theme-divider-faint)",
+                            }}
+                        >
+                            {DisplayFile(index, file.data, file.url)}
+                        </div>
+                    );
                 })}
-                
             </div>
     )
 }

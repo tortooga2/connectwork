@@ -25,7 +25,7 @@ export async function POST(request : NextRequest) {
     const newBunde : FileData = {
         owner_id : userId,
         creator_id : userId,
-        name : "Bundle",
+        name : "Linq",
         type : "bundle",
     }
 

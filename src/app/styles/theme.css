@@ -39,6 +39,8 @@
   /* Secondary borders (hover) */
   --theme-border-accent: #5a5f7a;
   /* Accent borders */
+  --theme-divider-faint: rgba(255, 255, 255, 0.08);
+  /* Faint divider (e.g. between Linq items) */
 
   /* ============================================
      TYPE COLORS (File Type Indicators)
@@ -230,4 +232,5 @@
   --theme-border-primary: #d0d0d0;
   --theme-border-secondary: #b0b0b0;
   --theme-border-accent: #909090;
+  --theme-divider-faint: rgba(0, 0, 0, 0.06);
 }

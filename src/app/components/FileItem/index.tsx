@@ -4,6 +4,7 @@ import { createPortal } from "react-dom"
 import type { File } from "../State Manager/appManager"
 import { useFileStore } from "../State Manager/appManager"
 import { FileType } from "../TypeTags"
+import { getFileType } from "@/lib/client/getFileType"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faEye, faCopy } from "@fortawesome/free-solid-svg-icons"
 
@@ -68,7 +69,7 @@ export const FileItem = ({ file }: { file: File }) => {
                 <div className={"column"}>{new Date(file.createdAt).toISOString()}</div>
                 <div className={"column"}>{FileType(file.type, layoutState == 0 || viewportWidth < 768)}</div>
                 <div className={"column"}>{file.creator_email}</div>
-                <div className={"column"}>{file.name}</div>
+                <div className={"column"}>{getFileType(file.type) === "Bundle" ? "Linq" : file.name}</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", position: "relative" }}>
                     <button
                         onClick={(e) => {
