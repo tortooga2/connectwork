@@ -72,8 +72,8 @@ a {
   grid-template-columns:
     1rem
     /* checkbox */
-    minmax(50px, 1fr) minmax(50px, 1fr) minmax(50px, 1fr) 1fr 1fr minmax(100px, auto);
-  /* Quickview column - wider to fit text */
+    minmax(50px, 1fr) minmax(50px, 1fr) minmax(50px, 1fr) 1fr 1fr minmax(120px, auto) minmax(100px, auto);
+  /* URL column (copy + link), Quickview column */
   gap: 1rem;
   padding: 0.5rem;
   align-items: center;
@@ -91,8 +91,8 @@ a {
     grid-template-columns:
       1rem
       /* checkbox */
-      minmax(30px, 1fr) minmax(50px, 1fr) 2rem 0fr 0fr minmax(80px, auto);
-    /* Quickview column */
+      minmax(30px, 1fr) minmax(50px, 1fr) 2rem 0fr 0fr minmax(100px, auto) minmax(80px, auto);
+    /* URL column, Quickview column */
     gap: 1rem;
     padding: 0.5rem;
     align-items: center;
@@ -116,6 +116,10 @@ a {
 .row:hover button svg path {
   color: var(--theme-list-row-hover-text);
   fill: var(--theme-list-row-hover-text);
+}
+
+.row:hover a {
+  color: var(--theme-list-row-hover-text);
 }
 
 .column {
@@ -157,6 +161,55 @@ a {
   line-height: 1;
 }
 
+/* Copy-link toast */
+.copy-toast {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--theme-text-primary);
+  background: var(--theme-bg-secondary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: var(--theme-border-radius);
+  box-shadow: var(--theme-shadow-md);
+  animation: copy-toast-in 0.15s ease-out;
+  z-index: 9999;
+}
+
+/* Portal version: fixed position, no movement—fade in only */
+.copy-toast-portal {
+  position: fixed;
+  bottom: auto;
+  right: auto;
+  margin-bottom: 0;
+  animation: copy-toast-fade 0.15s ease-out;
+}
+
+@keyframes copy-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes copy-toast-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
 
 @media (prefers-color-scheme: dark) {
   html {

@@ -42,6 +42,7 @@ export const FilesList = () => {
                 <div className={"column"} style={{ fontWeight: "bold" }}>TYPE</div>
                 <div className={"column"} style={{ fontWeight: "bold" }}>CREATOR</div>
                 <div className={"column"} style={{ fontWeight: "bold" }}>NAME</div>
+                <div className={"column"} style={{ fontWeight: "bold" }}>URL</div>
                 <div className={"column"} style={{ fontWeight: "bold" }}>QUICKVIEW</div>
             </div>
 
