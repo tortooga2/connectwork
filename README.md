@@ -40,7 +40,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 | Endpoint | METHOD | Description | Use |
-|---|---|---|
+|---|---|---|---|
 | /api/files/  | GET | Get all of a users files  | |
 | /api/files/{:file_id} | GET | Returns all information (including a temporary link) to the file and its data | params - file id |
 | /api/files/{:file_id} | DELETE | Deletes a file | params - file id |
