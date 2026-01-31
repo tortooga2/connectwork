@@ -1,47 +1,47 @@
 import { getFileData } from "@/lib/server/getFileData";
 import { getFileUrl } from "@/lib/server/getFileUrl";
 import { auth } from "@clerk/nextjs/server"
-import { get } from "lodash";
 import { redirect } from "next/navigation"
 
-
-
-export default async function PreviewPage({ params }: { params: { file_id: string } }) {
-    const { userId } = await auth()
+// 1. Update the type to expect a Promise
+export default async function PreviewPage({ 
+    params 
+}: { 
+    params: Promise<{ file_id: string }> 
+}) {
+    const { userId } = await auth();
     
     if(!userId){
-        redirect("/")
+        redirect("/");
     }
 
-    
-    const fileId = await params.file_id;
+    // 2. Await the params object before accessing properties
+    const resolvedParams = await params;
+    const fileId = resolvedParams.file_id;
 
     const fileData = await getFileData(fileId);
 
     if(!fileData){
         return (
-            <div>
-                You do not have permission to view this file.
+            <div className="p-10">
+                <p>You do not have permission to view this file.</p>
                 <button>Request Access</button>
                 <button>Go to Dashboard</button>
             </div>
-        )
+        );
     }
 
+    const fileUrl = await getFileUrl({
+        id: fileData.id, 
+        file_id: fileData.file_id!, 
+        type: fileData.type
+    }, false);
 
-   
-    const fileUrl = await getFileUrl({id: fileData.id, file_id: fileData.file_id!, type: fileData.type}, false);
-    
-
-    
-
-    console.log(fileData);
     return (
-        <div>
-            Preview Page for file: {fileId}
-
-            <pre>{JSON.stringify(fileData, null, 2)}</pre>
-            <pre>{JSON.stringify(fileUrl, null, 2)}</pre>
+        <div className="p-10">
+            <h1>Preview Page for file: {fileId}</h1>
+            <pre className="bg-gray-100 p-4">{JSON.stringify(fileData, null, 2)}</pre>
+            <pre className="bg-gray-100 p-4">{JSON.stringify(fileUrl, null, 2)}</pre>
         </div>
-    )
+    );
 }
