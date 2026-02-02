@@ -114,19 +114,19 @@
      ============================================ */
 
     /* File List Header */
-    --theme-list-header-bg: var(--theme-text-primary);
-    --theme-list-header-text: var(--theme-text-inverse);
+    --theme-list-header-bg: #3c3f50;
+    --theme-list-header-text: #ffffff;
     --theme-list-header-border: transparent;
     --theme-list-header-border-radius: var(--theme-border-radius);
 
     /* File Row (Card) - Default State */
     --theme-list-row-bg: transparent;
-    --theme-list-row-text: var(--theme-text-primary);
+    --theme-list-row-text: #ffffff;
     --theme-list-row-border: transparent;
 
     /* File Row (Card) - Hover State */
-    --theme-list-row-hover-bg: var(--theme-text-primary);
-    --theme-list-row-hover-text: var(--theme-text-inverse);
+    --theme-list-row-hover-bg: #3c3f50;
+    --theme-list-row-hover-text: #ffffff;
     --theme-list-row-hover-border: transparent;
     --theme-list-row-hover-transition: background-color 0.2s ease-out, color 0.2s ease-out;
 

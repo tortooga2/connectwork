@@ -3,8 +3,6 @@ import { useEffect, useMemo } from "react"
 import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
-import { ButtonBundle } from "@/app/components/buttonBundle"
-import { DeleteButton } from "@/app/components/DeleteButton"
 
 export const FilesList = () => {
     const files = useFileStore((state) => state.files)
@@ -31,10 +29,7 @@ export const FilesList = () => {
     }, [files])
 
     return (
-        <VerticalDiv style={{ border: "var(--theme-border-width) solid var(--theme-border-primary)", borderRadius: "var(--theme-border-radius)", padding: "1rem", width: "100%", minWidth: 0 }}>
-            <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-                <ButtonBundle />
-            </div>
+        <VerticalDiv style={{ border: "var(--theme-border-width) solid var(--theme-border-primary)", borderRadius: "var(--theme-border-radius)", padding: "1rem", width: "100%", minWidth: 0, alignSelf: "flex-start" }}>
             <div style={{ minWidth: 0, overflowX: "auto", width: "100%" }} className={"file-table-wrapper"}>
                 <div className={"file-table"}>
                 <div className={"file-table-row row-header"}>

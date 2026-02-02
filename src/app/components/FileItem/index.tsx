@@ -68,7 +68,7 @@ export const FileItem = ({ file }: { file: File }) => {
                 </div>
                 <div className={"column column-type"}><div className={"file-table-cell-truncate"}>{FileType(file.type, true)}</div></div>
                 <div className={"column"} title={file.creator_email ?? ""}><span className={"file-table-cell-truncate"}>{file.creator_email}</span></div>
-                <div className={"column"} title={file.name}><span className={"file-table-cell-truncate"}>{getFileType(file.type) === "Bundle" ? "Linq" : file.name}</span></div>
+                <div className={"column"} title={getFileType(file.type) === "Bundle" ? "Linq" : file.name}><span className={"file-table-cell-truncate"}>{getFileType(file.type) === "Bundle" ? "Linq" : file.name}</span></div>
                 <div className={"column column-url"} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "0.5rem", position: "relative" }}>
                     <button
                         onClick={(e) => {

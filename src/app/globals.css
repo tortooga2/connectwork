@@ -65,6 +65,41 @@ a {
   text-decoration: none;
 }
 
+/* Toolbar/header buttons: no border, reduced padding, fill on hover, same size */
+.btn-toolbar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  min-width: 6rem;
+  min-height: 2.25rem;
+  border: none;
+  border-radius: var(--theme-border-radius);
+  background: transparent;
+  color: var(--theme-text-primary);
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+.btn-toolbar:hover:not(:disabled) {
+  background: var(--theme-bg-tertiary);
+}
+.btn-toolbar:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Action dock: fixed to viewport bottom so it stays visible when page scrolls */
+.action-dock {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
 /* One table grid: header and all data rows share the same column boundaries */
 /* minmax(0, 1fr) lets columns shrink so text truncates with ellipsis when squished */
 .file-table {

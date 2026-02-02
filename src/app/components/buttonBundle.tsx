@@ -10,7 +10,8 @@ export const ButtonBundle = () => {
     const UpdateFiles = useFileStore((state)=>state.UpdateFiles)
 
     return (
-        <button 
+        <button
+            className="btn-toolbar"
             onClick={async () => {
                 if(selectedFiles.size > 0) {
                     const result = await Bundle(Array.from(selectedFiles)) as unknown as { bundle: { id: string; creator_id: string; name: string; type: string; description: string | null; file_id: string | null; createdAt: Date | string; creator_email: string | null }; links: { to_id: string; from_id: string }[] }
@@ -31,31 +32,7 @@ export const ButtonBundle = () => {
                     }
                 }
             }}
-            style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "0.875rem 1.75rem",
-                border: "var(--theme-border-width) solid var(--theme-btn-linq-border)",
-                borderRadius: "var(--theme-border-radius)",
-                backgroundColor: "var(--theme-btn-linq-bg)",
-                color: "var(--theme-btn-linq-text)",
-                cursor: selectedFiles.size > 0 ? "pointer" : "not-allowed",
-                fontSize: "1.125rem",
-                fontWeight: "500",
-                transition: "all 0.2s ease",
-                opacity: selectedFiles.size > 0 ? "1" : "0.6"
-            }}
-            onMouseEnter={(e) => {
-                if(selectedFiles.size > 0) {
-                    e.currentTarget.style.backgroundColor = "var(--theme-btn-linq-hover-bg)"
-                    e.currentTarget.style.opacity = "var(--theme-btn-linq-hover-opacity)"
-                }
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--theme-btn-linq-bg)"
-                e.currentTarget.style.opacity = selectedFiles.size > 0 ? "1" : "0.6"
-            }}
+            style={{ color: "var(--theme-btn-linq-text)" }}
             disabled={selectedFiles.size === 0}
         >
             <FontAwesomeIcon icon={faLink} style={{ color: "var(--theme-btn-linq-icon)" }} />

@@ -10,8 +10,9 @@ import { getFileType } from "@/lib/client/getFileType"
 import { formatRelativeDate } from "@/lib/client/formatDate"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faX, faFile, faPaperclip } from "@fortawesome/free-solid-svg-icons"
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import { DeleteButton } from "@/app/components/DeleteButton"
+import { ButtonBundle } from "@/app/components/buttonBundle"
 
 // Simple Upload Button Component
 const UploadButton = () => {
@@ -38,28 +39,8 @@ const UploadButton = () => {
     return (
         <>
             <button
+                className="btn-toolbar"
                 onClick={() => fileInputRef.current?.click()}
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    padding: "0.75rem 1.5rem",
-                    border: "var(--theme-border-width) solid var(--theme-btn-primary-border)",
-                    borderRadius: "var(--theme-border-radius)",
-                    backgroundColor: "var(--theme-btn-primary-bg)",
-                    color: "var(--theme-btn-primary-text)",
-                    cursor: "pointer",
-                    fontSize: "1rem",
-                    transition: "all 0.2s ease"
-                }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--theme-btn-primary-hover-bg)"
-                    e.currentTarget.style.color = "var(--theme-btn-primary-hover-text)"
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--theme-btn-primary-bg)"
-                    e.currentTarget.style.color = "var(--theme-btn-primary-text)"
-                }}
             >
                 <FontAwesomeIcon icon={faPaperclip} />
                 Upload File
@@ -85,43 +66,74 @@ export const Dashboard = ({ }) => {
     const SetLayoutState = useFileStore((state) => state.SetLayoutState)
 
     const userEmail = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses?.[0]?.emailAddress || ""
+    const selectedFiles = useFileStore((state) => state.selectedFiles)
+    const fileListRef = useRef<HTMLDivElement>(null)
+    const [fileListHeight, setFileListHeight] = useState(0)
+
+    useEffect(() => {
+        const el = fileListRef.current
+        if (!el) return
+        const ro = new ResizeObserver(() => {
+            setFileListHeight(el.offsetHeight)
+        })
+        ro.observe(el)
+        setFileListHeight(el.offsetHeight)
+        return () => ro.disconnect()
+    }, [])
+
+    const [windowHeight, setWindowHeight] = useState(() => (typeof window !== "undefined" ? window.innerHeight : 900))
+    useEffect(() => {
+        const onResize = () => setWindowHeight(window.innerHeight)
+        window.addEventListener("resize", onResize)
+        return () => window.removeEventListener("resize", onResize)
+    }, [])
+    const spacerHeightPx = Math.max(0, fileListHeight + 9.5 * 16 - windowHeight)
 
     return (
         <NewPage>
-            <VerticalDiv style={{ position: "relative", height: "100vh" }}>
-                {/* Header - Top Left: Linquiq, Email, Sign out */}
+            <VerticalDiv style={{ position: "relative", minHeight: "100vh", overflowY: "auto", paddingBottom: "5.5rem" }}>
+                {/* Header row: Linquiq left, search center, user + Sign out right */}
                 <div style={{
                     position: "absolute",
                     top: "1rem",
                     left: "1rem",
+                    right: "1rem",
                     display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    gap: "0.25rem",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "1rem",
                     zIndex: 1000
                 }}>
-                    <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0, color: "var(--theme-btn-linq-text)" }}>Linquiq</h1>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0, color: "var(--theme-btn-linq-text)", flexShrink: 0 }}>Linquiq</h1>
+                    <input
+                        type="search"
+                        placeholder="Search…"
+                        aria-label="Search"
+                        style={{
+                            flex: "1",
+                            maxWidth: "24rem",
+                            margin: "0 auto",
+                            padding: "0.5rem 0.9rem",
+                            fontSize: "0.9375rem",
+                            borderRadius: "var(--theme-border-radius)",
+                            border: "1px solid var(--theme-border-primary)",
+                            background: "var(--theme-bg-secondary)",
+                            color: "var(--theme-text-primary)",
+                            outline: "none"
+                        }}
+                    />
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", flexShrink: 0 }}>
                         <span style={{ fontSize: "0.875rem", opacity: 0.8 }}>{userEmail}</span>
                         <button
                             type="button"
+                            className="btn-toolbar"
                             onClick={() => signOut?.()}
-                            style={{
-                                fontSize: "0.75rem",
-                                padding: "0.2rem 0.5rem",
-                                border: "1px solid var(--theme-border-primary)",
-                                borderRadius: "var(--theme-border-radius)",
-                                background: "transparent",
-                                color: "var(--theme-text-secondary)",
-                                cursor: "pointer",
-                                transition: "opacity 0.2s, color 0.2s"
-                            }}
+                            style={{ color: "var(--theme-text-secondary)" }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.opacity = "0.8"
                                 e.currentTarget.style.color = "var(--theme-text-primary)"
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.opacity = "1"
                                 e.currentTarget.style.color = "var(--theme-text-secondary)"
                             }}
                         >
@@ -130,72 +142,70 @@ export const Dashboard = ({ }) => {
                     </div>
                 </div>
 
-                {/* Top Action Buttons - New Note and Upload File */}
-                <div style={{
-                    position: "absolute",
-                    top: "1rem",
-                    right: "1rem",
+                {/* File list: grows with table; min height half viewport above dock */}
+                <div ref={fileListRef} style={{ position: "absolute", top: "4rem", left: "1rem", right: "1rem", padding: 0, margin: 0, height: "auto", minHeight: "calc((100vh - 9.5rem) / 2)" }}>
+                    <HorizontalDiv color="var(--theme-bg-primary)" style={{ padding: "1rem", border: "none", borderRadius: "var(--theme-border-radius)", zIndex: "1", transition: "width 0.08s ease-out, left 0.08s ease-out, right 0.08s ease-out", height: "auto", minHeight: 0 }} layouts={[
+                        {
+                            position: "absolute",
+                            left: 0,
+                            width: "100%",
+                        },
+                        {
+                            position: "absolute",
+                            left: 0,
+                            width: "60%",
+                        },
+                        {
+                            position: "absolute",
+                            left: "40%",
+                            width: "60%",
+                        }
+                    ]}
+                        state={layoutState}
+                    >
+                        <FilesList />
+                    </HorizontalDiv>
+                </div>
+                <div style={{ height: "100vh", flexShrink: 0 }} aria-hidden />
+                {spacerHeightPx > 0 && <div style={{ height: `${spacerHeightPx}px`, flexShrink: 0 }} aria-hidden />}
+
+                {/* Action dock: fixed to viewport bottom center when scrolling */}
+                <div className="action-dock" style={{
+                    position: "fixed",
+                    bottom: "1rem",
+                    left: "50%",
+                    transform: "translateX(-50%)",
                     display: "flex",
-                    gap: "1rem",
-                    zIndex: 1000
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.75rem",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "var(--theme-border-radius)",
+                    background: "var(--theme-bg-secondary)",
+                    border: "1px solid var(--theme-border-primary)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                    zIndex: 9999
                 }}>
+                    {selectedFiles.size > 0 && <ButtonBundle />}
                     <button
-                        onClick={() => {
-                            setLayoutState(2)
-                        }}
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            padding: "0.75rem 1.5rem",
-                            border: "var(--theme-border-width) solid var(--theme-btn-primary-border)",
-                            borderRadius: "var(--theme-border-radius)",
-                            backgroundColor: "var(--theme-btn-primary-bg)",
-                            color: "var(--theme-btn-primary-text)",
-                            cursor: "pointer",
-                            fontSize: "1rem",
-                            transition: "all 0.2s ease"
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = "var(--theme-btn-primary-hover-bg)"
-                            e.currentTarget.style.color = "var(--theme-btn-primary-hover-text)"
-                        }}
+                        className="btn-toolbar"
+                        onClick={() => setLayoutState(2)}
+                        style={{ color: "var(--note-color-2)" }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = "var(--theme-btn-primary-bg)"
-                            e.currentTarget.style.color = "var(--theme-btn-primary-text)"
+                            e.currentTarget.style.color = "var(--note-color-2)"
                         }}
                     >
                         <FontAwesomeIcon icon={faFile} />
                         New Note
                     </button>
                     <UploadButton />
-                    <DeleteButton />
+                    {selectedFiles.size > 0 && <DeleteButton />}
                 </div>
-
-                <HorizontalDiv color="var(--theme-bg-primary)" style={{ position: "absolute", top: "4rem", left: "1rem", right: "1rem", bottom: "1rem", padding: "1rem", border: "none", borderRadius: "var(--theme-border-radius)", zIndex: "1", transition: "width 0.2s ease-out, left 0.2s ease-out, right 0.2s ease-out" }} layouts={[
-                    {
-                        left: 0,
-                        width: "100%",
-                    },
-                    {
-                        left: 0,
-                        width: "60%",
-                    },
-                    {
-                        left: "40%",
-                        width: "60%",
-                    }
-                ]}
-                    state={layoutState}
-                >
-
-                    <FilesList />
-
-                </HorizontalDiv>
 
                 {/* Preview Panel - Right Side */}
                 {layoutState === 1 && (
-                    <VerticalDiv style={{ position: "absolute", right: "1rem", top: "5rem", bottom: "1rem", width: "calc(40% - 1rem)", height: "calc(100% - 5rem)" }} padding="0rem">
+                    <VerticalDiv style={{ position: "absolute", right: "1rem", top: "5rem", bottom: "5.5rem", width: "calc(40% - 1rem)" }} padding="0rem">
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%", height: "100%" }}>
                             <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "center", paddingBottom: "1rem", borderBottom: "var(--theme-border-width) solid var(--theme-border-primary)" }}>
                                 <h1 style={{ fontSize: "2.5rem", margin: 0 }}>{getFileType(previewedFile?.type ?? "") === "Bundle" ? "Linq" : previewedFile?.name}</h1>
@@ -242,7 +252,7 @@ export const Dashboard = ({ }) => {
 
                 {/* Note Editor Panel - Left Side */}
                 {layoutState === 2 && (
-                    <VerticalDiv style={{ position: "absolute", left: "1rem", top: "5rem", bottom: "1rem", width: "calc(40% - 1rem)", backgroundColor: "var(--theme-bg-secondary)", borderRadius: "var(--theme-border-radius)", border: "none", padding: "1rem" }}>
+                    <VerticalDiv style={{ position: "absolute", left: "1rem", top: "5rem", bottom: "5.5rem", width: "calc(40% - 1rem)", backgroundColor: "var(--theme-bg-secondary)", borderRadius: "var(--theme-border-radius)", border: "none", padding: "1rem" }}>
                         <div style={{ position: "relative", flex: 1, overflow: "auto" }}>
                             <button
                                 onClick={() => {
