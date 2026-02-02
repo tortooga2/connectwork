@@ -2,10 +2,13 @@
     background-color: var(--background);
     min-height: 50vh;
     box-sizing: border-box;
+    max-width: 100%;
+    overflow-wrap: break-word;
 
     padding: 1rem;
     outline: none;
-    border: none;
+    border: var(--border-width) solid var(--foreground);
+    border-radius: var(--border-rad);
 
     :first-child {
       margin-top: 0;

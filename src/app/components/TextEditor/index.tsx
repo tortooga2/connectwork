@@ -39,8 +39,8 @@ export default () => {
   }
 
   return (
-    <>
-      <div style={{ borderRadius: "var(--border-rad)", border: "none", padding: "0.5rem 1rem", display: "flex", flexDirection: "column", gap: "1rem", flex: 1, minHeight: 0, overflow: "hidden" }}>
+    <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, overflow: "hidden" }}>
+      <div style={{ borderRadius: "var(--border-rad)", border: "none", padding: "0.5rem 1rem", display: "flex", flexDirection: "column", gap: "1rem", flex: 1, minHeight: 0, overflow: "hidden", flexShrink: 1 }}>
         <input onChange={(e) => {
           setTitle(e.currentTarget.value)
         }} style={{
@@ -58,8 +58,8 @@ export default () => {
           {FileType("md")}
         </div>
 
-        <div style={{ flex: 1, minHeight: 0, borderRadius: "var(--border-rad)", border: "var(--border-width) solid var(--foreground)",  display: "flex", flexDirection: "column", overflow: "hidden" }}>
-          <div style={{ flex: 1, overflow: "auto", minHeight: 0, borderRadius: "var(--border-rad)" }}>
+        <div style={{ flex: 1, minHeight: 0, width: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div style={{ flex: 1, overflow: "auto", overflowX: "hidden", minHeight: 0, width: "100%" }}>
             <EditorContent editor={editor} />
           </div>
         </div>
@@ -108,7 +108,6 @@ export default () => {
           Save
         </button>
       </div>
-
-    </>
+    </div>
   )
 }

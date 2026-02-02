@@ -13,48 +13,7 @@ import { faX, faFile, faPaperclip } from "@fortawesome/free-solid-svg-icons"
 import { useRef, useState, useEffect } from "react"
 import { DeleteButton } from "@/app/components/DeleteButton"
 import { ButtonBundle } from "@/app/components/buttonBundle"
-
-// Simple Upload Button Component
-const UploadButton = () => {
-    const fileInputRef = useRef<HTMLInputElement>(null)
-    const uploadFile = useFileStore((state) => state.uploadFiles)
-    const SetError = useFileStore((state) => state.SetError)
-
-    const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files
-        if (!files || files.length === 0) return
-
-        try {
-            await uploadFile(files, null)
-        } catch (error) {
-            SetError(error instanceof Error ? error.message : "Upload failed")
-        }
-
-        // Reset input
-        if (fileInputRef.current) {
-            fileInputRef.current.value = ""
-        }
-    }
-
-    return (
-        <>
-            <button
-                className="btn-toolbar"
-                onClick={() => fileInputRef.current?.click()}
-            >
-                <FontAwesomeIcon icon={faPaperclip} />
-                Upload File
-            </button>
-            <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                style={{ display: "none" }}
-                onChange={handleUpload}
-            />
-        </>
-    )
-}
+import { UploadPopupWidget } from "@/app/components/Uploads/UploadPopupWidget"
 
 
 export const Dashboard = ({ }) => {
@@ -67,6 +26,7 @@ export const Dashboard = ({ }) => {
 
     const userEmail = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses?.[0]?.emailAddress || ""
     const selectedFiles = useFileStore((state) => state.selectedFiles)
+    const [uploadPopupOpen, setUploadPopupOpen] = useState(false)
     const fileListRef = useRef<HTMLDivElement>(null)
     const [fileListHeight, setFileListHeight] = useState(0)
 
@@ -204,7 +164,28 @@ export const Dashboard = ({ }) => {
                         <FontAwesomeIcon icon={faFile} />
                         New Note
                     </button>
-                    <UploadButton />
+                    <button
+                        className="btn-toolbar"
+                        onClick={() => setUploadPopupOpen((open) => !open)}
+                    >
+                        <FontAwesomeIcon icon={faPaperclip} />
+                        Upload File
+                    </button>
+                    {uploadPopupOpen && (
+                        <>
+                            <div
+                                style={{
+                                    position: "fixed",
+                                    inset: 0,
+                                    zIndex: 9998,
+                                    background: "var(--theme-bg-overlay)",
+                                }}
+                                onClick={() => setUploadPopupOpen(false)}
+                                aria-hidden
+                            />
+                            <UploadPopupWidget onClose={() => setUploadPopupOpen(false)} />
+                        </>
+                    )}
                     {selectedFiles.size > 0 && <DeleteButton />}
                 </div>
 
@@ -279,6 +260,7 @@ export const Dashboard = ({ }) => {
                         padding: "1rem",
                         visibility: layoutState === 2 ? "visible" : "hidden",
                         pointerEvents: layoutState === 2 ? "auto" : "none",
+                        opacity: layoutState === 2 ? 1 : 0,
                         zIndex: 10
                     }}
                 >
