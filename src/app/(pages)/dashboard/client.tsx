@@ -91,7 +91,7 @@ export const Dashboard = ({ }) => {
 
     return (
         <NewPage>
-            <VerticalDiv style={{ position: "relative", minHeight: "100vh", overflowY: "auto", paddingBottom: "5.5rem" }}>
+            <VerticalDiv style={{ position: "relative", minHeight: "100vh", overflowY: spacerHeightPx > 0 ? "auto" : "hidden", paddingBottom: spacerHeightPx > 0 ? "5.5rem" : 0 }}>
                 {/* File list wrapper: header + table share same position/width so header is centered above table */}
                 <div ref={fileListRef} style={{ position: "absolute", top: "4rem", left: "1rem", right: "1rem", padding: 0, margin: 0, height: "auto", minHeight: "calc((100vh - 9.5rem) / 2)" }}>
                     {/* Header: same left/width as table panel, positioned above it */}
@@ -167,8 +167,12 @@ export const Dashboard = ({ }) => {
                         <FilesList />
                     </HorizontalDiv>
                 </div>
-                <div style={{ height: "100vh", flexShrink: 0 }} aria-hidden />
-                {spacerHeightPx > 0 && <div style={{ height: `${spacerHeightPx}px`, flexShrink: 0 }} aria-hidden />}
+                {spacerHeightPx > 0 && (
+                    <>
+                        <div style={{ height: "100vh", flexShrink: 0 }} aria-hidden />
+                        <div style={{ height: `${spacerHeightPx}px`, flexShrink: 0 }} aria-hidden />
+                    </>
+                )}
 
                 {/* Action dock: fixed to viewport bottom center when scrolling */}
                 <div className="action-dock" style={{
@@ -204,9 +208,20 @@ export const Dashboard = ({ }) => {
                     {selectedFiles.size > 0 && <DeleteButton />}
                 </div>
 
-                {/* Preview Panel - Right Side */}
-                {layoutState === 1 && (
-                    <VerticalDiv style={{ position: "absolute", right: "1rem", top: "5rem", bottom: "5.5rem", width: "calc(40% - 1rem)" }} padding="0rem">
+                {/* Preview Panel - Right Side (always mounted; wrapper controls visibility so it updates) */}
+                <div
+                    style={{
+                        position: "absolute",
+                        right: "1rem",
+                        top: "5rem",
+                        bottom: "5.5rem",
+                        width: "calc(40% - 1rem)",
+                        visibility: layoutState === 1 ? "visible" : "hidden",
+                        pointerEvents: layoutState === 1 ? "auto" : "none",
+                        zIndex: 10
+                    }}
+                >
+                    <VerticalDiv style={{ width: "100%", height: "100%" }} padding="0rem">
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%", height: "100%" }}>
                             <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "center", paddingBottom: "1rem", borderBottom: "var(--theme-border-width) solid var(--theme-border-primary)" }}>
                                 <h1 style={{ fontSize: "2.5rem", margin: 0 }}>{getFileType(previewedFile?.type ?? "") === "Bundle" ? "Linq" : previewedFile?.name}</h1>
@@ -249,45 +264,55 @@ export const Dashboard = ({ }) => {
                             </div>
                         </div>
                     </VerticalDiv>
-                )}
+                </div>
 
-                {/* Note Editor Panel - Left Side */}
-                {layoutState === 2 && (
-                    <VerticalDiv style={{ position: "absolute", left: "1rem", top: "5rem", bottom: "5.5rem", width: "calc(40% - 1rem)", backgroundColor: "var(--theme-bg-secondary)", borderRadius: "var(--theme-border-radius)", border: "none", padding: "1rem" }}>
-                        <div style={{ position: "relative", flex: 1, overflow: "auto" }}>
-                            <button
-                                onClick={() => {
-                                    setLayoutState(0)
-                                }}
-                                style={{
-                                    position: "absolute",
-                                    top: "0.5rem",
-                                    right: "0.5rem",
-                                    background: "transparent",
-                                    border: "none",
-                                    color: "var(--theme-text-primary)",
-                                    cursor: "pointer",
-                                    padding: "0.5rem",
-                                    fontSize: "1.5rem",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    transition: "opacity 0.2s ease",
-                                    zIndex: 10
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.opacity = "0.7"
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.opacity = "1"
-                                }}
-                            >
-                                <FontAwesomeIcon icon={faX} />
-                            </button>
-                            <Tiptap />
-                        </div>
-                    </VerticalDiv>
-                )}
+                {/* Note Editor Panel - Left Side (always mounted; wrapper controls visibility so it updates) */}
+                <div
+                    style={{
+                        position: "absolute",
+                        left: "1rem",
+                        top: "5rem",
+                        bottom: "5.5rem",
+                        width: "calc(40% - 1rem)",
+                        backgroundColor: "var(--theme-bg-secondary)",
+                        borderRadius: "var(--theme-border-radius)",
+                        padding: "1rem",
+                        visibility: layoutState === 2 ? "visible" : "hidden",
+                        pointerEvents: layoutState === 2 ? "auto" : "none",
+                        zIndex: 10
+                    }}
+                >
+                    <div style={{ position: "relative", flex: 1, overflow: "auto", height: "100%" }}>
+                        <button
+                            onClick={() => setLayoutState(0)}
+                            style={{
+                                position: "absolute",
+                                top: "0.5rem",
+                                right: "0.5rem",
+                                background: "transparent",
+                                border: "none",
+                                color: "var(--theme-text-primary)",
+                                cursor: "pointer",
+                                padding: "0.5rem",
+                                fontSize: "1.5rem",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                transition: "opacity 0.2s ease",
+                                zIndex: 10
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.opacity = "0.7"
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.opacity = "1"
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faX} />
+                        </button>
+                        <Tiptap />
+                    </div>
+                </div>
 
 
             </VerticalDiv>
