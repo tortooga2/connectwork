@@ -92,58 +92,59 @@ export const Dashboard = ({ }) => {
     return (
         <NewPage>
             <VerticalDiv style={{ position: "relative", minHeight: "100vh", overflowY: "auto", paddingBottom: "5.5rem" }}>
-                {/* Header row: Linquiq left, search center, user + Sign out right */}
-                <div style={{
-                    position: "absolute",
-                    top: "1rem",
-                    left: "1rem",
-                    right: "1rem",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "1rem",
-                    zIndex: 1000
-                }}>
-                    <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0, color: "var(--theme-btn-linq-text)", flexShrink: 0 }}>Linquiq</h1>
-                    <input
-                        type="search"
-                        placeholder="Search…"
-                        aria-label="Search"
-                        style={{
-                            flex: "1",
-                            maxWidth: "24rem",
-                            margin: "0 auto",
-                            padding: "0.5rem 0.9rem",
-                            fontSize: "0.9375rem",
-                            borderRadius: "var(--theme-border-radius)",
-                            border: "1px solid var(--theme-border-primary)",
-                            background: "var(--theme-bg-secondary)",
-                            color: "var(--theme-text-primary)",
-                            outline: "none"
-                        }}
-                    />
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", flexShrink: 0 }}>
-                        <span style={{ fontSize: "0.875rem", opacity: 0.8 }}>{userEmail}</span>
-                        <button
-                            type="button"
-                            className="btn-toolbar"
-                            onClick={() => signOut?.()}
-                            style={{ color: "var(--theme-text-secondary)" }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.color = "var(--theme-text-primary)"
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.color = "var(--theme-text-secondary)"
-                            }}
-                        >
-                            Sign out
-                        </button>
-                    </div>
-                </div>
-
-                {/* File list: grows with table; min height half viewport above dock */}
+                {/* File list wrapper: header + table share same position/width so header is centered above table */}
                 <div ref={fileListRef} style={{ position: "absolute", top: "4rem", left: "1rem", right: "1rem", padding: 0, margin: 0, height: "auto", minHeight: "calc((100vh - 9.5rem) / 2)" }}>
+                    {/* Header: same left/width as table panel, positioned above it */}
+                    <div style={{
+                        position: "absolute",
+                        top: "-3rem",
+                        left: layoutState === 0 ? 0 : layoutState === 1 ? 0 : "40%",
+                        width: layoutState === 0 ? "100%" : "60%",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "1rem",
+                        zIndex: 1000,
+                        transition: "left 0.08s ease-out, width 0.08s ease-out",
+                        boxSizing: "border-box"
+                    }}>
+                        <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0, color: "var(--theme-btn-linq-text)", flexShrink: 0 }}>Linquiq</h1>
+                        <input
+                            type="search"
+                            placeholder="Search…"
+                            aria-label="Search"
+                            style={{
+                                flex: "1",
+                                maxWidth: "24rem",
+                                margin: "0 auto",
+                                padding: "0.5rem 0.9rem",
+                                fontSize: "0.9375rem",
+                                borderRadius: "var(--theme-border-radius)",
+                                border: "1px solid var(--theme-border-primary)",
+                                background: "var(--theme-bg-secondary)",
+                                color: "var(--theme-text-primary)",
+                                outline: "none"
+                            }}
+                        />
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", flexShrink: 0 }}>
+                            <span style={{ fontSize: "0.875rem", opacity: 0.8 }}>{userEmail}</span>
+                            <button
+                                type="button"
+                                className="btn-toolbar"
+                                onClick={() => signOut?.()}
+                                style={{ color: "var(--theme-text-secondary)", border: "1px solid var(--theme-border-primary)" }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.color = "var(--theme-text-primary)"
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.color = "var(--theme-text-secondary)"
+                                }}
+                            >
+                                Sign out
+                            </button>
+                        </div>
+                    </div>
                     <HorizontalDiv color="var(--theme-bg-primary)" style={{ padding: "1rem", border: "none", borderRadius: "var(--theme-border-radius)", zIndex: "1", transition: "width 0.08s ease-out, left 0.08s ease-out, right 0.08s ease-out", height: "auto", minHeight: 0 }} layouts={[
                         {
                             position: "absolute",
