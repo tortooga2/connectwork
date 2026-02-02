@@ -65,37 +65,159 @@ a {
   text-decoration: none;
 }
 
+/* One table grid: header and all data rows share the same column boundaries */
+/* minmax(0, 1fr) lets columns shrink so text truncates with ellipsis when squished */
+.file-table {
+  display: grid;
+  grid-template-columns:
+    1rem
+    minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.25rem 1rem;
+  width: 100%;
+  min-width: 560px;
+  padding: 0;
+  align-items: stretch;
+  justify-items: start;
+  overflow: hidden;
+}
+
+.file-table-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: center;
+  justify-items: start;
+  text-align: left;
+  border-radius: 10px;
+  background-color: var(--theme-list-row-bg);
+  color: var(--theme-list-row-text);
+  border: var(--theme-list-row-border);
+  transition: var(--theme-list-row-hover-transition);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.file-table-row.row-header {
+  background-color: var(--theme-list-header-bg);
+  color: var(--theme-list-header-text);
+  border: var(--theme-list-header-border);
+  border-radius: var(--theme-list-header-border-radius);
+}
+
+.file-table-row > * {
+  padding-inline-start: 0.5rem;
+  padding-inline-end: 0.5rem;
+  padding-block: 0.5rem;
+  text-align: left;
+  justify-self: start;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-table-row > .row-cell {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  width: 1rem;
+  min-width: 1rem;
+  max-width: 1rem;
+}
+
+.file-table-row > .column-quickview {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  /* keep width/max-width from parent so cell stays in column */
+}
+
+/* Quickview column only: center the eye icon below the header */
+.file-table-row:not(.row-header) > .column-quickview {
+  margin-left: 2rem;
+}
+
+/* Truncate helper: use on inner span/div so text gets "..." */
+.file-table-cell-truncate {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.file-table-cell-truncate > * {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-table-row:hover {
+  background-color: var(--theme-list-row-hover-bg);
+  color: var(--theme-list-row-hover-text);
+  border: var(--theme-list-row-hover-border);
+}
+
+.file-table-row:hover button,
+.file-table-row:hover a {
+  color: var(--theme-list-row-hover-text);
+}
+
+.file-table-row:hover button svg,
+.file-table-row:hover button svg path {
+  color: var(--theme-list-row-hover-text);
+  fill: var(--theme-list-row-hover-text);
+}
+
 .row {
   position: relative;
   border-radius: 0rem;
   display: grid;
   grid-template-columns:
     1rem
-    /* checkbox */
     minmax(50px, 1fr) minmax(50px, 1fr) minmax(50px, 1fr) 1fr 1fr minmax(120px, auto) minmax(100px, auto);
-  /* URL column (copy + link), Quickview column */
   gap: 1rem;
-  padding: 0.5rem;
-  align-items: center;
+  padding: 0;
+  align-items: start;
+  justify-items: start;
   text-align: left;
   border-radius: 10px;
   background-color: var(--theme-list-row-bg);
   color: var(--theme-list-row-text);
   border: var(--theme-list-row-border);
   transition: var(--theme-list-row-hover-transition), padding-left 0.2s ease-out, padding-right 0.2s ease-out;
+}
 
+/* Same padding in every cell so header title and column content line up left-aligned */
+.row > * {
+  padding-inline-start: 0.5rem;
+  padding-inline-end: 0.5rem;
+  padding-block: 0.5rem;
+  text-align: left;
 }
 
 @media (width < 768px) {
+  .file-table {
+    grid-template-columns:
+      1rem
+      minmax(0, 1fr) minmax(0, 1fr) 2rem 0fr 0fr minmax(0, 1fr) minmax(0, 1fr);
+    min-width: 320px;
+  }
+
   .row {
     grid-template-columns:
       1rem
-      /* checkbox */
       minmax(30px, 1fr) minmax(50px, 1fr) 2rem 0fr 0fr minmax(100px, auto) minmax(80px, auto);
-    /* URL column, Quickview column */
     gap: 1rem;
-    padding: 0.5rem;
-    align-items: center;
+    padding: 0;
+    align-items: start;
+    justify-items: start;
     text-align: left;
     transition: background-color 0.2s ease-out, color 0.2s ease-out, padding-left 0.2s ease-out, padding-right 0.2s ease-out, grid-template-columns 0.2s ease-out;
   }
@@ -126,10 +248,28 @@ a {
   overflow: hidden;
   text-wrap: nowrap;
   text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Truncate long names and text in table cells so they don't overlap */
+.file-table-row .column,
+.file-table-row .column-url {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.file-table-row .column-url a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 /* Checkbox styling */
-.row input[type="checkbox"] {
+.row input[type="checkbox"],
+.file-table-row input[type="checkbox"] {
   width: 1.25rem;
   height: 1.25rem;
   cursor: pointer;
@@ -144,12 +284,14 @@ a {
   transition: all 0.2s ease;
 }
 
-.row input[type="checkbox"]:checked {
+.row input[type="checkbox"]:checked,
+.file-table-row input[type="checkbox"]:checked {
   background-color: #D7827E;
   border-color: #D7827E;
 }
 
-.row input[type="checkbox"]:checked::after {
+.row input[type="checkbox"]:checked::after,
+.file-table-row input[type="checkbox"]:checked::after {
   content: "✓";
   position: absolute;
   top: 50%;

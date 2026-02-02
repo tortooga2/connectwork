@@ -5,6 +5,7 @@ import type { File } from "../State Manager/appManager"
 import { useFileStore } from "../State Manager/appManager"
 import { FileType } from "../TypeTags"
 import { getFileType } from "@/lib/client/getFileType"
+import { formatRelativeDate } from "@/lib/client/formatDate"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faEye, faCopy } from "@fortawesome/free-solid-svg-icons"
 
@@ -13,7 +14,6 @@ import { faEye, faCopy } from "@fortawesome/free-solid-svg-icons"
 
 export const FileItem = ({ file }: { file: File }) => {
 
-    const [onEnter, SetOnEnter] = useState({ width: "100%" })
     const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0)
     const [showCopied, setShowCopied] = useState(false)
     const [toastPosition, setToastPosition] = useState<{ left: number; top: number } | null>(null)
@@ -49,15 +49,9 @@ export const FileItem = ({ file }: { file: File }) => {
 
     }, [isSelected])
 
-
-    useEffect(() => {
-        SetOnEnter({ width: "0%" })
-    }, [])
-
     return (
-        <div>
-            <div className={"row"}>
-                <div>
+        <div className={"file-table-row"}>
+                <div className={"row-cell"}>
                     <input type={"checkbox"} ref={checkboxRef} onClick={() => {
                         if (checkboxRef?.current) {
                             const state = checkboxRef.current.checked
@@ -65,19 +59,17 @@ export const FileItem = ({ file }: { file: File }) => {
                         }
                     }} />
                 </div>
-                <div className={"column"} title={file.id}>{typeof file.id === "string" ? file.id.slice(-5) : file.id}</div>
+                <div className={"column"} title={file.id}><span className={"file-table-cell-truncate"}>{typeof file.id === "string" ? file.id.slice(-5) : file.id}</span></div>
                 <div
                     className={"column"}
                     title={file.createdAt ? new Date(file.createdAt).toISOString() : undefined}
                 >
-                    {file.createdAt
-                        ? new Date(file.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
-                        : ""}
+                    <span className={"file-table-cell-truncate"}>{file.createdAt ? formatRelativeDate(file.createdAt) : ""}</span>
                 </div>
-                <div className={"column"}>{FileType(file.type, layoutState == 0 || viewportWidth < 768)}</div>
-                <div className={"column"}>{file.creator_email}</div>
-                <div className={"column"}>{getFileType(file.type) === "Bundle" ? "Linq" : file.name}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", position: "relative" }}>
+                <div className={"column column-type"}><div className={"file-table-cell-truncate"}>{FileType(file.type, true)}</div></div>
+                <div className={"column"} title={file.creator_email ?? ""}><span className={"file-table-cell-truncate"}>{file.creator_email}</span></div>
+                <div className={"column"} title={file.name}><span className={"file-table-cell-truncate"}>{getFileType(file.type) === "Bundle" ? "Linq" : file.name}</span></div>
+                <div className={"column column-url"} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "0.5rem", position: "relative" }}>
                     <button
                         onClick={(e) => {
                             e.preventDefault()
@@ -137,19 +129,21 @@ export const FileItem = ({ file }: { file: File }) => {
                         href={`/preview/${file.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        title={`${typeof window !== "undefined" ? window.location.origin : ""}/preview/${file.id}`}
                         style={{
                             textDecoration: "underline",
                             fontSize: "0.875rem",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             whiteSpace: "nowrap",
-                            maxWidth: "100%"
+                            minWidth: 0,
+                            flex: "1 1 0"
                         }}
                     >
                         Open in new tab
                     </a>
                 </div>
-                <div>
+                <div className={"column column-quickview"}>
                     <button
                         onClick={() => {
                             console.log(file);
@@ -168,7 +162,7 @@ export const FileItem = ({ file }: { file: File }) => {
                             justifyContent: "center",
                             transition: "opacity 0.2s ease, color 0.2s ease-out, background-color 0.2s ease",
                             borderRadius: "var(--theme-border-radius)",
-                            marginLeft: "2rem"
+                            marginLeft: 0
                         }}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.opacity = "0.7"
@@ -182,8 +176,6 @@ export const FileItem = ({ file }: { file: File }) => {
                         <FontAwesomeIcon icon={faEye} />
                     </button>
                 </div>
-                <div style={{ position: "absolute", right: "0", height: "100%", ...onEnter, backgroundColor: "var(--background)", transition: "width 0.5s ease-in-out 0.2s" }}></div>
-            </div>
         </div>
     )
 

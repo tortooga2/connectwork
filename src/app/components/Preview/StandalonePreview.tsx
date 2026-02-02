@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getFileType } from "@/lib/client/getFileType";
+import { formatRelativeDate } from "@/lib/client/formatDate";
 import { DocumentViewer } from "react-documents";
 import { FileType } from "@/app/components/TypeTags";
 import Bundle from "./Views/Bundle";
@@ -173,7 +174,7 @@ export function StandalonePreview({
             <span>
               <span style={{ fontWeight: "bold" }}>Created:</span>{" "}
               <span title={`UTC: ${fileData.createdAt}`}>
-                {new Date(fileData.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+                {formatRelativeDate(fileData.createdAt)}
               </span>
             </span>
           )}

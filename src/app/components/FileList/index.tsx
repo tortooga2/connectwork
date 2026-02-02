@@ -31,26 +31,27 @@ export const FilesList = () => {
     }, [files])
 
     return (
-        <VerticalDiv style={{ border: "var(--theme-border-width) solid var(--theme-border-primary)", borderRadius: "var(--theme-border-radius)", padding: "1rem", width: "100%" }}>
+        <VerticalDiv style={{ border: "var(--theme-border-width) solid var(--theme-border-primary)", borderRadius: "var(--theme-border-radius)", padding: "1rem", width: "100%", minWidth: 0 }}>
             <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
                 <ButtonBundle />
             </div>
-            <div className={"row"} style={{ backgroundColor: "var(--theme-list-header-bg)", color: "var(--theme-list-header-text)", borderRadius: "var(--theme-list-header-border-radius)", border: "var(--theme-list-header-border)" }}>
-                <div></div>
-                <div className={"column"} style={{ fontWeight: "bold" }}>ID</div>
-                <div className={"column"} style={{ fontWeight: "bold" }}>CREATED AT</div>
-                <div className={"column"} style={{ fontWeight: "bold" }}>TYPE</div>
-                <div className={"column"} style={{ fontWeight: "bold" }}>CREATOR</div>
-                <div className={"column"} style={{ fontWeight: "bold" }}>NAME</div>
-                <div className={"column"} style={{ fontWeight: "bold" }}>URL</div>
-                <div className={"column"} style={{ fontWeight: "bold" }}>QUICKVIEW</div>
-            </div>
-
-            <VerticalDiv style={{ gap: "0.25rem" }} padding="0rem">
+            <div style={{ minWidth: 0, overflowX: "auto", width: "100%" }} className={"file-table-wrapper"}>
+                <div className={"file-table"}>
+                <div className={"file-table-row row-header"}>
+                    <div className={"row-cell"}></div>
+                    <div className={"column"} style={{ fontWeight: "bold" }}>ID</div>
+                    <div className={"column"} style={{ fontWeight: "bold" }}>CREATED AT</div>
+                    <div className={"column"} style={{ fontWeight: "bold" }}>TYPE</div>
+                    <div className={"column"} style={{ fontWeight: "bold" }}>CREATOR</div>
+                    <div className={"column"} style={{ fontWeight: "bold" }}>NAME</div>
+                    <div className={"column column-url"} style={{ fontWeight: "bold" }}>URL</div>
+                    <div className={"column column-quickview"} style={{ fontWeight: "bold" }}>QUICKVIEW</div>
+                </div>
                 {sortedFiles.map((file) => (
                     <FileItem key={file.id} file={file} />
                 ))}
-            </VerticalDiv>
+                </div>
+            </div>
         </VerticalDiv>
     )
 }

@@ -139,9 +139,14 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
                                                 })
 
                             if (!fileVerResponse.ok) {
-                                const errorData = await fileVerResponse.json();
-                                
-                                throw new Error("Failed to verify files", errorData);
+                                const errorData = await fileVerResponse.json().catch(() => ({}));
+                                if (fileVerResponse.status === 401) {
+                                    SetError("Please sign in to upload and verify files.");
+                                    reject(new Error("Unauthorized"));
+                                    return;
+                                }
+                                reject(new Error("Failed to verify files"));
+                                return;
                             }
 
                             const { data, message} = await fileVerResponse.json();

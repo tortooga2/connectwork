@@ -7,6 +7,7 @@ import { Preview } from "@/app/components/Preview"
 import Tiptap from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
 import { getFileType } from "@/lib/client/getFileType"
+import { formatRelativeDate } from "@/lib/client/formatDate"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faX, faFile, faPaperclip } from "@fortawesome/free-solid-svg-icons"
 import { useRef } from "react"
@@ -227,7 +228,7 @@ export const Dashboard = ({ }) => {
                                 <span><span style={{ fontWeight: "bold" }}>ID:</span> <span title={previewedFile?.id}>{previewedFile?.id ? (typeof previewedFile.id === "string" ? previewedFile.id.slice(-5) : previewedFile.id) : ""}</span></span>
                                 <span><span style={{ fontWeight: "bold" }}>Created:</span>{" "}
                                     <span title={previewedFile?.createdAt ? `UTC: ${new Date(previewedFile.createdAt).toISOString()}` : ""}>
-                                        {previewedFile?.createdAt ? new Date(previewedFile.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" }) : ""}
+                                        {previewedFile?.createdAt ? formatRelativeDate(previewedFile.createdAt) : ""}
                                     </span>
                                 </span>
                                 <span><span style={{ fontWeight: "bold" }}>Creator:</span> {previewedFile?.creator_email}</span>
