@@ -1,41 +1,37 @@
-import { redirect } from "next/navigation";
+// src/app/api/files/url/[file_id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-
 import { auth } from "@clerk/nextjs/server";
+import { genPresignedUrl } from "@/lib/server/s3/module.genPresignedUrl"; // Adjust path as needed
+import { getFileData } from "@/lib/server/getFileData";
 
-import { genPresignedUrl } from "@/lib/server/s3/module.genPresignedUrl";
-
-import { isFileOwner } from "@/lib/server/getFileOwnership";
-
-export async function GET(request : NextRequest, {params} : {params : {file_id : string}}) {
-    const { userId } = await auth()
-    
-    if(!userId){
-        redirect("/")
+export async function GET(
+    request: NextRequest, 
+    { params }: { params: Promise<{ file_id: string }> } // 1. Define as Promise
+) {
+    const { userId } = await auth();
+    if (!userId) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    
-    const file_id = params.file_id;
+    // 2. Await the params
+    const { file_id } = await params;
 
-    const isOwner = await isFileOwner(file_id, userId);
-
-    if(!isOwner){
-        return NextResponse.json({"message" : "You do not have permission to access this file."}, {status : 403})
+    const fileData = await getFileData(file_id);
+    if (!fileData) {
+        return NextResponse.json({ message: "File not found" }, { status: 404 });
     }
 
-    
+    try {
+        // Use your utility function
+        const url = await genPresignedUrl({
+            profile_id: userId,
+            key: fileData.file_id!, // assuming this is the S3 key
+            method: "GET",
+            expirationInSec: 3600 // 1 hour
+        });
 
-    const presigned_url = await genPresignedUrl(userId, file_id, "GET", 60).catch(err => {
-        console.log(err);
-        return null;
-    });
-
-    if(!presigned_url){
-        return NextResponse.json({"message" : "Failed to get Presigned Url"}, {status : 501})
+        return NextResponse.json({ url });
+    } catch (error) {
+        return NextResponse.json({ message: "Error generating URL" }, { status: 500 });
     }
-
-    console.log(presigned_url)
-
-
-    return NextResponse.json({"message" : "Successfully Generated Url", "url" : presigned_url}, {status : 200})
 }

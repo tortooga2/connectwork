@@ -31,7 +31,7 @@ export async function GET(request : NextRequest) {
       const key = crypto.randomBytes(16).toString("hex");
       
 
-      urls.push(await genPresignedUrl(userId, key, "PUT"));
+      urls.push(await genPresignedUrl({profile_id: userId, key, method: "PUT", expirationInSec: 300}));
 
       keys.push(key);
     }

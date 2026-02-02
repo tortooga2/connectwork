@@ -16,7 +16,7 @@ export const getFileUrl = async (file : {id : string, file_id : string, type: st
         return bundle_contents
     }
 
-    const url = await genPresignedUrl(userId, file.file_id, "GET")
+    const url = await genPresignedUrl({profile_id: userId, key: file.file_id, method: "GET", expirationInSec: 300});
 
     if(url){
         return [{url: url, data: file}];
