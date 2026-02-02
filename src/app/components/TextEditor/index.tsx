@@ -17,7 +17,7 @@ import { useFileStore } from "@/app/components/State Manager/appManager"
 const lowlight = createLowlight(all)
 
 
-export default () => {
+export const TextEditor = () => {
 
 
   const [title, setTitle] = useState("Untitled Note")
@@ -58,11 +58,8 @@ export default () => {
           {FileType("md")}
         </div>
 
-        <div style={{ flex: 1, minHeight: 0, borderRadius: "var(--border-rad)", border: "var(--border-width) solid var(--foreground)",  display: "flex", flexDirection: "column", overflow: "hidden" }}>
-          <div style={{ flex: 1, overflow: "auto", minHeight: 0, borderRadius: "var(--border-rad)" }}>
-            <EditorContent editor={editor} />
-          </div>
-        </div>
+        <EditorContent editor={editor} />
+
       </div>
       <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem", flexShrink: 0 }}>
         <button

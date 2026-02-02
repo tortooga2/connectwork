@@ -4,7 +4,7 @@ import { useUser, useClerk } from "@clerk/nextjs"
 import { FilesList } from "@/app/components/FileList"
 import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
-import Tiptap from "@/app/components/TextEditor"
+import {TextEditor} from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
 import { getFileType } from "@/lib/client/getFileType"
 import { formatRelativeDate } from "@/lib/client/formatDate"
@@ -310,7 +310,7 @@ export const Dashboard = ({ }) => {
                         >
                             <FontAwesomeIcon icon={faX} />
                         </button>
-                        <Tiptap />
+                        <TextEditor />
                     </div>
                 </div>
 
