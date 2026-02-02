@@ -17,7 +17,7 @@ import { useFileStore } from "@/app/components/State Manager/appManager"
 const lowlight = createLowlight(all)
 
 
-export default () => {
+export const TextEditor = () => {
 
 
   const [title, setTitle] = useState("Untitled Note")
