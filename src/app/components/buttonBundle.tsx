@@ -1,6 +1,5 @@
 "use client"
-import { FileData } from "@/lib/Types/Types"
-import { useFileStore } from "../components/State Manager/appManager"
+import { useFileStore, type File } from "./State Manager/appManager"
 import Bundle from "@/lib/server/Bundle/bundle"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faLink } from "@fortawesome/free-solid-svg-icons"
@@ -14,9 +13,22 @@ export const ButtonBundle = () => {
         <button 
             onClick={async () => {
                 if(selectedFiles.size > 0) {
-                    const bundle = await Bundle(Array.from(selectedFiles)) as {bundle: FileData, links: {to_id: string, from_id: string}[]}
+                    const result = await Bundle(Array.from(selectedFiles)) as unknown as { bundle: { id: string; creator_id: string; name: string; type: string; description: string | null; file_id: string | null; createdAt: Date | string; creator_email: string | null }; links: { to_id: string; from_id: string }[] }
                     ClearSelection()
-                    UpdateFiles([bundle?.bundle as FileData])
+                    const b = result?.bundle
+                    if (b) {
+                        const file: File = {
+                            id: b.id,
+                            creator_id: b.creator_id,
+                            name: b.name,
+                            type: b.type,
+                            description: b.description ?? null,
+                            file_id: b.file_id ?? null,
+                            createdAt: typeof b.createdAt === "string" ? b.createdAt : b.createdAt.toISOString(),
+                            creator_email: b.creator_email ?? null,
+                        }
+                        UpdateFiles([file])
+                    }
                 }
             }}
             style={{

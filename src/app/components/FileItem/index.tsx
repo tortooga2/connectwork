@@ -65,8 +65,15 @@ export const FileItem = ({ file }: { file: File }) => {
                         }
                     }} />
                 </div>
-                <div className={"column"}>{file.id}</div>
-                <div className={"column"}>{new Date(file.createdAt).toISOString()}</div>
+                <div className={"column"} title={file.id}>{typeof file.id === "string" ? file.id.slice(-5) : file.id}</div>
+                <div
+                    className={"column"}
+                    title={file.createdAt ? new Date(file.createdAt).toISOString() : undefined}
+                >
+                    {file.createdAt
+                        ? new Date(file.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
+                        : ""}
+                </div>
                 <div className={"column"}>{FileType(file.type, layoutState == 0 || viewportWidth < 768)}</div>
                 <div className={"column"}>{file.creator_email}</div>
                 <div className={"column"}>{getFileType(file.type) === "Bundle" ? "Linq" : file.name}</div>

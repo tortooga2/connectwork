@@ -164,12 +164,17 @@ export function StandalonePreview({
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             {FileType(fileData.type)}
             <span>
-              <span style={{ fontWeight: "bold" }}>ID:</span> {fileData.id}
+              <span style={{ fontWeight: "bold" }}>ID:</span>{" "}
+              <span title={fileData.id}>
+                {typeof fileData.id === "string" ? fileData.id.slice(-5) : fileData.id}
+              </span>
             </span>
           {fileData.createdAt && (
             <span>
               <span style={{ fontWeight: "bold" }}>Created:</span>{" "}
-              {fileData.createdAt}
+              <span title={`UTC: ${fileData.createdAt}`}>
+                {new Date(fileData.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+              </span>
             </span>
           )}
           {fileData.creator_email && (

@@ -1,74 +1,127 @@
-import styles from "./page.module.css";
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { Dashboard } from "./(pages)/dashboard/client";
 
 export default async function Home() {
     const { userId } = await auth();
-    console.log("userId", userId);
     if (userId) {
-        redirect("/dashboard");
+        return <Dashboard />;
     }
 
     return (
-        <div className={styles.page}>
-            <header
+        <div
+            style={{
+                minHeight: "100vh",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "var(--theme-bg-primary)",
+                color: "var(--theme-text-primary)",
+                padding: "var(--theme-spacing-lg)",
+                boxSizing: "border-box",
+            }}
+        >
+            {/* Centered sign-in / sign-up card */}
+            <main
                 style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "1.5rem",
+                    maxWidth: "420px",
                     width: "100%",
+                    padding: "2.5rem",
+                    background: "var(--theme-bg-secondary)",
+                    border: "var(--theme-border-width) solid var(--theme-border-primary)",
+                    borderRadius: "var(--theme-border-radius)",
+                    boxShadow: "var(--theme-shadow-lg)",
                 }}
             >
-                <nav
+                <h1
                     style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "1rem 2rem",
+                        fontSize: "2.25rem",
+                        fontWeight: 700,
+                        margin: 0,
+                        color: "var(--theme-btn-linq-text)",
+                        fontFamily: "var(--font-geist-sans, 'EB Garamond', serif)",
                     }}
                 >
-                    <h1>Linquiq</h1>
-                    <div style={{ display: "flex", gap: "1rem" }}>
-                        <SignedOut>
-                            <SignInButton />
-                            <SignUpButton />
-                        </SignedOut>
-                    </div>
-                </nav>
-            </header>
-
-            <main className="landing-main">
-                <section className="hero-section">
-                    <div className="hero-left">
-                        <h2 className="hero-heading">Capture Your Info</h2>
-                        <p className="hero-description">
-                            Create your personalized layout of information from
-                            conferences and expo events that has links, business
-                            cards, photos, and detailed description of your
-                            links such as date, location, and type.
-                        </p>
-                        {/* <button className="start-button" onClick={() => console.log('Start Here Clicked')}>Start Here</button> */}
-                    </div>
-                    <div className="hero-right"></div>
-                </section>
+                    Linquiq
+                </h1>
+                <p
+                    style={{
+                        fontSize: "1rem",
+                        lineHeight: 1.5,
+                        color: "var(--theme-text-secondary)",
+                        textAlign: "center",
+                        margin: 0,
+                    }}
+                >
+                    Capture your info from conferences and events — links, business cards, photos, and notes in one place.
+                </p>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.75rem",
+                        width: "100%",
+                        marginTop: "0.5rem",
+                    }}
+                >
+                    <SignedOut>
+                        <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
+                            <button
+                                type="button"
+                                style={{
+                                    width: "100%",
+                                    padding: "0.75rem 1.5rem",
+                                    fontSize: "1rem",
+                                    fontWeight: 500,
+                                    border: "var(--theme-border-width) solid var(--theme-btn-linq-border)",
+                                    borderRadius: "var(--theme-border-radius)",
+                                    background: "var(--theme-btn-linq-bg)",
+                                    color: "var(--theme-btn-linq-text)",
+                                    cursor: "pointer",
+                                    transition: "background 0.2s, opacity 0.2s",
+                                }}
+                            >
+                                Sign up
+                            </button>
+                        </SignUpButton>
+                        <SignInButton mode="modal">
+                            <button
+                                type="button"
+                                style={{
+                                    width: "100%",
+                                    padding: "0.75rem 1.5rem",
+                                    fontSize: "1rem",
+                                    fontWeight: 500,
+                                    border: "var(--theme-border-width) solid var(--theme-border-primary)",
+                                    borderRadius: "var(--theme-border-radius)",
+                                    background: "transparent",
+                                    color: "var(--theme-text-primary)",
+                                    cursor: "pointer",
+                                    transition: "background 0.2s, opacity 0.2s",
+                                }}
+                            >
+                                Sign in
+                            </button>
+                        </SignInButton>
+                    </SignedOut>
+                </div>
             </main>
 
-            <div
+            <footer
                 style={{
-                    position: "absolute",
-                    bottom: "0",
-                    right: "0",
-                    color: "#cc674b",
+                    marginTop: "2rem",
                     fontSize: "0.8rem",
-                    fontFamily: `"Playfair Display", serif`,
-                    padding: "0.5rem",
+                    color: "var(--theme-text-tertiary)",
                 }}
             >
-                @2025 Bundle,{" "}
-                <span style={{ fontStyle: "italic" }}>
-                    {" "}
-                    Networking Application{" "}
-                </span>
-                . All rights reserved.
-            </div>
+                © 2025 Linquiq. All rights reserved.
+            </footer>
         </div>
     );
 }

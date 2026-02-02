@@ -1,6 +1,6 @@
 "use client"
 import { NewPage, VerticalDiv, HorizontalDiv } from "@/app/components/UILayout"
-import { useUser } from "@clerk/nextjs"
+import { useUser, useClerk } from "@clerk/nextjs"
 import { FilesList } from "@/app/components/FileList"
 import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
@@ -77,6 +77,7 @@ const UploadButton = () => {
 
 export const Dashboard = ({ }) => {
     const { user } = useUser()
+    const { signOut } = useClerk()
     const layoutState = useFileStore((state) => state.layoutState)
     const setLayoutState = useFileStore((state) => state.SetLayoutState)
     const previewedFile = useFileStore((state) => state.previewedFile)
@@ -87,7 +88,7 @@ export const Dashboard = ({ }) => {
     return (
         <NewPage>
             <VerticalDiv style={{ position: "relative", height: "100vh" }}>
-                {/* Header - Top Left: Linquiq and Email */}
+                {/* Header - Top Left: Linquiq, Email, Sign out */}
                 <div style={{
                     position: "absolute",
                     top: "1rem",
@@ -99,7 +100,33 @@ export const Dashboard = ({ }) => {
                     zIndex: 1000
                 }}>
                     <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0, color: "var(--theme-btn-linq-text)" }}>Linquiq</h1>
-                    <span style={{ fontSize: "0.875rem", opacity: 0.8 }}>{userEmail}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "0.875rem", opacity: 0.8 }}>{userEmail}</span>
+                        <button
+                            type="button"
+                            onClick={() => signOut?.()}
+                            style={{
+                                fontSize: "0.75rem",
+                                padding: "0.2rem 0.5rem",
+                                border: "1px solid var(--theme-border-primary)",
+                                borderRadius: "var(--theme-border-radius)",
+                                background: "transparent",
+                                color: "var(--theme-text-secondary)",
+                                cursor: "pointer",
+                                transition: "opacity 0.2s, color 0.2s"
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.opacity = "0.8"
+                                e.currentTarget.style.color = "var(--theme-text-primary)"
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.opacity = "1"
+                                e.currentTarget.style.color = "var(--theme-text-secondary)"
+                            }}
+                        >
+                            Sign out
+                        </button>
+                    </div>
                 </div>
 
                 {/* Top Action Buttons - New Note and Upload File */}
@@ -197,8 +224,12 @@ export const Dashboard = ({ }) => {
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                                 {FileType(previewedFile?.type)}
-                                <span><span style={{ fontWeight: "bold" }}>ID:</span> {previewedFile?.id}</span>
-                                <span><span style={{ fontWeight: "bold" }}>Created:</span> {previewedFile?.createdAt ? new Date(previewedFile.createdAt).toISOString() : ""}</span>
+                                <span><span style={{ fontWeight: "bold" }}>ID:</span> <span title={previewedFile?.id}>{previewedFile?.id ? (typeof previewedFile.id === "string" ? previewedFile.id.slice(-5) : previewedFile.id) : ""}</span></span>
+                                <span><span style={{ fontWeight: "bold" }}>Created:</span>{" "}
+                                    <span title={previewedFile?.createdAt ? `UTC: ${new Date(previewedFile.createdAt).toISOString()}` : ""}>
+                                        {previewedFile?.createdAt ? new Date(previewedFile.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" }) : ""}
+                                    </span>
+                                </span>
                                 <span><span style={{ fontWeight: "bold" }}>Creator:</span> {previewedFile?.creator_email}</span>
                             </div>
                             <div style={{ flex: 1, overflow: "auto" }}>
