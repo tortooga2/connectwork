@@ -92,59 +92,59 @@ export const Dashboard = ({ }) => {
     return (
         <NewPage>
             <VerticalDiv style={{ position: "relative", minHeight: "100vh", overflowY: spacerHeightPx > 0 ? "auto" : "hidden", paddingBottom: spacerHeightPx > 0 ? "5.5rem" : 0 }}>
-                {/* File list wrapper: header + table share same position/width so header is centered above table */}
-                <div ref={fileListRef} style={{ position: "absolute", top: "4rem", left: "1rem", right: "1rem", padding: 0, margin: 0, height: "auto", minHeight: "calc((100vh - 9.5rem) / 2)" }}>
-                    {/* Header: same left/width as table panel, positioned above it */}
-                    <div style={{
-                        position: "absolute",
-                        top: "-3rem",
-                        left: layoutState === 0 ? 0 : layoutState === 1 ? 0 : "40%",
-                        width: layoutState === 0 ? "100%" : "60%",
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: "1rem",
-                        zIndex: 1000,
-                        transition: "left 0.08s ease-out, width 0.08s ease-out",
-                        boxSizing: "border-box"
-                    }}>
-                        <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0, color: "var(--theme-btn-linq-text)", flexShrink: 0 }}>Linquiq</h1>
-                        <input
-                            type="search"
-                            placeholder="Search…"
-                            aria-label="Search"
-                            style={{
-                                flex: "1",
-                                maxWidth: "24rem",
-                                margin: "0 auto",
-                                padding: "0.5rem 0.9rem",
-                                fontSize: "0.9375rem",
-                                borderRadius: "var(--theme-border-radius)",
-                                border: "1px solid var(--theme-border-primary)",
-                                background: "var(--theme-bg-secondary)",
-                                color: "var(--theme-text-primary)",
-                                outline: "none"
+                {/* Main header: always at top, full width, does not move when panels open */}
+                <div style={{
+                    position: "absolute",
+                    top: "1rem",
+                    left: "1rem",
+                    right: "1rem",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                    zIndex: 1000,
+                    boxSizing: "border-box"
+                }}>
+                    <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0, color: "var(--theme-btn-linq-text)", flexShrink: 0 }}>Linquiq</h1>
+                    <input
+                        type="search"
+                        placeholder="Search…"
+                        aria-label="Search"
+                        style={{
+                            flex: "1",
+                            maxWidth: "24rem",
+                            margin: "0 auto",
+                            padding: "0.5rem 0.9rem",
+                            fontSize: "0.9375rem",
+                            borderRadius: "var(--theme-border-radius)",
+                            border: "1px solid var(--theme-border-primary)",
+                            background: "var(--theme-bg-secondary)",
+                            color: "var(--theme-text-primary)",
+                            outline: "none"
+                        }}
+                    />
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", flexShrink: 0 }}>
+                        <span style={{ fontSize: "0.875rem", opacity: 0.8 }}>{userEmail}</span>
+                        <button
+                            type="button"
+                            className="btn-toolbar"
+                            onClick={() => signOut?.()}
+                            style={{ color: "var(--theme-text-secondary)", border: "1px solid var(--theme-border-primary)" }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.color = "var(--theme-text-primary)"
                             }}
-                        />
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", flexShrink: 0 }}>
-                            <span style={{ fontSize: "0.875rem", opacity: 0.8 }}>{userEmail}</span>
-                            <button
-                                type="button"
-                                className="btn-toolbar"
-                                onClick={() => signOut?.()}
-                                style={{ color: "var(--theme-text-secondary)", border: "1px solid var(--theme-border-primary)" }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.color = "var(--theme-text-primary)"
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.color = "var(--theme-text-secondary)"
-                                }}
-                            >
-                                Sign out
-                            </button>
-                        </div>
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.color = "var(--theme-text-secondary)"
+                            }}
+                        >
+                            Sign out
+                        </button>
                     </div>
+                </div>
+
+                {/* File list wrapper: table shifts when panels open */}
+                <div ref={fileListRef} style={{ position: "absolute", top: "4rem", left: "1rem", right: "1rem", padding: 0, margin: 0, height: "auto", minHeight: "calc((100vh - 9.5rem) / 2)" }}>
                     <HorizontalDiv color="var(--theme-bg-primary)" style={{ padding: "1rem", border: "none", borderRadius: "var(--theme-border-radius)", zIndex: "1", transition: "width 0.08s ease-out, left 0.08s ease-out, right 0.08s ease-out", height: "auto", minHeight: 0 }} layouts={[
                         {
                             position: "absolute",
@@ -154,12 +154,12 @@ export const Dashboard = ({ }) => {
                         {
                             position: "absolute",
                             left: 0,
-                            width: "60%",
+                            width: "calc(60% - 0.5rem)",
                         },
                         {
                             position: "absolute",
-                            left: "40%",
-                            width: "60%",
+                            left: "calc(40% + 0.5rem)",
+                            width: "calc(60% - 0.5rem)",
                         }
                     ]}
                         state={layoutState}
@@ -208,14 +208,14 @@ export const Dashboard = ({ }) => {
                     {selectedFiles.size > 0 && <DeleteButton />}
                 </div>
 
-                {/* Preview Panel - Right Side (always mounted; wrapper controls visibility so it updates) */}
+                {/* Preview Panel - Right Side (always mounted; width leaves 0.5rem gap with table) */}
                 <div
                     style={{
                         position: "absolute",
                         right: "1rem",
                         top: "5rem",
                         bottom: "5.5rem",
-                        width: "calc(40% - 1rem)",
+                        width: "calc(40% - 1.5rem)",
                         visibility: layoutState === 1 ? "visible" : "hidden",
                         pointerEvents: layoutState === 1 ? "auto" : "none",
                         zIndex: 10
@@ -266,14 +266,14 @@ export const Dashboard = ({ }) => {
                     </VerticalDiv>
                 </div>
 
-                {/* Note Editor Panel - Left Side (always mounted; wrapper controls visibility so it updates) */}
+                {/* Note Editor Panel - Left Side (always mounted; width leaves 0.5rem gap with table) */}
                 <div
                     style={{
                         position: "absolute",
                         left: "1rem",
                         top: "5rem",
                         bottom: "5.5rem",
-                        width: "calc(40% - 1rem)",
+                        width: "calc(40% - 1.5rem)",
                         backgroundColor: "var(--theme-bg-secondary)",
                         borderRadius: "var(--theme-border-radius)",
                         padding: "1rem",
@@ -282,7 +282,7 @@ export const Dashboard = ({ }) => {
                         zIndex: 10
                     }}
                 >
-                    <div style={{ position: "relative", flex: 1, overflow: "auto", height: "100%" }}>
+                    <div style={{ position: "relative", flex: 1, overflow: "hidden", height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
                         <button
                             onClick={() => setLayoutState(0)}
                             style={{

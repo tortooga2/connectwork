@@ -1,11 +1,12 @@
 .tiptap {
     background-color: var(--background);
-    height: 50vh;
-    
+    min-height: 50vh;
+    box-sizing: border-box;
+
     padding: 1rem;
-    border-radius: var(--border-rad);
-    border: var(--border-width) solid var(--foreground);
-    
+    outline: none;
+    border: none;
+
     :first-child {
       margin-top: 0;
       
@@ -78,6 +79,12 @@
         font-weight: 700;
       }
     }
+  }
+
+  .tiptap:focus,
+  .tiptap.ProseMirror:focus {
+    outline: none;
+    box-shadow: none;
   }
 
   input {

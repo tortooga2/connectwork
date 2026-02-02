@@ -40,7 +40,7 @@ export default () => {
 
   return (
     <>
-      <div style={{ borderRadius: "var(--border-rad)", border: "none", padding: "0.5rem 1rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div style={{ borderRadius: "var(--border-rad)", border: "none", padding: "0.5rem 1rem", display: "flex", flexDirection: "column", gap: "1rem", flex: 1, minHeight: 0, overflow: "hidden" }}>
         <input onChange={(e) => {
           setTitle(e.currentTarget.value)
         }} style={{
@@ -58,14 +58,13 @@ export default () => {
           {FileType("md")}
         </div>
 
-
-
-        <EditorContent editor={editor} />
-
-
-
+        <div style={{ flex: 1, minHeight: 0, borderRadius: "var(--border-rad)", border: "var(--border-width) solid var(--foreground)",  display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div style={{ flex: 1, overflow: "auto", minHeight: 0, borderRadius: "var(--border-rad)" }}>
+            <EditorContent editor={editor} />
+          </div>
+        </div>
       </div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem", flexShrink: 0 }}>
         <button
           onClick={async () => {
             console.log(editor.getHTML())
