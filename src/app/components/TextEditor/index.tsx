@@ -40,7 +40,7 @@ export const TextEditor = () => {
 
   return (
     <>
-    <div style={{ borderRadius : "var(--border-rad)", border : "var(--border-width) solid var(--foreground)", padding : "1rem", display : "flex", flexDirection : "column", gap : "1rem"}}>
+    <div style={{ padding : "1rem", display : "flex", flexDirection : "column", gap : "1rem"}}>
         <input onChange={(e)=>{
             setTitle(e.currentTarget.value)
         }} style={{

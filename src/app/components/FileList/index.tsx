@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useMemo } from "react"
+import { use, useEffect, useMemo } from "react"
 import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
@@ -7,6 +7,7 @@ import { FileItem } from "@/app/components/FileItem"
 export const FilesList = () => {
     const files = useFileStore((state)=>state.files)
     const SetFiles = useFileStore((state)=>state.SetFiles)
+    const layout = useFileStore((state)=>state.layoutState)
 
     useEffect(()=>{
         const getFiles = async () => {
@@ -34,7 +35,7 @@ export const FilesList = () => {
                 <div></div>
                 <div className={"column"} style={{ fontWeight: "bold"}}>ID:</div>
                 <div className={"column"} style={{ fontWeight: "bold"}}>CREATED AT:</div>
-                <div className={"column"} style={{ fontWeight: "bold"}}>TYPE:</div>
+                <div className={"column"} style={{ display : "flex", fontWeight: "bold", flex : "row"}}><div className={layout == 0 ? "spacer" : "spacer small"}/><span>TYPE:</span></div>
                 <div className={"column"} style={{ fontWeight: "bold"}}>CREATOR:</div>
                 <div className={"column"} style={{ fontWeight: "bold"}}>NAME:</div>
                 <div></div>

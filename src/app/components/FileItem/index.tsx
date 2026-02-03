@@ -59,8 +59,8 @@ export const FileItem = ({file} : {file : File}) => {
                         }
                     }}/>
                 </div>
-                <div className={"column"}>{file.id}</div>
-                <div className={"column"}>{new Date(file.createdAt).toISOString()}</div>
+                <div className={"column"}>{file.id.split("-").slice(-1)[0]}</div>
+                <div className={"column"}>{new Date(file.createdAt).toLocaleString()}</div>
                 <div className={"column"}>{FileType(file.type, layoutState==0 || viewportWidth < 768)}</div>
                 <div className={"column"}>{file.creator_email}</div>
                 <div className={"column"}>{file.name}</div>

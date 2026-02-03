@@ -123,6 +123,20 @@ a {
   text-overflow: ellipsis;
 }
 
+.spacer {
+  width : 0%;
+  transition: width 0.2s ease-out;
+}
+
+.spacer.small{
+  width : 40%;
+  
+}
+
+.column.small {
+  text-align: center;
+}
+
 
 @media (prefers-color-scheme: dark) {
   html {
