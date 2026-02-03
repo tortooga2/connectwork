@@ -48,6 +48,18 @@ export const Dashboard = ({}) => {
                     
                         <FilesList />
                     </HorizontalDiv>
+                    {/*Dock - Action Buttons */}
+                    <div style={{position: "fixed", bottom : "calc(5% - 1rem)", left: "50%", transform: "translateX(-50%)", display : "flex", gap : "1rem", zIndex : "10"}}>
+                        <LinqButton/>
+                        <DeleteButton/>
+                        <button onClick={()=>{
+                            if (layoutState !== 2)
+                            SetLayoutState(2);
+                            else
+                            SetLayoutState(0);
+
+                        }}> new note </button>
+                    </div>
                 </VerticalDiv>
                 
                     
@@ -86,17 +98,7 @@ export const Dashboard = ({}) => {
                 </HorizontalDiv>
             </VerticalDiv>
 
-            <div style={{position: "fixed", bottom : "1rem", left: "50%", transform: "translateX(-50%)", display : "flex", gap : "1rem", zIndex : "10", height : "5%"}}>
-                        <LinqButton/>
-                        <DeleteButton/>
-                        <button onClick={()=>{
-                            if (layoutState !== 2)
-                            SetLayoutState(2);
-                            else
-                            SetLayoutState(0);
-
-                        }}> new note </button>
-            </div>
+            
             
         </NewPage>
     )
