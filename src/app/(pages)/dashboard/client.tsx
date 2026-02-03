@@ -4,10 +4,9 @@ import { UserButton, SignOutButton } from "@clerk/nextjs"
 import { FilesList } from "@/app/components/FileList"
 import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
-import Bundle from "@/lib/server/Bundle/bundle"
 import { ButtonBundle } from "@/app/components/buttonBundle"
 import UploadArea from "@/app/components/Uploads/UploadArea"
-import Tiptap from "@/app/components/TextEditor"
+import { TextEditor } from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
 import { DeleteButton } from "@/app/components/DeleteButton"
 
@@ -19,25 +18,26 @@ export const Dashboard = ({}) => {
     const SetLayoutState = useFileStore((state)=>state.SetLayoutState)
     return (       
         <NewPage>    
-            <VerticalDiv style={{position : "relative"}}>
-                <HorizontalDiv color="var(--background)" style={{position : "absolute", padding : "1rem", border : "var(--border-width) solid white", borderRadius : "var(--border-rad)", zIndex : "1", transition : "width 0.2s ease-out, left 0.2s ease-out, right 0.2s ease-out"}} layouts={[
-                            {
-                                left : 0,
-                                width : "100%",
-                            },
-                            {
-                                left : 0,
-                                width : "60%",
-                            },
-                            {
-                                left: "40%",
-                                width : "60%",
-                            }
-                        ]} 
-                        state={layoutState}
-                        > 
+            <VerticalDiv style={{position : "relative", height: "95%", borderWidth: "0px", borderColor: "transparent"}} padding="0rem">
+                
+                <HorizontalDiv color="var(--background)" style={{height: "100%", position : "absolute", padding : "1rem", zIndex : "1", transition : "width 0.2s ease-out, left 0.2s ease-out, right 0.2s ease-out"}} layouts={[
+                        {
+                            left : 0,
+                            width : "100%",
+                        },
+                        {
+                            left : 0,
+                            width : "60%",
+                        },
+                        {
+                            left: "40%",
+                            width : "60%",
+                        }
+                    ]} 
+                    state={layoutState}
+                > 
                         
-                    <VerticalDiv width="25vw" style={{maxWidth : "300px", minWidth : "200px", border : "var(--border-width) solid white", borderRadius : "var(--border-rad)", padding : "1rem"}}>
+                    {/* <VerticalDiv width="25vw" style={{maxWidth : "300px", minWidth : "200px", border : "var(--border-width) solid white", borderRadius : "var(--border-rad)", padding : "1rem"}}>
                         <div>
                             <h1>Connect Work</h1>
                             <p>Remade in NextJs</p>
@@ -59,11 +59,13 @@ export const Dashboard = ({}) => {
                         }}>
                             new note
                         </button>
-                    </VerticalDiv>
+                    </VerticalDiv> */}
                     
                     <FilesList />
-                    
                 </HorizontalDiv>
+                    
+                
+                
                 
                 <VerticalDiv style={{position : "absolute", right : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)", height : "100%"}} padding="0rem">
                     <div style={{display : "flex", flexDirection : "column", gap : "1rem", width : "100%"}}>
@@ -89,11 +91,16 @@ export const Dashboard = ({}) => {
                     }}>
                         close
                     </button>
-                    <Tiptap/>
+                    <TextEditor />
                 </VerticalDiv>
                     
-
+                <div style={{position: "fixed", bottom : "1rem", left: "50%", transform: "translateX(-50%)", display : "flex", gap : "1rem", zIndex : "10", height : "5%"}}>
+                    <ButtonBundle/>
+                    <DeleteButton/>
+                </div>
             </VerticalDiv>
+            
+            
         </NewPage>
     )
 }

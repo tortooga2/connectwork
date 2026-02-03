@@ -5,6 +5,7 @@
     padding: 1rem;
     border-radius: var(--border-rad);
     border: var(--border-width) solid var(--foreground);
+    overflow-y: auto;
     
     :first-child {
       margin-top: 0;
