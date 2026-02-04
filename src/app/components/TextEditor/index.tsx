@@ -1,6 +1,6 @@
 "use client"
 
-import "./style.css"
+
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import StarterKit from '@tiptap/starter-kit'
@@ -8,7 +8,7 @@ import { EditorContent, useEditor } from '@tiptap/react'
 
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from 'lowlight'
-import React, { useRef, useState } from 'react'
+import React, {useState } from 'react'
 
 import { FileType } from "../TypeTags"
 import { useFileStore } from "@/app/components/State Manager/appManager"
@@ -21,7 +21,6 @@ export const TextEditor = () => {
 
 
   const [title, setTitle] = useState("Untitled Note")
-  const contentRef = useRef<HTMLHeadingElement>(null)
   const uploadFilesAction = useFileStore((state) => state.uploadFiles);
   const editor = useEditor({
     extensions: [
@@ -81,7 +80,7 @@ export const TextEditor = () => {
                 await uploadFilesAction(fileList, null);
                
             } catch (err) {
-                
+                console.error("Error uploading file:", err);
             }
         }}> 
             Save

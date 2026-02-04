@@ -105,19 +105,26 @@ export const Preview = () => {
                 // const fileSrc = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl[0].url as string)}&embedded=true`;
                 return(
                     
-                    
-                    <DocumentViewer
-                        queryParams="hl=Nl"
-                        url={fileUrl[0].url as string}
-                        style={{
-                            width : "100%",
-                            height : "100%",
-                            
-                            borderRadius : "var(--border-rad)",
-                            objectFit : "contain",
-                            objectPosition : "center",
-                        }}>
-                    </DocumentViewer>
+                    <div style={{
+                        width : "100%",
+                        
+                        display : "flex",
+                        flexDirection : "column",
+                        gap : "1rem",
+                    }}>
+                        <DocumentViewer
+                            queryParams="hl=Nl"
+                            url={fileUrl[0].url as string}
+                            style={{
+                                width : "100%",
+                                aspectRatio : "1/1.1",
+                                flex: 1,
+                                borderRadius : "var(--border-rad)",
+                                objectFit : "contain",
+                                objectPosition : "center",
+                            }}>
+                        </DocumentViewer>
+                    </div>
                 
                 )
                     
@@ -173,18 +180,13 @@ export const Preview = () => {
     }
 
 
-    return (<VerticalDiv style={{
-        width : "100%",
-        height : "100%",
-        alignItems : "center",
-        borderRadius : "var(--border-rad)",
-        border : "var(--border-width) solid white",
-        padding : "1rem",
-    }}>
-       {fileType==="Bundle" && fileUrl !== undefined ? (
-            DisplayFile()
-        ) : (<Bundle bundle_data={fileUrl || undefined} />)}
-        
-    </VerticalDiv>)
-    
-}
+    return (
+        <VerticalDiv style={{width : "100%", height : "100%", padding : "1rem", boxSizing : "border-box", overflowY : "auto"}}> 
+            
+            {fileType==="Bundle" && fileUrl !== undefined ? (
+                    DisplayFile()
+                ) : (<Bundle bundle_data={fileUrl || undefined} />)}
+                
+            
+        </VerticalDiv>
+    )}

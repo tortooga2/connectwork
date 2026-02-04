@@ -1,3 +1,5 @@
+"use client"
+
 import { useFileStore } from "@/app/components/State Manager/appManager";
 import { getFileType } from "@/lib/client/getFileType";
 import { useEffect, useRef, useState } from "react";

@@ -1,15 +1,4 @@
-:root {
-    --bundle-color-1: #fcefef;
-    --bundle-color-2: #d7827e;
-    --doc-color-1: #fcefef;
-    --doc-color-2: #ea9d34;
-    --note-color-1: #fcefef;
-    --note-color-2: #2a9d8f;
-    --rec-color-1: #fcefef;
-    --rec-color-2: #286983;
-    --img-color-1: #fcefef;
-    --img-color-2: #56949f;
-}
+
 
 /* .tag {
     width: 8rem;
@@ -36,22 +25,22 @@
     min-width: 0.5rem;
     height: 0.5rem;
     min-height: 0.5rem;
-    border-radius: 0rem;
+    border-radius: 0.5rem;
 }
 
 .tag .text {
     overflow: hidden;
     width: 100%;
-    transition: width 0.1s ease-in-out;
+    transition: width 0.2s ease-in-out;
 }
 
 .tag .text.small {
     width: 0%;
-    transition: width 0.1s ease-in-out;
+    transition: width 0.2s ease-in-out;
 }
 
 @media (width < 768px) {
-    .tag .text {
+    .tag .text:not(.scaling) {
         width: 0%;
         transition: width 0.1s ease-in-out;
     }
