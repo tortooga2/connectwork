@@ -1,16 +1,12 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react";
-import { useFileStore } from "../State Manager/appManager";
+import { useRef, useState, useEffect } from "react"
+import { useFileStore } from "../State Manager/appManager"
 
-const ListItem = ({ index, name, remove, percentage }) => {
-    const [isHovered, setIsHovered] = useState(false);
-    const [logoutHovered, setLogoutHovered] = useState(false);
-    const setError = useFileStore((state) => state.SetError);
-
-    useEffect(() => {
-        console.log(percentage);
-    }, [percentage]);
+const ListItem = ({ index, name, remove, percentage = 0 }) => {
+    const [isHovered, setIsHovered] = useState(false)
+    const [removeHovered, setRemoveHovered] = useState(false)
+    const SetError = useFileStore((state) => state.SetError)
 
     return (
         <div
@@ -24,59 +20,37 @@ const ListItem = ({ index, name, remove, percentage }) => {
                 paddingLeft: "1rem",
                 paddingRight: "1rem",
             }}
-            onMouseEnter={() => {
-                setIsHovered(true);
-            }}
-            onMouseLeave={() => {
-                setIsHovered(false);
-            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
-            <div
+            <button
+                type="button"
                 style={{
                     position: "absolute",
                     top: "50%",
                     transform: "translateY(-50%)",
                     borderRadius: "var(--border-rad)",
-                    paddingLeft: "0.5rem",
-                    paddingRight: "0.5rem",
+                    padding: "0.25rem 0.5rem",
                     zIndex: 1000,
-
-                    ...(isHovered
-                        ? { pointerEvents: "auto", left: "0.5rem" }
-                        : { pointerEvents: "none", left: "-2.0rem" }),
-                    ...(logoutHovered
-                        ? {
-                              backgroundColor: "#ffc2c3",
-                              color: "#f52727",
-                              borderColor: "#f52727",
-                          }
-                        : {}),
+                    left: isHovered ? "0.5rem" : "-2rem",
+                    pointerEvents: isHovered ? "auto" : "none",
                     transition: "left 0.2s, background-color 0.2s",
-
                     cursor: "pointer",
+                    border: "none",
+                    backgroundColor: removeHovered ? "#ffc2c3" : "transparent",
+                    color: removeHovered ? "#f52727" : "var(--foreground)",
                 }}
-                onMouseEnter={() => {
-                    setLogoutHovered(true);
-                    setIsHovered(true);
-                }}
-                onMouseLeave={() => {
-                    setLogoutHovered(false);
-                    setIsHovered(true);
-                }}
+                onMouseEnter={() => { setRemoveHovered(true); setIsHovered(true) }}
+                onMouseLeave={() => setRemoveHovered(false)}
                 onClick={() => {
-                    setError("File Removed", "good");
-                    remove(name);
+                    remove(name)
+                    SetError(null)
                 }}
+                aria-label={`Remove ${name}`}
             >
-                -
-            </div>{" "}
-            <div
-                style={{
-                    ...(isHovered ? { opacity: "0" } : { opacity: "1" }),
-                }}
-            >
-                {index}
-            </div>
+                −
+            </button>
+            <div style={{ opacity: isHovered ? 0 : 1, minWidth: "1.25rem" }}>{index}</div>
             <span
                 style={{
                     overflowX: "hidden",
@@ -90,76 +64,117 @@ const ListItem = ({ index, name, remove, percentage }) => {
             <div
                 style={{
                     position: "absolute",
-                    top: "0",
-                    left: "0",
+                    top: 0,
+                    left: 0,
                     height: "100%",
                     width: `${percentage}%`,
                     backgroundColor: "var(--background)",
-                    opacity: "0.5",
-                    borderRadius: "var(--border-rad)"
+                    opacity: 0.5,
+                    borderRadius: "var(--border-rad)",
                 }}
-            ></div>
+            />
         </div>
-    );
-};
+    )
+}
 
-const UploadArea = () => {
-    const fileInputRef = useRef(null);
-    const [files, setFiles] = useState([]);
-    const [progress, setProgress] = useState([]);
-    const uploadFile = useFileStore((state) => state.uploadFiles);
-    const setError = useFileStore((state) => state.setError);
+const UploadArea = ({ onClose }) => {
+    const fileInputRef = useRef(null)
+    const [files, setFiles] = useState([])
+    const [progress, setProgress] = useState({})
+    const uploadFiles = useFileStore((state) => state.uploadFiles)
+    const SetError = useFileStore((state) => state.SetError)
 
     const onProgress = (name, percent) => {
-        const newList = { ...progress };
-        newList[name] = percent;
-        setProgress(newList);
-    };
+        setProgress((prev) => ({ ...prev, [name]: percent }))
+    }
 
     useEffect(() => {
-        setFiles(
-            files.filter((f) => {
-                return progress[f.name] !== 100;
-            })
-        );
-    }, [progress]);
+        setFiles((prev) => prev.filter((f) => progress[f.name] !== 100))
+    }, [progress])
 
-    const removeFile = (index) => {
-        setFiles(
-            files.filter((f) => {
-                return f.name !== index;
-            })
-        );
-    };
+    const removeFile = (name) => {
+        setFiles((prev) => prev.filter((f) => f.name !== name))
+        setProgress((prev) => {
+            const next = { ...prev }
+            delete next[name]
+            return next
+        })
+    }
+
+    const handleAddClick = () => {
+        if (fileInputRef.current) fileInputRef.current.click()
+        else SetError("Upload not ready")
+    }
+
+    const handleFileChange = (e) => {
+        const newFiles = e.target.files ? Array.from(e.target.files) : []
+        const combined = [...files, ...newFiles]
+        const capped = combined.length > 10 ? combined.slice(0, 10) : combined
+        if (combined.length > 10) SetError("Max 10 files")
+        setFiles(capped)
+        const nextProgress = {}
+        capped.forEach((f) => (nextProgress[f.name] = 0))
+        setProgress(nextProgress)
+        e.target.value = ""
+    }
+
+    const handleUpload = async () => {
+        if (!files.length) {
+            SetError("No files selected")
+            return
+        }
+        SetError(null)
+        try {
+            const dt = new DataTransfer()
+            files.forEach((f) => dt.items.add(f))
+            await uploadFiles(dt.files, onProgress)
+            setFiles([])
+            setProgress({})
+            onClose?.()
+        } catch (err) {
+            SetError(err instanceof Error ? err.message : "Upload failed")
+        }
+    }
 
     return (
         <div
             style={{
                 border: "var(--border-width) solid var(--foreground)",
-                
                 padding: "1rem",
-                borderRadius: "var(--border-rad)"
+                borderRadius: "var(--border-rad)",
+                backgroundColor: "var(--accent-color)",
+                minWidth: "320px",
             }}
         >
-            <div
-                
-            >
-                File Upload
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                <span style={{ fontWeight: 600 }}>File Upload</span>
+                {onClose && (
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            color: "var(--foreground)",
+                            cursor: "pointer",
+                            padding: "0.25rem 0.5rem",
+                            fontSize: "1.25rem",
+                            lineHeight: 1,
+                        }}
+                        aria-label="Close"
+                    >
+                        ×
+                    </button>
+                )}
             </div>
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    overflowY: "auto",
-                }}
-            >
-                {Array.from(files).map((f, index) => (
+            <div style={{ display: "flex", flexDirection: "column", overflowY: "auto", maxHeight: "240px" }}>
+                {files.map((f, i) => (
                     <ListItem
-                        index={index + 1}
+                        key={`${f.name}-${i}`}
+                        index={i + 1}
                         name={f.name}
-                        key={index}
                         remove={removeFile}
-                        percentage={progress[f.name]}
+                        percentage={progress[f.name] ?? 0}
                     />
                 ))}
             </div>
@@ -167,105 +182,34 @@ const UploadArea = () => {
                 style={{
                     padding: "0.5rem",
                     border: "var(--border-width) solid var(--foreground)",
-                    
                     marginTop: "0.5rem",
-                    borderRadius: "var(--border-rad)"
+                    borderRadius: "var(--border-rad)",
                 }}
             >
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        // padding: "0.5rem",
-                    }}
-                >
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                        }}
-                    >
-                        <button
-                            onClick={(e) => {
-                                if (!fileInputRef) {
-                                    setError(true);
-                                }
-                                fileInputRef.current.click();
-                            }}
-                        >
-                        Add
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                multiple
-                                style={{
-                                    visibility: "hidden",
-                                    position: "absolute",
-                                }}
-                                onChange={(event) => {
-                                    const newfiles = event.target.files;
-                                    const newList = [...files, ...newfiles];
-                                    if (newList.length > 10) {
-                                        setError("Hit upload limit :(", "bad");
-                                        newList.length = 10;
-                                    }
-                                    setFiles(newList);
-
-                                    const newProgress = {};
-
-                                    for (let i = 0; i < newList.length; i++) {
-                                        newProgress[newList[i].name] = 0;
-                                    }
-
-                                    console.log(newProgress);
-
-                                    setProgress(newProgress);
-                                }}
-                            />
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <button type="button" onClick={handleAddClick}>
+                            Add
                         </button>
-                        <button
-                            onClick={() => {
-                                setFiles([]);
-                            }}
-                        >
-                            
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            multiple
+                            style={{ visibility: "hidden", position: "absolute", width: 0, height: 0 }}
+                            onChange={handleFileChange}
+                        />
+                        <button type="button" onClick={() => { setFiles([]); setProgress({}) }}>
                             Clear
                         </button>
                     </div>
-
-                    <div>{files.length}/10</div>
+                    <span>{files.length}/10</span>
                 </div>
-                <button
-                    style={
-                        {
-                            // marginLeft: "0.5rem",
-                        }
-                    }
-                    onClick={async (e) => {
-                        e.preventDefault();
-
-                        if (!files || files.length === 0) {
-                            console.error("No files selected");
-                            return;
-                        }
-
-                        try {
-                            await uploadFile(files, onProgress);
-
-                            setProgress([]);
-                            setFiles([]);
-                        } catch (error) {
-                            setError(error);
-                        }
-                    }}
-                >
-                     Upload
+                <button type="button" style={{ marginTop: "0.5rem" }} onClick={handleUpload}>
+                    Upload
                 </button>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default UploadArea;
+export default UploadArea

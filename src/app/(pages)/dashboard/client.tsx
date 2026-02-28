@@ -1,15 +1,16 @@
 "use client"
+import { useState } from "react"
 import { NewPage, VerticalDiv, HorizontalDiv } from "@/app/components/UILayout"
 import { UserButton } from "@clerk/nextjs"
 import { FilesList } from "@/app/components/FileList"
 import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
 import { LinqButton } from "@/app/components/LinqButton"
-// import UploadArea from "@/app/components/Uploads/UploadArea"
+import UploadArea from "@/app/components/Uploads/UploadArea"
 import { TextEditor } from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
 import { DeleteButton } from "@/app/components/DeleteButton"
-import { PencilLine, Upload } from "lucide-react"
+import { PencilLine, Upload, X } from "lucide-react"
 
 
 export const Dashboard = ({}) => {
@@ -17,7 +18,8 @@ export const Dashboard = ({}) => {
     const setLayoutState = useFileStore((state)=>state.SetLayoutState)
     const previewedFile = useFileStore((state)=>state.previewedFile)
     const SetLayoutState = useFileStore((state)=>state.SetLayoutState)
-    
+    const [uploadPopupOpen, setUploadPopupOpen] = useState(false)
+
     const heightOfDock = "6.5%";
     const heightOfTopBar = "3%";
     return (       
@@ -58,12 +60,32 @@ export const Dashboard = ({}) => {
                             {/*Dock - Action Buttons */}
                             <div className={"dock"} style={{position: "relative", width : "fit-content", top : "50%", left: "50%", transform: "translate(-50%, -50%)", display : "flex", alignItems : "center", justifyContent : "center"}}>
                                 <LinqButton/>
-                                <button className={"but upload"}>
+                                <button type="button" className={"but upload"} onClick={() => setUploadPopupOpen(true)}>
                                     <div className={"but-content"} style={{display : "flex", alignItems : "center"}}>
                                         <Upload size={16} style={{marginRight : "0.25rem"}}/>
                                         Upload
                                     </div>
                                 </button>
+                                {uploadPopupOpen && (
+                                    <>
+                                        <div
+                                            style={{ position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.4)" }}
+                                            onClick={() => setUploadPopupOpen(false)}
+                                            aria-hidden
+                                        />
+                                        <div
+                                            style={{
+                                                position: "fixed",
+                                                bottom: "8rem",
+                                                left: "50%",
+                                                transform: "translateX(-50%)",
+                                                zIndex: 9999,
+                                            }}
+                                        >
+                                            <UploadArea onClose={() => setUploadPopupOpen(false)} />
+                                        </div>
+                                    </>
+                                )}
                                 <button className={"but new-note"} onClick={()=>{
                                     if (layoutState !== 2)
                                     SetLayoutState(2);
@@ -108,10 +130,24 @@ export const Dashboard = ({}) => {
                     </VerticalDiv>
 
                     <VerticalDiv style={{position : "absolute", left : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)",borderRadius : "var(--border-rad)"}} color="var(--accent-color)" padding="1rem">    
-                        <button onClick={()=>{
-                            setLayoutState(0)
-                        }}>
-                            close
+                        <button
+                            onClick={() => setLayoutState(0)}
+                            style={{
+                                position: "absolute",
+                                top: "0.5rem",
+                                right: "0.5rem",
+                                background: "transparent",
+                                border: "none",
+                                color: "var(--foreground)",
+                                cursor: "pointer",
+                                padding: "0.5rem",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                            aria-label="Close editor"
+                        >
+                            <X size={24} />
                         </button>
                         <TextEditor />
                     </VerticalDiv>
