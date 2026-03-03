@@ -1,7 +1,6 @@
 "use client"
 
-
-
+import "./style.css"
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import StarterKit from '@tiptap/starter-kit'
 import { EditorContent, useEditor } from '@tiptap/react'
@@ -64,25 +63,31 @@ export const TextEditor = () => {
 
       
     </div>
-        <button onClick={async ()=>{
-            console.log(editor.getHTML())
-            const noteText = editor.getHTML()
-            const notefile = new File([noteText], title + ".txt", {
-                type: "text/html",
-            });
-    
-            // Convert File[] to FileList using DataTransfer
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(notefile);
-            const fileList = dataTransfer.files;
-    
-            try {
-                await uploadFilesAction(fileList, null);
-               
-            } catch (err) {
-                console.error("Error uploading file:", err);
-            }
-        }}> 
+        <button
+            onClick={async () => {
+                const noteText = editor.getHTML()
+                const notefile = new File([noteText], title + ".txt", {
+                    type: "text/html",
+                });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(notefile);
+                const fileList = dataTransfer.files;
+                try {
+                    await uploadFilesAction(fileList, null);
+                } catch (err) {
+                    console.error("Error uploading file:", err);
+                }
+            }}
+            style={{
+                padding: "0.5rem 1rem",
+                border: "1px solid var(--foreground)",
+                borderRadius: "var(--border-rad)",
+                background: "transparent",
+                color: "var(--foreground)",
+                cursor: "pointer",
+                fontSize: "1rem",
+            }}
+        >
             Save
         </button>
 
