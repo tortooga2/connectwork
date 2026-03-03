@@ -3,11 +3,25 @@
 
 
 :root {
-  --background: #191715;
-  --foreground: #fff7e3;
+  --background:  #2a2e3e;
+  --accent-color: #1f242f;
+  --foreground: #d3d3d3;
   --border-rad: 0.5rem;
   --border-width: 0.15rem;
 
+    --bundle-color-1: #fcefef;
+    --bundle-color-2: #d7827e;
+    --doc-color-1: #fcefef;
+    --doc-color-2: #ea9d34;
+    --note-color-1: #fcefef;
+    --note-color-2: #2a9d8f;
+    --rec-color-1: #fcefef;
+    --rec-color-2: #286983;
+    --img-color-1: #fcefef;
+    --img-color-2: #56949f;
+
+  --delete-color-1: #fcefef;
+  --delete-color-2: #e63946;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -45,7 +59,7 @@ h1{
 }
 
 p {
-  font-family: "Noto Sans", sans-serif;
+  font-family: sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -55,9 +69,12 @@ p {
 }
 
 div {
-  font-family: "Noto Sans", sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   font-optical-sizing: auto;
-  font-weight: 400;
+  /* text-transform: uppercase; */
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.05rem;
   font-style: normal;
   font-variation-settings:
     "wdth" 100,
@@ -68,7 +85,6 @@ div {
 
 a {
   color: inherit;
-  text-decoration: none;
 }
 
 .row{
@@ -92,16 +108,33 @@ a {
 
 }
 
+.row.header {
+  background-color: transparent;
+  border-radius: 0px;
+  font-weight: bold;
+  border-bottom : 1px solid var(--foreground);
+  color : #87abf7;
+  transition: background-color 0.2s ease-out, color 0.2s ease-out, padding-left 0.2s ease-out, padding-right 0.2s ease-out;
+
+}
+
+.column.header {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05rem;
+  color: var(--foreground);
+}
+
 @media (width < 768px) {
   .row{
     grid-template-columns:
-      1rem                    /* checkbox */
+      1.5rem                    /* checkbox */
       minmax(30px, 1fr)
       minmax(50px, 1fr)
       2rem
       0fr
       0fr
-      2.5rem;                /* button / "Actions" */
+      1.5rem;                /* button / "Actions" */
   gap: 1rem;
   padding : 0.5rem;
   align-items: center;
@@ -110,10 +143,11 @@ a {
 }
 }
 
-.row:hover {
 
-  background-color: var(--foreground);
-  color : var(--background);
+.row:not(.header):hover {
+
+  background-color: var(--background);
+  color : var(--foreground);
   transition: background-color 0.2s ease-out, color 0.2s ease-out, padding-left 0.2s ease-out, padding-right 0.2s ease-out;
 }
 
@@ -121,6 +155,47 @@ a {
   overflow: hidden; 
   text-wrap: nowrap;
   text-overflow: ellipsis;
+  color : var(--foreground);
+}
+
+.url {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  flex-direction : row;
+  gap : 0.5rem;
+  width: fit-content;
+  padding : 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  cursor : pointer;
+}
+
+.url:hover {
+  background-color: var(--accent-color);
+}
+
+.url.preview:hover {
+  background-color: var(--background);
+}
+
+.url > a {
+  text-decoration: underline;
+}
+
+
+
+.spacer {
+  width : 0%;
+  transition: width 0.2s ease-out;
+}
+
+.spacer.small{
+  width : 40%;
+  
+}
+
+.column.small {
+  text-align: center;
 }
 
 
@@ -128,4 +203,116 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+.dock{
+  height : fit-content;
+  background-color: var(--accent-color);
+  padding : 1rem;
+  border-radius: var(--border-rad);
+}
+
+.but {
+  background-color: var(--foreground);
+  color: var(--background);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-wrap: nowrap;
+  height : fit-content;
+}
+.but.new-note {
+  background-color: var(--note-color-2);
+  color: white;
+}
+.but.delete {
+  background-color: var(--delete-color-2);
+  color: white;
+  margin-right: 0rem;
+  text-wrap: nowrap;
+  margin-left: 1rem;
+}
+.but.linq {
+  font-family: 'EB Garamond', serif;
+  font-weight: 400;
+  background-color: var(--bundle-color-2);
+  color: white;
+  margin-right: 1rem;
+  transition: box-shadow 0.7s ease-in-out;
+}
+.but.linq.active {
+  box-shadow : 0 0 10px var(--bundle-color-2);
+}
+
+.but.linq.active:hover {
+  box-shadow : 0 0 20px var(--bundle-color-2);
+}
+
+.but.upload {
+  margin-right: 1rem;
+}
+
+.dock-item {
+  width : 0rem;
+  overflow: hidden;
+  border-radius: var(--border-rad);
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+  
+}
+
+.dock-item .but {
+  white-space: nowrap; /* prevents text wrapping during animation */
+}
+
+.dock-item.active {
+  opacity: 1;
+  width : 4.9rem;
+}
+
+
+.but-content {
+  display: flex;
+  align-items: center;
+
+}
+
+.view-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-button button {
+  background-color: transparent;
+  border: none;
+  color: var(--foreground);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.view-button button:hover {
+  background-color: var(--accent-color);
+}
+
+.select-column > input[type="checkbox"] {
+  background-color: transparent;
+  border: none;
+  color: var(--foreground);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.select-column > input[type="checkbox"]:hover {
+  background-color: var(--accent-color);
 }

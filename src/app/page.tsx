@@ -12,63 +12,39 @@ export default async function Home() {
 
     return (
         <div className={styles.page}>
-            <header
-                style={{
-                    width: "100%",
-                }}
-            >
-                <nav
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "1rem 2rem",
-                    }}
-                >
-                    <h1>Connectwork</h1>
-                    <div style={{ display: "flex", gap: "1rem" }}>
-                        <SignedOut>
-                            <SignInButton />
-                            <SignUpButton />
-                        </SignedOut>
-                    </div>
-                </nav>
+            <header className={styles.authHeader}>
+                <h1 className={styles.authTitle}>Linquiq</h1>
+                <div className={styles.authButtons}>
+                    <SignedOut>
+                        <SignInButton>
+                            <button type="button" className={styles.authBtn}>
+                                Sign in
+                            </button>
+                        </SignInButton>
+                        <SignUpButton>
+                            <button type="button" className={styles.authBtn}>
+                                Sign up
+                            </button>
+                        </SignUpButton>
+                    </SignedOut>
+                </div>
             </header>
 
-            <main className="landing-main">
-                <section className="hero-section">
-                    <div className="hero-left">
-                        <h2 className="hero-heading">Capture Your Info</h2>
-                        <p className="hero-description">
-                            Create your personalized layout of information from
-                            conferences and expo events that has links, business
-                            cards, photos, and detailed description of your
-                            links such as date, location, and type.
-                        </p>
-                        {/* <button className="start-button" onClick={() => console.log('Start Here Clicked')}>Start Here</button> */}
-                    </div>
-                    <div className="hero-right"></div>
+            <main className={styles.landingMain}>
+                <section className={styles.heroSection}>
+                    <h2 className={styles.heroHeading}>Capture Your Info</h2>
+                    <p className={styles.heroDescription}>
+                        Create your personalized layout of information from
+                        conferences and expo events that has links, business
+                        cards, photos, and detailed description of your
+                        links such as date, location, and type.
+                    </p>
                 </section>
             </main>
 
-            <div
-                style={{
-                    position: "absolute",
-                    bottom: "0",
-                    right: "0",
-                    color: "#cc674b",
-                    fontSize: "0.8rem",
-                    fontFamily: `"Playfair Display", serif`,
-                    padding: "0.5rem",
-                }}
-            >
-                @2025 Bundle,{" "}
-                <span style={{ fontStyle: "italic" }}>
-                    {" "}
-                    Networking Application{" "}
-                </span>
-                . All rights reserved.
-            </div>
+            <footer className={styles.landingFooter}>
+                © 2025 Bundle, <em>Networking Application</em>. All rights reserved.
+            </footer>
         </div>
     );
 }

@@ -1,7 +1,11 @@
+import { FileData } from "@/app/components/FileDisplay";
+import Bundle from "@/app/components/Preview/Views/Bundle";
+import { NewPage, VerticalDiv } from "@/app/components/UILayout";
 import { getFileData } from "@/lib/server/getFileData";
 import { getFileUrl } from "@/lib/server/getFileUrl";
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
+import { UserButton } from "@clerk/nextjs";
 
 // 1. Update the type to expect a Promise
 export default async function PreviewPage({ 
@@ -9,6 +13,8 @@ export default async function PreviewPage({
 }: { 
     params: Promise<{ file_id: string }> 
 }) {
+    
+    const heightOfTopBar = "3%";
     const { userId } = await auth();
     
     if(!userId){
@@ -38,10 +44,22 @@ export default async function PreviewPage({
     }, false);
 
     return (
-        <div className="p-10">
-            <h1>Preview Page for file: {fileId}</h1>
-            <pre className="bg-gray-100 p-4">{JSON.stringify(fileData, null, 2)}</pre>
-            <pre className="bg-gray-100 p-4">{JSON.stringify(fileUrl, null, 2)}</pre>
-        </div>
+        <NewPage>
+            <VerticalDiv style={{alignItems: "center"}} padding="1rem">
+                <div style={{height: heightOfTopBar, minHeight: `calc(${heightOfTopBar} + 1rem)`, width : "100%", padding: "0rem 2rem", display : "flex", alignItems : "center", justifyContent : "space-between", boxSizing : "border-box", zIndex : "2"}}>
+                            <h1 style={{fontSize : "2rem", color: "var(--bundle-color-2)", margin: 0}}>Linquiq</h1>
+                            <UserButton/>
+                                
+                </div>
+                <VerticalDiv width="65%" padding="0rem">
+                    <FileData fileData={fileData} />
+                    <VerticalDiv  style={{borderRadius: "var(--border-rad)", scrollbarWidth : "auto", }} padding="0rem" gap="1rem">
+                        <div style={{padding: "1rem", boxSizing : "border-box", backgroundColor : "var(--accent-color)", borderRadius : "var(--border-rad)", overflowY : "auto"}}>
+                            <Bundle bundle_data={fileUrl || undefined} />
+                        </div>
+                    </VerticalDiv>
+                </VerticalDiv>
+            </VerticalDiv>
+        </NewPage>
     );
 }

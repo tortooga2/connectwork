@@ -32,6 +32,6 @@ export async function GET(
 
         return NextResponse.json({ url });
     } catch (error) {
-        return NextResponse.json({ message: "Error generating URL" }, { status: 500 });
+        return NextResponse.json({ message: "Error generating URL" + error }, { status: 500 });
     }
 }

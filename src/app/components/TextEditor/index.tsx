@@ -1,14 +1,13 @@
 "use client"
 
 import "./style.css"
-
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import StarterKit from '@tiptap/starter-kit'
 import { EditorContent, useEditor } from '@tiptap/react'
 
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from 'lowlight'
-import React, { useRef, useState } from 'react'
+import React, {useState } from 'react'
 
 import { FileType } from "../TypeTags"
 import { useFileStore } from "@/app/components/State Manager/appManager"
@@ -17,11 +16,10 @@ import { useFileStore } from "@/app/components/State Manager/appManager"
 const lowlight = createLowlight(all)
 
 
-export default () => {
+export const TextEditor = () => {
 
 
   const [title, setTitle] = useState("Untitled Note")
-  const contentRef = useRef<HTMLHeadingElement>(null)
   const uploadFilesAction = useFileStore((state) => state.uploadFiles);
   const editor = useEditor({
     extensions: [
@@ -40,7 +38,7 @@ export default () => {
 
   return (
     <>
-    <div style={{ borderRadius : "var(--border-rad)", border : "var(--border-width) solid var(--foreground)", padding : "1rem", display : "flex", flexDirection : "column", gap : "1rem"}}>
+    <div style={{ padding : "1rem", display : "flex", flexDirection : "column", gap : "1rem"}}>
         <input onChange={(e)=>{
             setTitle(e.currentTarget.value)
         }} style={{
@@ -65,25 +63,31 @@ export default () => {
 
       
     </div>
-        <button onClick={async ()=>{
-            console.log(editor.getHTML())
-            const noteText = editor.getHTML()
-            const notefile = new File([noteText], title + ".txt", {
-                type: "text/html",
-            });
-    
-            // Convert File[] to FileList using DataTransfer
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(notefile);
-            const fileList = dataTransfer.files;
-    
-            try {
-                await uploadFilesAction(fileList, null);
-               
-            } catch (err) {
-                
-            }
-        }}> 
+        <button
+            onClick={async () => {
+                const noteText = editor.getHTML()
+                const notefile = new File([noteText], title + ".txt", {
+                    type: "text/html",
+                });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(notefile);
+                const fileList = dataTransfer.files;
+                try {
+                    await uploadFilesAction(fileList, null);
+                } catch (err) {
+                    console.error("Error uploading file:", err);
+                }
+            }}
+            style={{
+                padding: "0.5rem 1rem",
+                border: "1px solid var(--foreground)",
+                borderRadius: "var(--border-rad)",
+                background: "transparent",
+                color: "var(--foreground)",
+                cursor: "pointer",
+                fontSize: "1rem",
+            }}
+        >
             Save
         </button>
 

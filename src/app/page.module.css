@@ -1,3 +1,51 @@
+/* Landing auth: title + vertical centered buttons */
+.authHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.authTitle {
+  font-size: 4rem;
+  font-weight: 700;
+  margin: 0 0 2rem;
+  color: var(--bundle-color-2);
+}
+
+.authButtons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.authBtn {
+  appearance: none;
+  min-width: 140px;
+  height: 40px;
+  padding: 0 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--bundle-color-2);
+  background: transparent;
+  color: var(--bundle-color-2);
+  transition: background 0.2s, color 0.2s;
+}
+
+.authBtn:hover {
+  background: var(--bundle-color-2);
+  color: #fff;
+}
+
 .page {
   --gray-rgb: 0, 0, 0;
   --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
@@ -6,14 +54,56 @@
   --button-primary-hover: #383838;
   --button-secondary-hover: #f2f2f2;
 
-  display: grid;
-  grid-template-rows: 20px 1fr 20px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
   min-height: 100svh;
-  padding: 80px;
-  gap: 64px;
+  padding: 1.5rem;
+  gap: 2rem;
   font-family: var(--font-geist-sans);
+  box-sizing: border-box;
+}
+
+/* Description block: closer to auth, readable */
+.landingMain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 520px;
+  margin: 0;
+}
+
+.heroSection {
+  width: 100%;
+}
+
+.heroHeading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--foreground);
+}
+
+.heroDescription {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  margin: 0;
+  color: var(--foreground);
+  opacity: 0.9;
+}
+
+.landingFooter {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--bundle-color-2);
+  opacity: 0.85;
+  font-style: normal;
+}
+
+.landingFooter em {
+  font-style: italic;
 }
 
 @media (prefers-color-scheme: dark) {
