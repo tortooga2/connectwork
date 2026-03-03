@@ -9,7 +9,7 @@ import { LinqButton } from "@/app/components/LinqButton"
 import { TextEditor } from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
 import { DeleteButton } from "@/app/components/DeleteButton"
-import { PencilLine, Upload } from "lucide-react"
+import { PencilLine, SquareArrowOutUpRight, Upload } from "lucide-react"
 
 
 export const Dashboard = ({}) => {
@@ -98,9 +98,9 @@ export const Dashboard = ({}) => {
                             </div>
                             <div style={{display : "flex", flexDirection : "column", gap : "0.5rem"}}>
                                 {FileType(previewedFile?.type, true, false)}
-                                <span><span style={{fontWeight : "bold"}}>File ID:</span> {previewedFile?.id}</span>
-                                <span><span style={{fontWeight : "bold"}}>File Url:</span> <a href={`http://${window.location.host}/preview/${previewedFile?.id}`}>{`http://${window.location.host}/preview/${previewedFile?.id}`}</a></span>
-                                <span><span style={{fontWeight : "bold"}}>Created:</span> {(previewedFile?.createdAt)?.toString()}</span>
+                                <span title={previewedFile?.id}><span style={{fontWeight : "bold"}}>File ID:</span> {previewedFile?.id}</span>
+                                <span><span style={{fontWeight : "bold"}}>File Url:</span><div><div className={"url preview"} onClick={() => window.open(`http://${window.location.host}/preview/${previewedFile?.id}`, "_blank")}>{<a>{`http://${window.location.host}/preview/${previewedFile?.id}`}</a>}<SquareArrowOutUpRight size={12}/></div></div></span>
+                                <span title={previewedFile?.createdAt}><span style={{fontWeight : "bold"}}>Created:</span > {new Date(previewedFile?.createdAt as string).toLocaleString()}</span>
                                 <span><span style={{fontWeight : "bold"}}>Creator:</span> {previewedFile?.creator_email}</span>
                             </div>
                         </div>
