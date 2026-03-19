@@ -6,7 +6,7 @@ export const Bundle = ({ layout = true, scaling=false }) => {
     return (
         <div className={`tag bundle${!layout ? " small" : ""}${!scaling ? " scaling" : ""}`}>
             <div className="marker" />
-            <div className={`text ${layout ? `${!scaling ? "scaling" : ""}` : "small"}`}>Bundle</div>
+            <div className={`text ${layout ? `${!scaling ? "scaling" : ""}` : "small"}`}>Linq</div>
         </div>
     );
 };

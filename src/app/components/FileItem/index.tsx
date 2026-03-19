@@ -47,6 +47,8 @@ export const FileItem = ({file} : {file : File}) => {
         SetOnEnter({width : "0%"})
     }, [])
 
+    const displayName = file.name === "Bundle" ? "Linq" : file.name
+
     return (
         <div>
             <div className={"row"}>
@@ -62,7 +64,7 @@ export const FileItem = ({file} : {file : File}) => {
                 <div className={"column"}>{new Date(file.createdAt).toLocaleString()}</div>
                 <div className={"column"}>{FileType(file.type, layoutState==0 || viewportWidth < 768, true)}</div>
                 <div className={"column"}>{file.creator_email}</div>
-                <div className={"column"}>{file.name}</div>
+                <div className={"column"}>{displayName}</div>
                 <div className={"view-button"}>
                     <button onClick={()=>{ SetPreviewFile(file); SetLayoutState(1); }}><Eye size={16}/></button>
                 </div>

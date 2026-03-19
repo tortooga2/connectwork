@@ -13,6 +13,13 @@ export type File = {
     creator_email : string | null
 }
 
+export type SearchResult = {
+    file: File,
+    matchedIn: "name" | "content" | "linked-content",
+    snippet: string | null,
+    matchedChildName?: string
+}
+
 interface FileManagerState {
     layoutState: number,
     SetLayoutState: (layoutNum: number) => void,
@@ -30,6 +37,11 @@ interface FileManagerState {
     SetPreviewedFile : (file : File | undefined) => void,
     error: string | null,
     SetError: (error: string | null) => void,
+    searchQuery: string,
+    SetSearchQuery: (query: string) => void,
+    searchResults: SearchResult[] | null,
+    SetSearchResults: (results: SearchResult[] | null) => void,
+    searchLoading: boolean,
 }
 
 export const useFileStore = create<FileManagerState>()((set, get) => ({
@@ -85,6 +97,12 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
 
     error: null,
     SetError: (error) => set({ error }),
+
+    searchQuery: "",
+    SetSearchQuery: (query) => set({ searchQuery: query }),
+    searchResults: null,
+    SetSearchResults: (results) => set({ searchResults: results }),
+    searchLoading: false,
 
     uploadFiles: async (files, onProgress = null) => {
         const { SetLoading, SetError, UpdateFiles } = get();
