@@ -64,13 +64,15 @@ const ListItem = ({ index, name, remove, percentage = 0 }) => {
             <div
                 style={{
                     position: "absolute",
-                    top: 0,
+                    bottom: 0,
                     left: 0,
-                    height: "100%",
+                    height: "4px",
                     width: `${percentage}%`,
-                    backgroundColor: "var(--background)",
-                    opacity: 0.5,
-                    borderRadius: "var(--border-rad)",
+                    backgroundColor: "rgba(34, 211, 238, 0.95)",
+                    borderRadius: "999px",
+                    transition: "width 0.15s linear",
+                    zIndex: 1001,
+                    pointerEvents: "none",
                 }}
             />
         </div>

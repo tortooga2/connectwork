@@ -184,8 +184,8 @@ export const Preview = () => {
         <VerticalDiv style={{width : "100%", height : "100%", padding : "1rem", boxSizing : "border-box", overflowY : "auto"}}> 
             
             {fileType==="Bundle" && fileUrl !== undefined ? (
-                    DisplayFile()
-                ) : (<Bundle bundle_data={fileUrl || undefined} />)}
+                    <Bundle bundle_data={fileUrl} />
+                ) : (DisplayFile())}
                 
             
         </VerticalDiv>

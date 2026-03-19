@@ -1,5 +1,6 @@
 import { FileData } from "@/app/components/FileDisplay";
 import Bundle from "@/app/components/Preview/Views/Bundle";
+import { SingleFilePreview } from "@/app/components/Preview/Views/SingleFile";
 import { NewPage, VerticalDiv } from "@/app/components/UILayout";
 import { getFileData } from "@/lib/server/getFileData";
 import { getFileUrl } from "@/lib/server/getFileUrl";
@@ -55,7 +56,14 @@ export default async function PreviewPage({
                     <FileData fileData={fileData} />
                     <VerticalDiv  style={{borderRadius: "var(--border-rad)", scrollbarWidth : "auto", }} padding="0rem" gap="1rem">
                         <div style={{padding: "1rem", boxSizing : "border-box", backgroundColor : "var(--accent-color)", borderRadius : "var(--border-rad)", overflowY : "auto"}}>
-                            <Bundle bundle_data={fileUrl || undefined} />
+                            {fileData.type.toLowerCase() === "bundle" ? (
+                                <Bundle bundle_data={fileUrl || undefined} />
+                            ) : (
+                                <SingleFilePreview
+                                    fileUrl={fileUrl?.[0]?.url}
+                                    fileType={fileData.type}
+                                />
+                            )}
                         </div>
                     </VerticalDiv>
                 </VerticalDiv>
