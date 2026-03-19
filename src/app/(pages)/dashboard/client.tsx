@@ -39,7 +39,7 @@ export const Dashboard = ({}) => {
                                 
                         </div>
                             
-                        <VerticalDiv padding="0rem">    
+                        <VerticalDiv padding="0rem" style={{height: `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`}}>    
                             <HorizontalDiv style={{position: "relative", height: `100%`, zIndex : "1", transition : "width 0.2s, left 0.2s, right 0.2s"}} layouts={[
                                     {
                                         left : 0,

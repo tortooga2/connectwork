@@ -4,6 +4,8 @@ import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
 import { Search, X } from "lucide-react"
+import Box from "@mui/material/Box"
+import LinearProgress from "@mui/material/LinearProgress"
 
 export const FilesList = () => {
     const files = useFileStore((state)=>state.files)
@@ -15,6 +17,8 @@ export const FilesList = () => {
     const searchResults = useFileStore((state)=>state.searchResults)
     const SetSearchResults = useFileStore((state)=>state.SetSearchResults)
     const searchLoading = useFileStore((state)=>state.searchLoading)
+    const actionLoading = useFileStore((state)=>state.actionLoading)
+    const actionLabel = useFileStore((state)=>state.actionLabel)
 
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -158,6 +162,25 @@ export const FilesList = () => {
                     <FileItem key={file.id} file={file} />
                 ))}
             </VerticalDiv>
+            {actionLoading && (
+                <div style={{ width: "100%", marginTop: "0.25rem" }}>
+                    <Box sx={{ width: "100%" }}>
+                        <LinearProgress
+                            sx={{
+                                height: 4,
+                                borderRadius: 0,
+                                backgroundColor: "rgba(255,255,255,0.08)",
+                                "& .MuiLinearProgress-bar": {
+                                    backgroundColor: "var(--bundle-color-2)",
+                                },
+                            }}
+                        />
+                    </Box>
+                    {actionLabel && (
+                        <span style={{ fontSize: "0.75rem", opacity: 0.75 }}>{actionLabel}</span>
+                    )}
+                </div>
+            )}
         </VerticalDiv>
     )
 }

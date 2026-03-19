@@ -42,6 +42,9 @@ interface FileManagerState {
     searchResults: SearchResult[] | null,
     SetSearchResults: (results: SearchResult[] | null) => void,
     searchLoading: boolean,
+    actionLoading: boolean,
+    actionLabel: string,
+    SetActionLoading: (loading: boolean, label?: string) => void,
 }
 
 export const useFileStore = create<FileManagerState>()((set, get) => ({
@@ -103,6 +106,9 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
     searchResults: null,
     SetSearchResults: (results) => set({ searchResults: results }),
     searchLoading: false,
+    actionLoading: false,
+    actionLabel: "",
+    SetActionLoading: (loading, label = "") => set({ actionLoading: loading, actionLabel: label }),
 
     uploadFiles: async (files, onProgress = null) => {
         const { SetLoading, SetError, UpdateFiles } = get();

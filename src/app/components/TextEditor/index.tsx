@@ -19,8 +19,9 @@ const lowlight = createLowlight(all)
 export const TextEditor = () => {
 
 
-  const [title, setTitle] = useState("Untitled Note")
+  const [title, setTitle] = useState("")
   const uploadFilesAction = useFileStore((state) => state.uploadFiles);
+  const SetActionLoading = useFileStore((state) => state.SetActionLoading);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -48,9 +49,9 @@ export const TextEditor = () => {
         borderBottom : " var(--border-width) solid var(--foreground)",
         outline : "none",
         backgroundColor : "transparent",
-        color : "var(--foreground)",
+        color : title.trim() ? "var(--foreground)" : "rgba(255, 255, 255, 0.55)",
         margin : "0.5rem",
-        }} value={title}/>
+        }} value={title} placeholder="Title (optional)"/>
 
         <div style={{marginLeft : "0.5rem"}}>
             {FileType("md")}
@@ -66,16 +67,27 @@ export const TextEditor = () => {
         <button
             onClick={async () => {
                 const noteText = editor.getHTML()
-                const notefile = new File([noteText], title + ".txt", {
+                const plainText = editor.getText().replace(/\s+/g, " ").trim()
+                const fallbackTitle = plainText.length >= 8
+                    ? plainText.slice(0, 8)
+                    : plainText.length >= 4
+                        ? plainText
+                        : (plainText.length > 0 ? plainText : "Untitled Note")
+                const resolvedTitle = (title.trim() || fallbackTitle).replace(/[\\/:*?"<>|]/g, "-")
+
+                const notefile = new File([noteText], resolvedTitle + ".txt", {
                     type: "text/html",
                 });
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(notefile);
                 const fileList = dataTransfer.files;
                 try {
+                    SetActionLoading(true, "Saving note...")
                     await uploadFilesAction(fileList, null);
                 } catch (err) {
                     console.error("Error uploading file:", err);
+                } finally {
+                    SetActionLoading(false)
                 }
             }}
             style={{

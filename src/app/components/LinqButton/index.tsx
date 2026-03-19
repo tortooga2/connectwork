@@ -9,14 +9,20 @@ export const LinqButton = () => {
     const selectedFiles = useFileStore((state)=>state.selectedFiles)
     const ClearSelection = useFileStore((state)=>state.ClearSelection)
     const UpdateFiles = useFileStore((state)=>state.UpdateFiles)
+    const SetActionLoading = useFileStore((state)=>state.SetActionLoading)
 
     return (
 
     <button className={selectedFiles.size > 0 ? "but linq active" : "but linq"} onClick={async () => {
         if(selectedFiles.size > 0) {
-            const bundle = await Bundle(Array.from(selectedFiles)) as {bundle: FileData, links: {to_id: string, from_id: string}[]}
-            ClearSelection()
-            UpdateFiles([bundle?.bundle as any])
+            SetActionLoading(true, "Linqing files...")
+            try {
+                const bundle = await Bundle(Array.from(selectedFiles)) as {bundle: FileData, links: {to_id: string, from_id: string}[]}
+                ClearSelection()
+                UpdateFiles([bundle?.bundle as any])
+            } finally {
+                SetActionLoading(false)
+            }
         }
     }}>
         <div className={"but-content"} style={{display : "flex", alignItems : "center"}}>

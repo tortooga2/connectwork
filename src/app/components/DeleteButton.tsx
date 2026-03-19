@@ -6,6 +6,7 @@ export const DeleteButton = () => {
     const selectedFiles = useFileStore((state) => state.selectedFiles);
     const ClearSelection = useFileStore((state) => state.ClearSelection);
     const deleteFiles = useFileStore((state) => state.deleteFiles);
+    const SetActionLoading = useFileStore((state) => state.SetActionLoading);
 
     const isActive = selectedFiles.size > 0;
     return (
@@ -13,8 +14,13 @@ export const DeleteButton = () => {
             className={`but delete ${isActive ? "active" : ""}`}
             onClick={async () => {
                 if (selectedFiles.size > 0) {
-                    await deleteFiles();
-                    ClearSelection()
+                    SetActionLoading(true, "Deleting files...")
+                    try {
+                        await deleteFiles();
+                        ClearSelection()
+                    } finally {
+                        SetActionLoading(false)
+                    }
                 }
             }}
             style={{
