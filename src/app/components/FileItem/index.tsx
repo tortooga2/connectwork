@@ -47,7 +47,7 @@ export const FileItem = ({file} : {file : File}) => {
         SetOnEnter({width : "0%"})
     }, [])
 
-    const displayName = file.name === "Bundle" ? "Linq" : file.name
+    const displayName = file.name === "Bundle" ? "linq" : file.name
 
     return (
         <div>

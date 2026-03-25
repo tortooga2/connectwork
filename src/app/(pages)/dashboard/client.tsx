@@ -24,7 +24,7 @@ export const Dashboard = ({}) => {
     const heightOfTopBar = "3%";
     // avoid server-side window access
     const previewUrl = previewedFile?.id ? `/preview/${previewedFile.id}` : "#";
-    const previewName = previewedFile?.name === "Bundle" ? "Linq" : previewedFile?.name;
+    const previewName = previewedFile?.name === "Bundle" ? "linq" : previewedFile?.name;
     const previewCreatedAt = previewedFile?.createdAt ? new Date(previewedFile.createdAt) : null;
     const createdLocal = previewCreatedAt && !Number.isNaN(previewCreatedAt.getTime()) ? previewCreatedAt.toLocaleString() : "Unknown";
     const createdUtc = previewCreatedAt && !Number.isNaN(previewCreatedAt.getTime()) ? previewCreatedAt.toISOString() : "Unknown";
@@ -140,7 +140,7 @@ export const Dashboard = ({}) => {
                             <div style={{display : "flex", flexDirection : "column", gap : "0.5rem"}}>
                                 {FileType(previewedFile?.type, true, false)}
                                 <span><span style={{fontWeight : "bold"}}>File ID:</span> {previewedFile?.id}</span>
-                                <span><span style={{fontWeight : "bold"}}>File Url:</span> <a href={previewUrl}>{previewUrl}</a></span>
+                                <span><span style={{fontWeight : "bold"}}>File Url:</span> <a href={previewUrl} target="_blank" rel="noopener noreferrer">{previewUrl}</a></span>
                                 <span><span style={{fontWeight : "bold"}}>Created:</span> {createdLocal}</span>
                                 <span><span style={{fontWeight : "bold"}}>UTC:</span> {createdUtc}</span>
                                 <span><span style={{fontWeight : "bold"}}>Creator:</span> {previewedFile?.creator_email}</span>

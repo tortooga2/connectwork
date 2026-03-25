@@ -1,11 +1,50 @@
 "use client"
-import { useEffect, useMemo, useRef, useCallback } from "react"
+import { useEffect, useMemo, useRef, useCallback, useState } from "react"
 import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
-import { Search, X } from "lucide-react"
+import { Search, X, SlidersHorizontal, ChevronUp, ChevronDown } from "lucide-react"
 import Box from "@mui/material/Box"
 import LinearProgress from "@mui/material/LinearProgress"
+import { getFileType } from "@/lib/client/getFileType"
+
+const FILE_TYPE_OPTIONS = [
+    { label: "linq",      value: "Bundle"    },
+    { label: "Document",  value: "Document"  },
+    { label: "Note",      value: "Note"      },
+    { label: "Recording", value: "Recording" },
+    { label: "Image",     value: "Image"     },
+]
+
+const TIME_OPTIONS = [
+    { label: "Today",      value: "today"  },
+    { label: "This Week",  value: "week"   },
+    { label: "This Month", value: "month"  },
+    { label: "This Year",  value: "year"   },
+]
+
+function getTimeStart(option: string): Date {
+    const now = new Date()
+    switch (option) {
+        case "today": {
+            const d = new Date(now); d.setHours(0, 0, 0, 0); return d
+        }
+        case "week": {
+            const d = new Date(now)
+            d.setDate(d.getDate() - d.getDay())
+            d.setHours(0, 0, 0, 0)
+            return d
+        }
+        case "month": {
+            return new Date(now.getFullYear(), now.getMonth(), 1)
+        }
+        case "year": {
+            return new Date(now.getFullYear(), 0, 1)
+        }
+        default:
+            return new Date(0)
+    }
+}
 
 export const FilesList = () => {
     const files = useFileStore((state)=>state.files)
@@ -21,6 +60,26 @@ export const FilesList = () => {
     const actionLabel = useFileStore((state)=>state.actionLabel)
 
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const filterRef = useRef<HTMLDivElement>(null)
+
+    // sort & filter state (local to this component)
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+    const [filterTypes, setFilterTypes] = useState<Set<string>>(new Set())
+    const [filterTime, setFilterTime] = useState<string | null>(null)
+    const [filterOpen, setFilterOpen] = useState(false)
+
+    const hasActiveFilters = filterTypes.size > 0 || filterTime !== null
+
+    // close dropdown when clicking outside
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+                setFilterOpen(false)
+            }
+        }
+        document.addEventListener("mousedown", handler)
+        return () => document.removeEventListener("mousedown", handler)
+    }, [])
 
     useEffect(()=>{
         const getFiles = async () => {
@@ -67,28 +126,55 @@ export const FilesList = () => {
         SetSearchResults(null)
     }
 
+    const toggleType = (value: string) => {
+        setFilterTypes(prev => {
+            const next = new Set(prev)
+            if (next.has(value)) next.delete(value)
+            else next.add(value)
+            return next
+        })
+    }
+
+    const clearFilters = () => {
+        setFilterTypes(new Set())
+        setFilterTime(null)
+    }
+
     const sortedFiles = useMemo(() => {
         return Array.from(files.values()).sort((a, b) => {
             const dateA = new Date(a.createdAt).getTime()
             const dateB = new Date(b.createdAt).getTime()
-            return dateB - dateA
+            return sortOrder === "desc" ? dateB - dateA : dateA - dateB
         })
-    }, [files])
+    }, [files, sortOrder])
 
     const isSearchActive = searchQuery.trim().length > 0
 
-    // when searching, show matched files; otherwise show all
-    const displayFiles = useMemo(() => {
+    // base list: search results or all sorted files
+    const baseFiles = useMemo(() => {
         if (isSearchActive && searchResults) {
             return searchResults.map(r => r.file)
         }
         return sortedFiles
     }, [isSearchActive, searchResults, sortedFiles])
 
+    // apply type + time filters on top of base list
+    const displayFiles = useMemo(() => {
+        let result = baseFiles
+        if (filterTypes.size > 0) {
+            result = result.filter(f => filterTypes.has(getFileType(f.type)))
+        }
+        if (filterTime) {
+            const cutoff = getTimeStart(filterTime).getTime()
+            result = result.filter(f => new Date(f.createdAt).getTime() >= cutoff)
+        }
+        return result
+    }, [baseFiles, filterTypes, filterTime])
+
     return(
         <VerticalDiv style={{borderRadius : "var(--border-rad)", padding : "1rem"}} color="var(--accent-color)" padding="0rem" gap="0.5rem">
 
-            {/* search bar */}
+            {/* search bar + filter button row */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0" }}>
                 <Search size={16} style={{ opacity: 0.5 }} />
                 <input
@@ -112,6 +198,119 @@ export const FilesList = () => {
                         <X size={16} />
                     </button>
                 )}
+
+                {/* filter button */}
+                <div ref={filterRef} style={{ position: "relative" }}>
+                    <button
+                        onClick={() => setFilterOpen(v => !v)}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.3rem",
+                            padding: "0.4rem 0.65rem",
+                            border: `1px solid ${hasActiveFilters ? "var(--bundle-color-2)" : "var(--foreground)"}`,
+                            borderRadius: "var(--border-rad)",
+                            background: hasActiveFilters ? "rgba(var(--bundle-color-2-rgb, 120,80,255), 0.15)" : "rgba(255,255,255,0.08)",
+                            color: hasActiveFilters ? "var(--bundle-color-2)" : "var(--foreground)",
+                            cursor: "pointer",
+                            fontSize: "0.85rem",
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        <SlidersHorizontal size={14} />
+                        Filter
+                        {hasActiveFilters && (
+                            <span style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "16px",
+                                height: "16px",
+                                borderRadius: "50%",
+                                background: "var(--bundle-color-2)",
+                                color: "var(--background)",
+                                fontSize: "0.65rem",
+                                fontWeight: "bold",
+                            }}>
+                                {filterTypes.size + (filterTime ? 1 : 0)}
+                            </span>
+                        )}
+                    </button>
+
+                    {filterOpen && (
+                        <div style={{
+                            position: "absolute",
+                            top: "calc(100% + 0.4rem)",
+                            right: 0,
+                            zIndex: 500,
+                            background: "var(--accent-color)",
+                            border: "1px solid var(--foreground)",
+                            borderRadius: "var(--border-rad)",
+                            padding: "0.75rem",
+                            minWidth: "180px",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.6rem",
+                        }}>
+                            {/* type filters */}
+                            <div style={{ fontSize: "0.75rem", opacity: 0.55, fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>File Type</div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                                {FILE_TYPE_OPTIONS.map(opt => (
+                                    <label key={opt.value} style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem" }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={filterTypes.has(opt.value)}
+                                            onChange={() => toggleType(opt.value)}
+                                            style={{ accentColor: "var(--bundle-color-2)", cursor: "pointer" }}
+                                        />
+                                        {opt.label}
+                                    </label>
+                                ))}
+                            </div>
+
+                            <div style={{ height: "1px", background: "rgba(255,255,255,0.12)" }} />
+
+                            {/* time filters */}
+                            <div style={{ fontSize: "0.75rem", opacity: 0.55, fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>Time Range</div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                                {TIME_OPTIONS.map(opt => (
+                                    <label key={opt.value} style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem" }}>
+                                        <input
+                                            type="radio"
+                                            name="filter-time"
+                                            checked={filterTime === opt.value}
+                                            onChange={() => setFilterTime(filterTime === opt.value ? null : opt.value)}
+                                            onClick={() => { if (filterTime === opt.value) setFilterTime(null) }}
+                                            style={{ accentColor: "var(--bundle-color-2)", cursor: "pointer" }}
+                                        />
+                                        {opt.label}
+                                    </label>
+                                ))}
+                            </div>
+
+                            {hasActiveFilters && (
+                                <>
+                                    <div style={{ height: "1px", background: "rgba(255,255,255,0.12)" }} />
+                                    <button
+                                        onClick={clearFilters}
+                                        style={{
+                                            background: "transparent",
+                                            border: "1px solid var(--foreground)",
+                                            color: "var(--foreground)",
+                                            borderRadius: "var(--border-rad)",
+                                            padding: "0.3rem 0.5rem",
+                                            cursor: "pointer",
+                                            fontSize: "0.8rem",
+                                            opacity: 0.7,
+                                        }}
+                                    >
+                                        Clear filters
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* search status */}
@@ -147,10 +346,50 @@ export const FilesList = () => {
                 </div>
             )}
 
+            {/* active filter summary */}
+            {hasActiveFilters && !filterOpen && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", alignItems: "center" }}>
+                    {Array.from(filterTypes).map(t => (
+                        <span key={t} style={{
+                            display: "inline-flex", alignItems: "center", gap: "0.25rem",
+                            fontSize: "0.75rem", padding: "0.15rem 0.45rem",
+                            borderRadius: "999px", background: "rgba(255,255,255,0.1)",
+                            border: "1px solid var(--bundle-color-2)",
+                            color: "var(--bundle-color-2)",
+                        }}>
+                            {FILE_TYPE_OPTIONS.find(o => o.value === t)?.label ?? t}
+                            <button onClick={() => toggleType(t)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, lineHeight: 1, display: "flex" }}><X size={10} /></button>
+                        </span>
+                    ))}
+                    {filterTime && (
+                        <span style={{
+                            display: "inline-flex", alignItems: "center", gap: "0.25rem",
+                            fontSize: "0.75rem", padding: "0.15rem 0.45rem",
+                            borderRadius: "999px", background: "rgba(255,255,255,0.1)",
+                            border: "1px solid var(--bundle-color-2)",
+                            color: "var(--bundle-color-2)",
+                        }}>
+                            {TIME_OPTIONS.find(o => o.value === filterTime)?.label}
+                            <button onClick={() => setFilterTime(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, lineHeight: 1, display: "flex" }}><X size={10} /></button>
+                        </span>
+                    )}
+                </div>
+            )}
+
             <div className={"row header"}>
                 <div className={"column header"}></div>
                 <div className={"column header"}>ID:</div>
-                <div className={"column header"}>Created At:</div>
+                <div
+                    className={"column header"}
+                    onClick={() => setSortOrder(o => o === "desc" ? "asc" : "desc")}
+                    style={{ cursor: "pointer", userSelect: "none", display: "flex", alignItems: "center", gap: "0.25rem" }}
+                >
+                    Created At:
+                    <span style={{ display: "flex", flexDirection: "column", lineHeight: 1, opacity: 0.7 }}>
+                        <ChevronUp size={11} style={{ opacity: sortOrder === "asc" ? 1 : 0.35, marginBottom: "-2px" }} />
+                        <ChevronDown size={11} style={{ opacity: sortOrder === "desc" ? 1 : 0.35 }} />
+                    </span>
+                </div>
                 <div className={"column header"} style={{ display : "flex", flex : "row"}}><div className={layout == 0 ? "spacer" : "spacer small"}/><span>Type:</span></div>
                 <div className={"column header"}>Creator:</div>
                 <div className={"column header"}>Name:</div>
