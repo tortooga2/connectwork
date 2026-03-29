@@ -1,5 +1,7 @@
 "use client"
 
+import type { entryTable } from "@/db/schema";
+import type { FileUrlResult } from "@/lib/server/getFileUrl";
 import { useFileStore } from "@/app/components/State Manager/appManager";
 import { getFileType } from "@/lib/client/getFileType";
 import { FileType } from "@/app/components/TypeTags";
@@ -19,6 +21,7 @@ const formatCreatedUtc = (value: unknown) => {
     return Number.isNaN(d.getTime()) ? "Unknown" : d.toISOString()
 }
 
+type EntryRow = typeof entryTable.$inferSelect
 
 const NoteView = ({fileUrl}: {fileUrl: string}) => {
     const [fileSrc, setFileSrc] = useState<string | undefined>(undefined)
@@ -41,7 +44,7 @@ const NoteView = ({fileUrl}: {fileUrl: string}) => {
 
 
 // renders inline content for a single linked file based on its type
-const InlineContent = ({ file, url }: { file: any, url?: string }) => {
+const InlineContent = ({ file, url }: { file: EntryRow; url?: string }) => {
     const videoRef = useRef<HTMLVideoElement>(null)
     const safeUrl = typeof url === "string" && url.trim() !== "" ? url : undefined
 
@@ -57,7 +60,7 @@ const InlineContent = ({ file, url }: { file: any, url?: string }) => {
             )
         case "Image":
             if (!safeUrl) return <div style={{ fontSize: "0.8rem", opacity: 0.6 }}>Loading...</div>
-            return <img src={safeUrl} width="100%" style={{ borderRadius: "var(--border-rad)", objectFit: "contain" }} />
+            return <img src={safeUrl} width="100%" alt="" style={{ borderRadius: "var(--border-rad)", objectFit: "contain" }} />
         case "Recording":
             if (!safeUrl) return <div style={{ fontSize: "0.8rem", opacity: 0.6 }}>Loading...</div>
             return <video ref={videoRef} src={safeUrl} controls width="100%" style={{ borderRadius: "var(--border-rad)" }} />
@@ -71,13 +74,13 @@ const InlineContent = ({ file, url }: { file: any, url?: string }) => {
 
 
 // card for a single linked file, showing metadata + inline content
-const LinkedFileCard = ({ file, url }: { file: any, url?: string }) => {
+const LinkedFileCard = ({ file, url }: { file: EntryRow; url?: string }) => {
     const [copied, setCopied] = useState(false)
     const previewPath = `/preview/${file.id}`
     const previewUrl = typeof window !== "undefined"
         ? `${window.location.origin}${previewPath}`
         : previewPath
-    const displayName = file.name === "Bundle" ? "Linq" : file.name
+    const displayName = file.name === "Bundle" ? "linq" : file.name
 
     const copyUrl = async () => {
         await navigator.clipboard.writeText(previewUrl)
@@ -140,14 +143,18 @@ const LinkedFileCard = ({ file, url }: { file: any, url?: string }) => {
 }
 
 
-const Bundle = ({bundle_data}: {bundle_data: {url: string | undefined, data: any}[] | undefined}) => {
+function isEntryRow(data: unknown): data is EntryRow {
+    return typeof data === "object" && data !== null && "id" in data && "type" in data
+}
+
+const Bundle = ({ bundle_data }: { bundle_data: FileUrlResult[] | undefined }) => {
     // layoutState kept in scope for future video play/pause logic per card
     useFileStore((state)=>state.layoutState)
 
     return (
         <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "1rem" }}>
             {bundle_data?.map((item, index) => (
-                item.data
+                isEntryRow(item.data)
                     ? <LinkedFileCard key={item.data.id ?? index} file={item.data} url={item.url} />
                     : null
             ))}

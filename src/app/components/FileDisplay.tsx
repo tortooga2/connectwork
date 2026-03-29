@@ -1,7 +1,12 @@
 "use client"
 import { FileType } from "@/app/components/TypeTags";
+import type { entryTable } from "@/db/schema";
 
-export const FileData = ({fileData}: {fileData: any}) => {
+// type for the file data 
+type EntryRow = typeof entryTable.$inferSelect;
+
+// ensures that the file data is displayed correctly in the preview page by importing the file data from the database
+export const FileData = ({ fileData }: { fileData: EntryRow | null | undefined }) => {
     const createdAt = fileData?.createdAt ? new Date(fileData.createdAt) : null
     const createdLocal = createdAt && !Number.isNaN(createdAt.getTime()) ? createdAt.toLocaleString() : "Unknown"
     const createdUtc = createdAt && !Number.isNaN(createdAt.getTime()) ? createdAt.toISOString() : "Unknown"

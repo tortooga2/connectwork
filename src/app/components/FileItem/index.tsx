@@ -60,7 +60,16 @@ export const FileItem = ({file} : {file : File}) => {
                         }
                     }}/>
                 </div>
-                <div className={"column"}><div className={"url"} onClick={() => window.open(`http://${window.location.host}/preview/${file.id}`, "_blank")}>{<a>{file.id.split("-").slice(-1)[0]}</a>}<SquareArrowOutUpRight size={12}/></div></div>
+                <div className={"column"}>
+                    <div
+                        className={"url"}
+                        title="Open in new tab"
+                        onClick={() => window.open(`http://${window.location.host}/preview/${file.id}`, "_blank")}
+                    >
+                        {<a>{file.id.split("-").slice(-1)[0]}</a>}
+                        <SquareArrowOutUpRight size={12}/>
+                    </div>
+                </div>
                 <div className={"column"}>{new Date(file.createdAt).toLocaleString()}</div>
                 <div className={"column"}>{FileType(file.type, layoutState==0 || viewportWidth < 768, true)}</div>
                 <div className={"column"}>{file.creator_email}</div>

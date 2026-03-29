@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import Lenis from "lenis"
 
 export const NewPage = ({ children }) => {
     useEffect(() => {
@@ -66,6 +65,8 @@ export const VerticalDiv = ({
         setIsTransitioning(state);
     }, [state]);
 
+    // Intentionally sync layout from state transitions only (not every mainStyle/layouts change)
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         setStyleState({
             ...mainStyle,
@@ -73,6 +74,7 @@ export const VerticalDiv = ({
         });
 
     }, [isTransitioning]);
+    /* eslint-enable react-hooks/exhaustive-deps */
 
     const scrollableRef = useRef(null);
 
@@ -179,12 +181,14 @@ export const HorizontalDiv = ({
         // };
     });
 
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         setStyleState({
             ...mainStyle,
             ...layouts[isTransitioning],
         });
     }, [isTransitioning]);
+    /* eslint-enable react-hooks/exhaustive-deps */
 
     return (
         <div

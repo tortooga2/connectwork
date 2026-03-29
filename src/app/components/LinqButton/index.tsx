@@ -1,5 +1,5 @@
 "use client"
-import { FileData } from "@/lib/Types/Types"
+import type { File } from "@/app/components/State Manager/appManager"
 import { useFileStore } from "../../components/State Manager/appManager"
 import {Cable} from "lucide-react"
 import Bundle from "@/lib/server/Bundle/bundle"
@@ -17,9 +17,13 @@ export const LinqButton = () => {
         if(selectedFiles.size > 0) {
             SetActionLoading(true, "Linqing files...")
             try {
-                const bundle = await Bundle(Array.from(selectedFiles)) as {bundle: FileData, links: {to_id: string, from_id: string}[]}
+                // creates a bundle of the selected files
+                const bundle = await Bundle(Array.from(selectedFiles))
                 ClearSelection()
-                UpdateFiles([bundle?.bundle as any])
+                //if the bundle is created, update the files state with the new bundle
+                if (bundle?.bundle) {
+                    UpdateFiles([bundle.bundle as unknown as File])
+                }
             } finally {
                 SetActionLoading(false)
             }

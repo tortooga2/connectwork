@@ -2,7 +2,7 @@ import { FileData } from "@/app/components/FileDisplay";
 import Bundle from "@/app/components/Preview/Views/Bundle";
 import { SingleFilePreview } from "@/app/components/Preview/Views/SingleFile";
 import { NewPage, VerticalDiv } from "@/app/components/UILayout";
-import { getFileData } from "@/lib/server/getFileData";
+import { getFileDataForUser } from "@/lib/server/getFileData";
 import { getFileUrl } from "@/lib/server/getFileUrl";
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
@@ -26,7 +26,7 @@ export default async function PreviewPage({
     const resolvedParams = await params;
     const fileId = resolvedParams.file_id;
 
-    const fileData = await getFileData(fileId);
+    const fileData = await getFileDataForUser(fileId, userId);
 
     if(!fileData){
         return (
@@ -38,11 +38,7 @@ export default async function PreviewPage({
         );
     }
 
-    const fileUrl = await getFileUrl({
-        id: fileData.id, 
-        file_id: fileData.file_id!, 
-        type: fileData.type
-    }, false);
+    const fileUrl = await getFileUrl(fileData, false);
 
     return (
         <NewPage>

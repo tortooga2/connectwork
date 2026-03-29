@@ -52,6 +52,7 @@ export const SingleFilePreview = ({ fileUrl, fileType }: { fileUrl?: string; fil
             return (
                 <img
                     src={fileUrl}
+                    alt=""
                     style={{
                         width: "100%",
                         borderRadius: "var(--border-rad)",
