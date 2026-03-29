@@ -61,6 +61,8 @@ export const FilesList = () => {
 
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const filterRef = useRef<HTMLDivElement>(null)
+    /** Last row clicked without Shift — anchor for shift+click range selection */
+    const selectionAnchorRef = useRef<string | null>(null)
 
     // sort & filter state (local to this component)
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
@@ -170,6 +172,31 @@ export const FilesList = () => {
         }
         return result
     }, [baseFiles, filterTypes, filterTime])
+
+    const handleListCheckboxChange = useCallback(
+        (payload: { fileId: string; rowIndex: number; shiftKey: boolean; checked: boolean }) => {
+            const { fileId, rowIndex, shiftKey, checked } = payload
+            const { SelectFile, SetSelectionForIds } = useFileStore.getState()
+
+            if (shiftKey && selectionAnchorRef.current !== null) {
+                const anchorId = selectionAnchorRef.current
+                const anchorIndex = displayFiles.findIndex((f) => f.id === anchorId)
+                if (anchorIndex === -1) {
+                    SelectFile(fileId, checked)
+                    selectionAnchorRef.current = fileId
+                    return
+                }
+                const lo = Math.min(anchorIndex, rowIndex)
+                const hi = Math.max(anchorIndex, rowIndex)
+                const ids = displayFiles.slice(lo, hi + 1).map((f) => f.id)
+                SetSelectionForIds(ids, checked)
+            } else {
+                SelectFile(fileId, checked)
+                selectionAnchorRef.current = fileId
+            }
+        },
+        [displayFiles]
+    )
 
     return(
         <VerticalDiv style={{borderRadius : "var(--border-rad)", padding : "1rem"}} color="var(--accent-color)" padding="0rem" gap="0.5rem">
@@ -393,12 +420,16 @@ export const FilesList = () => {
                 <div className={"column header"} style={{ display : "flex", flex : "row"}}><div className={layout == 0 ? "spacer" : "spacer small"}/><span>Type:</span></div>
                 <div className={"column header"}>Creator:</div>
                 <div className={"column header"}>Name:</div>
-                <div className={"column header"}></div>
             </div>
 
             <VerticalDiv style={{gap: "0.25rem"}} padding="0rem">
-                {displayFiles.map((file) => (
-                    <FileItem key={file.id} file={file} />
+                {displayFiles.map((file, rowIndex) => (
+                    <FileItem
+                        key={file.id}
+                        file={file}
+                        rowIndex={rowIndex}
+                        onCheckboxChange={handleListCheckboxChange}
+                    />
                 ))}
             </VerticalDiv>
             {actionLoading && (

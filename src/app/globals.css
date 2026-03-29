@@ -91,16 +91,12 @@ a {
   position: relative;
   border-radius: 0rem;
   display : grid;
+  /* checkbox + five equal columns (ID, Created, Type, Creator, Name) */
   grid-template-columns:
-      1rem                    /* checkbox */
-      minmax(50px, 1fr)
-      minmax(50px, 1fr)
-      minmax(50px, 1fr)
-      1fr
-      1fr
-      3rem;                /* button / "Actions" */
-  gap: 1rem;
-  padding : 0.5rem;
+      minmax(3rem, auto)
+      repeat(5, minmax(0, 1fr));
+  gap: 1.25rem;
+  padding : 0.5rem 0.75rem;
   align-items: center;
   text-align: left;
   border-radius: 10px;
@@ -128,14 +124,13 @@ a {
 @media (width < 768px) {
   .row{
     grid-template-columns:
-      1.5rem                    /* checkbox */
+      minmax(2.85rem, auto)     /* checkbox + hit area */
       minmax(30px, 1fr)
       minmax(50px, 1fr)
       2rem
       0fr
-      0fr
-      1.5rem;                /* button / "Actions" */
-  gap: 1rem;
+      0fr;
+  gap: 0.75rem;
   padding : 0.5rem;
   align-items: center;
   text-align: left;
@@ -144,7 +139,12 @@ a {
 }
 
 
-.row:not(.header):hover {
+.row:not(.header) {
+  cursor: pointer;
+}
+
+.row:not(.header):hover,
+.row:not(.header).row-selected {
 
   background-color: var(--background);
   color : var(--foreground);
@@ -277,38 +277,68 @@ a {
 
 }
 
-.view-button {
+.select-column {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.view-button button {
-  background-color: transparent;
-  border: none;
-  color: var(--foreground);
+  box-sizing: border-box;
+  /* Larger hit target: clicks here stay on checkbox column (no row preview) */
+  padding: 0.45rem 0.6rem;
+  margin: -0.2rem 0;
+  min-height: 2.75rem;
   cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-  display: flex;
-  align-items: center;
-}
-
-.view-button button:hover {
-  background-color: var(--accent-color);
 }
 
 .select-column > input[type="checkbox"] {
-  background-color: transparent;
-  border: none;
-  color: var(--foreground);
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  margin: 0;
   cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-  display: flex;
-  align-items: center;
+  accent-color: var(--bundle-color-2);
+  flex-shrink: 0;
 }
 
 .select-column > input[type="checkbox"]:hover {
-  background-color: var(--accent-color);
+  filter: brightness(1.15);
+}
+
+/* Note editor panel: type tag left, close button right */
+.note-editor-header-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-shrink: 0;
+  gap: 0.75rem;
+  min-height: 2.5rem;
+}
+
+.note-editor-header-type {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  flex: 1;
+}
+
+.note-editor-header-type .tag {
+  justify-content: flex-start;
+  gap: 0.55rem;
+}
+
+.note-editor-header-type .tag .text {
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.note-editor-header-type .tag .marker {
+  width: 0.65rem;
+  min-width: 0.65rem;
+  height: 0.65rem;
+  min-height: 0.65rem;
+  border-radius: 50%;
 }

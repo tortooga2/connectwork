@@ -32,6 +32,7 @@ interface FileManagerState {
     SetLoading: (loading: boolean) => void,
     selectedFiles: Set<string>,
     SelectFile: (fileId: string, selected: boolean) => void,
+    SetSelectionForIds: (fileIds: string[], selected: boolean) => void,
     ClearSelection: () => void,
     previewedFile : File | undefined,
     SetPreviewedFile : (file : File | undefined) => void,
@@ -85,6 +86,16 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
             }
             console.log(newSelectedFiles)
             return { selectedFiles: newSelectedFiles };
+        });
+    },
+    SetSelectionForIds: (fileIds, selected) => {
+        set((state) => {
+            const next = new Set(state.selectedFiles);
+            for (const id of fileIds) {
+                if (selected) next.add(id);
+                else next.delete(id);
+            }
+            return { selectedFiles: next };
         });
     },
     ClearSelection: () => set({ selectedFiles: new Set() }),

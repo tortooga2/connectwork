@@ -149,26 +149,30 @@ export const Dashboard = ({}) => {
                         <Preview />
                     </VerticalDiv>
 
-                    <VerticalDiv style={{position : "absolute", left : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)",borderRadius : "var(--border-rad)"}} color="var(--accent-color)" padding="1rem">    
-                        <button
-                            onClick={() => setLayoutState(0)}
-                            style={{
-                                position: "absolute",
-                                top: "0.5rem",
-                                right: "0.5rem",
-                                background: "transparent",
-                                border: "none",
-                                color: "var(--foreground)",
-                                cursor: "pointer",
-                                padding: "0.5rem",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                            aria-label="Close editor"
-                        >
-                            <X size={24} />
-                        </button>
+                    <VerticalDiv style={{position : "absolute", left : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)", borderRadius : "var(--border-rad)", display : "flex", flexDirection : "column", height : "100%", minHeight : 0}} color="var(--accent-color)" padding="1rem">
+                        <div className="note-editor-header-bar">
+                            <div className="note-editor-header-type">
+                                {FileType("md")}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setLayoutState(0)}
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    color: "var(--foreground)",
+                                    cursor: "pointer",
+                                    padding: "0.35rem",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    flexShrink: 0,
+                                }}
+                                aria-label="Close editor"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
                         <TextEditor />
                     </VerticalDiv>
 

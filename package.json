@@ -18,6 +18,7 @@
     "@nutrient-sdk/viewer": "^1.9.1",
     "@tiptap/extension-code-block": "^2.14.0",
     "@tiptap/extension-code-block-lowlight": "^2.14.0",
+    "@tiptap/extension-placeholder": "^2.14.0",
     "@tiptap/extension-underline": "^2.14.0",
     "@tiptap/extension-youtube": "^2.14.0",
     "@tiptap/pm": "^2.14.0",

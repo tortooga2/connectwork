@@ -3,11 +3,26 @@ import {useState, useEffect, useRef} from "react"
 import type { File } from "../State Manager/appManager"
 import { useFileStore } from "../State Manager/appManager"
 import {FileType} from "../TypeTags"
-import { Eye, SquareArrowOutUpRight } from "lucide-react"
+import { SquareArrowOutUpRight } from "lucide-react"
 
 
 
-export const FileItem = ({file} : {file : File}) => {
+export type FileItemCheckboxPayload = {
+    fileId: string
+    rowIndex: number
+    shiftKey: boolean
+    checked: boolean
+}
+
+export const FileItem = ({
+    file,
+    rowIndex,
+    onCheckboxChange,
+}: {
+    file: File
+    rowIndex: number
+    onCheckboxChange: (payload: FileItemCheckboxPayload) => void
+}) => {
 
     const [onEnter, SetOnEnter] = useState({width : "100%"})
     const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0)
@@ -24,8 +39,6 @@ export const FileItem = ({file} : {file : File}) => {
     const isSelected = useFileStore((state) => {
         return state.selectedFiles.has(file.id)
     })
-
-    const SelectFile = useFileStore((state)=>state.SelectFile);
 
     const checkboxRef = useRef<HTMLInputElement>(null)
 
@@ -49,22 +62,38 @@ export const FileItem = ({file} : {file : File}) => {
 
     const displayName = file.name === "Bundle" ? "linq" : file.name
 
+    const openSidePreview = () => {
+        SetPreviewFile(file)
+        SetLayoutState(1)
+    }
+
     return (
         <div>
-            <div className={"row"}>
-                <div className={"select-column"}>
-                    <input type={"checkbox"} ref={checkboxRef} onClick={()=>{
-                        if(checkboxRef?.current){
-                            const state = checkboxRef.current.checked
-                            SelectFile(file.id, state)
-                        }
-                    }}/>
-                </div>
+            <div className={`row${isSelected ? " row-selected" : ""}`} onClick={openSidePreview}>
+                <label className={"select-column"} onClick={(e) => e.stopPropagation()}>
+                    <input
+                        type={"checkbox"}
+                        ref={checkboxRef}
+                        onChange={(e) => {
+                            e.stopPropagation()
+                            const ne = e.nativeEvent as MouseEvent
+                            onCheckboxChange({
+                                fileId: file.id,
+                                rowIndex,
+                                shiftKey: Boolean(ne.shiftKey),
+                                checked: e.target.checked,
+                            })
+                        }}
+                    />
+                </label>
                 <div className={"column"}>
                     <div
                         className={"url"}
                         title="Open in new tab"
-                        onClick={() => window.open(`http://${window.location.host}/preview/${file.id}`, "_blank")}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            window.open(`http://${window.location.host}/preview/${file.id}`, "_blank")
+                        }}
                     >
                         {<a>{file.id.split("-").slice(-1)[0]}</a>}
                         <SquareArrowOutUpRight size={12}/>
@@ -74,10 +103,19 @@ export const FileItem = ({file} : {file : File}) => {
                 <div className={"column"}>{FileType(file.type, layoutState==0 || viewportWidth < 768, true)}</div>
                 <div className={"column"}>{file.creator_email}</div>
                 <div className={"column"}>{displayName}</div>
-                <div className={"view-button"}>
-                    <button onClick={()=>{ SetPreviewFile(file); SetLayoutState(1); }}><Eye size={16}/></button>
-                </div>
-                <div style={{position : "absolute", right: "0", height : "100%", ...onEnter, backgroundColor : "var(--background)", borderRadius: "var(--border-rad)", transition : "width 0.5s ease-in-out 0.2s"}}></div>     
+                <div
+                    style={{
+                        position: "absolute",
+                        right: "0",
+                        height: "100%",
+                        ...onEnter,
+                        backgroundColor: "var(--background)",
+                        borderRadius: "var(--border-rad)",
+                        transition: "width 0.5s ease-in-out 0.2s",
+                        pointerEvents: "none",
+                    }}
+                    aria-hidden
+                />
             </div>      
         </div>
     )
