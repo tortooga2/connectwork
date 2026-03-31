@@ -10,14 +10,13 @@ import UploadArea from "@/app/components/Uploads/UploadArea"
 import { TextEditor } from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
 import { DeleteButton } from "@/app/components/DeleteButton"
-import { PencilLine, Upload, X } from "lucide-react"
+import { PencilLine, Upload, X, SquareArrowOutUpRight } from "lucide-react"
 
 
 export const Dashboard = ({}) => {
     const layoutState = useFileStore((state)=>state.layoutState)
     const setLayoutState = useFileStore((state)=>state.SetLayoutState)
     const previewedFile = useFileStore((state)=>state.previewedFile)
-    const SetLayoutState = useFileStore((state)=>state.SetLayoutState)
     const [uploadPopupOpen, setUploadPopupOpen] = useState(false)
 
     const heightOfDock = "6.5%";
@@ -94,9 +93,9 @@ export const Dashboard = ({}) => {
                                 )}
                                 <button className={"but new-note"} onClick={()=>{
                                     if (layoutState !== 2)
-                                    SetLayoutState(2);
+                                    setLayoutState(2);
                                     else
-                                    SetLayoutState(0);
+                                    setLayoutState(0);
 
                                 }}> 
                                     <div className={"but-content"} style={{display : "flex", alignItems : "center"}}>
@@ -121,7 +120,7 @@ export const Dashboard = ({}) => {
                             <div style={{display : "flex", flexDirection : "row", width : "100%", justifyContent : "space-between", alignItems : "center"}}>
                                 <h1 style={{fontSize : "2rem", whiteSpace : "nowrap", overflow : "hidden", textOverflow : "ellipsis"}}>{previewName}</h1>
                                 <button
-                                    onClick={() => SetLayoutState(0)}
+                                    onClick={() => setLayoutState(0)}
                                     style={{
                                         background: "transparent",
                                         border: "none",
@@ -139,9 +138,22 @@ export const Dashboard = ({}) => {
                             </div>
                             <div style={{display : "flex", flexDirection : "column", gap : "0.5rem"}}>
                                 {FileType(previewedFile?.type, true, false)}
-                                <span><span style={{fontWeight : "bold"}}>File ID:</span> {previewedFile?.id}</span>
-                                <span><span style={{fontWeight : "bold"}}>File Url:</span> <a href={previewUrl} target="_blank" rel="noopener noreferrer">{previewUrl}</a></span>
-                                <span><span style={{fontWeight : "bold"}}>Created:</span> {createdLocal}</span>
+                                <span title={previewedFile?.id}><span style={{fontWeight : "bold"}}>File ID:</span> {previewedFile?.id}</span>
+                                <span>
+                                    <span style={{fontWeight : "bold"}}>File Url:</span>
+                                    <div className="url preview">
+                                        <a
+                                            href={previewUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}
+                                        >
+                                            {previewUrl}
+                                            <SquareArrowOutUpRight size={12} aria-hidden />
+                                        </a>
+                                    </div>
+                                </span>
+                                <span title={previewedFile?.createdAt}><span style={{fontWeight : "bold"}}>Created:</span> {createdLocal}</span>
                                 <span><span style={{fontWeight : "bold"}}>UTC:</span> {createdUtc}</span>
                                 <span><span style={{fontWeight : "bold"}}>Creator:</span> {previewedFile?.creator_email}</span>
                             </div>

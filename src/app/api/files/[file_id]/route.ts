@@ -10,7 +10,9 @@ import { getFileDataForUser } from "@/lib/server/getFileData";
 import { s3Client, bucketName } from "../../../../lib/server/s3/module.s3client";
 import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import { deleteFile } from "@/lib/server/deleteFile";
+import { getFileUrl } from "@/lib/server/getFileUrl";
 
+// TODO: if Bundle, also delete all linked files and their data.
 
 export async function GET(
     request: NextRequest, 
@@ -33,7 +35,13 @@ export async function GET(
         return NextResponse.json({ "message": "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ "message": "Success", "data": fileData }, { status: 200 });
+    const fileUrl = await getFileUrl({
+            id: fileData.id, 
+            file_id: fileData.file_id!, 
+            type: fileData.type
+        }, false);
+
+    return NextResponse.json({ "message": "Success", "Parent": fileData, "Linked": fileUrl }, { status: 200 });
 }
 
 
