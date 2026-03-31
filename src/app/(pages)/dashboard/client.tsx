@@ -11,6 +11,7 @@ import { TextEditor } from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
 import { DeleteButton } from "@/app/components/DeleteButton"
 import { PencilLine, Upload, X, SquareArrowOutUpRight } from "lucide-react"
+import { getDisplayFileName } from "@/lib/client/getFileType"
 
 
 export const Dashboard = ({}) => {
@@ -23,7 +24,7 @@ export const Dashboard = ({}) => {
     const heightOfTopBar = "3%";
     // avoid server-side window access
     const previewUrl = previewedFile?.id ? `/preview/${previewedFile.id}` : "#";
-    const previewName = previewedFile?.name === "Bundle" ? "linq" : previewedFile?.name;
+    const previewName = getDisplayFileName(previewedFile?.name, previewedFile?.type);
     const previewCreatedAt = previewedFile?.createdAt ? new Date(previewedFile.createdAt) : null;
     const createdLocal = previewCreatedAt && !Number.isNaN(previewCreatedAt.getTime()) ? previewCreatedAt.toLocaleString() : "Unknown";
     const createdUtc = previewCreatedAt && !Number.isNaN(previewCreatedAt.getTime()) ? previewCreatedAt.toISOString() : "Unknown";
@@ -139,17 +140,50 @@ export const Dashboard = ({}) => {
                             <div style={{display : "flex", flexDirection : "column", gap : "0.5rem"}}>
                                 {FileType(previewedFile?.type, true, false)}
                                 <span title={previewedFile?.id}><span style={{fontWeight : "bold"}}>File ID:</span> {previewedFile?.id}</span>
-                                <span>
-                                    <span style={{fontWeight : "bold"}}>File Url:</span>
-                                    <div className="url preview">
+                                <span
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        flexWrap: "nowrap",
+                                        gap: "0.35rem",
+                                        width: "100%",
+                                        minWidth: 0,
+                                    }}
+                                >
+                                    <span style={{ fontWeight: "bold", flexShrink: 0 }}>File Url:</span>
+                                    <div
+                                        className="url preview"
+                                        style={{
+                                            flex: "1 1 0",
+                                            minWidth: 0,
+                                            width: "auto",
+                                        }}
+                                    >
                                         <a
                                             href={previewUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}
+                                            title={previewUrl}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "0.35rem",
+                                                minWidth: 0,
+                                                maxWidth: "100%",
+                                            }}
                                         >
-                                            {previewUrl}
-                                            <SquareArrowOutUpRight size={12} aria-hidden />
+                                            <span
+                                                style={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap",
+                                                    minWidth: 0,
+                                                }}
+                                            >
+                                                {previewUrl}
+                                            </span>
+                                            <SquareArrowOutUpRight size={12} aria-hidden style={{ flexShrink: 0 }} />
                                         </a>
                                     </div>
                                 </span>

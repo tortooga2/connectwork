@@ -3,6 +3,7 @@ import {useState, useEffect, useRef} from "react"
 import type { File } from "../State Manager/appManager"
 import { useFileStore } from "../State Manager/appManager"
 import {FileType} from "../TypeTags"
+import { getDisplayFileName } from "@/lib/client/getFileType"
 import { SquareArrowOutUpRight } from "lucide-react"
 
 
@@ -60,7 +61,7 @@ export const FileItem = ({
         SetOnEnter({width : "0%"})
     }, [])
 
-    const displayName = file.name === "Bundle" ? "linq" : file.name
+    const displayName = getDisplayFileName(file.name, file.type)
 
     const openSidePreview = () => {
         SetPreviewFile(file)
@@ -89,13 +90,13 @@ export const FileItem = ({
                 <div className={"column"}>
                     <div
                         className={"url"}
-                        title="Open in new tab"
+                        title="Open In New Tab"
                         onClick={(e) => {
                             e.stopPropagation()
                             window.open(`http://${window.location.host}/preview/${file.id}`, "_blank")
                         }}
                     >
-                        {<a>{file.id.split("-").slice(-1)[0]}</a>}
+                        <span>Open In New Tab</span>
                         <SquareArrowOutUpRight size={12}/>
                     </div>
                 </div>

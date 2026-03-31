@@ -65,6 +65,7 @@ export const FilesList = () => {
     const selectionAnchorRef = useRef<string | null>(null)
 
     // sort & filter state (local to this component)
+    // asc = oldest at top → newest at bottom (ChevronDown active); desc = newest at top (ChevronUp active)
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
     const [filterTypes, setFilterTypes] = useState<Set<string>>(new Set())
     const [filterTime, setFilterTime] = useState<string | null>(null)
@@ -146,7 +147,7 @@ export const FilesList = () => {
         return Array.from(files.values()).sort((a, b) => {
             const dateA = new Date(a.createdAt).getTime()
             const dateB = new Date(b.createdAt).getTime()
-            return sortOrder === "desc" ? dateB - dateA : dateA - dateB
+            return sortOrder === "asc" ? dateA - dateB : dateB - dateA
         })
     }, [files, sortOrder])
 
@@ -405,21 +406,36 @@ export const FilesList = () => {
 
             <div className={"row header"}>
                 <div className={"column header"}></div>
-                <div className={"column header"}>ID:</div>
+                <div className={"column header"}>View:</div>
                 <div
                     className={"column header"}
                     onClick={() => setSortOrder(o => o === "desc" ? "asc" : "desc")}
                     style={{ cursor: "pointer", userSelect: "none", display: "flex", alignItems: "center", gap: "0.25rem" }}
                 >
-                    Created At:
-                    <span style={{ display: "flex", flexDirection: "column", lineHeight: 1, opacity: 0.7 }}>
-                        <ChevronUp size={11} style={{ opacity: sortOrder === "asc" ? 1 : 0.35, marginBottom: "-2px" }} />
-                        <ChevronDown size={11} style={{ opacity: sortOrder === "desc" ? 1 : 0.35 }} />
+                    When:
+                    <span style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
+                        <ChevronUp
+                            size={11}
+                            aria-hidden
+                            style={{
+                                marginBottom: "-2px",
+                                color: sortOrder === "desc" ? "var(--bundle-color-2)" : "var(--foreground)",
+                                opacity: sortOrder === "desc" ? 1 : 0.55,
+                            }}
+                        />
+                        <ChevronDown
+                            size={11}
+                            aria-hidden
+                            style={{
+                                color: sortOrder === "asc" ? "var(--bundle-color-2)" : "var(--foreground)",
+                                opacity: sortOrder === "asc" ? 1 : 0.55,
+                            }}
+                        />
                     </span>
                 </div>
                 <div className={"column header"} style={{ display : "flex", flex : "row"}}><div className={layout == 0 ? "spacer" : "spacer small"}/><span>Type:</span></div>
-                <div className={"column header"}>Creator:</div>
-                <div className={"column header"}>Name:</div>
+                <div className={"column header"}>Who:</div>
+                <div className={"column header"}>What:</div>
             </div>
 
             <VerticalDiv style={{gap: "0.25rem"}} padding="0rem">

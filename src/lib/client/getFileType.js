@@ -9,3 +9,11 @@ export const getFileType = (fileType) => {
     if (["txt", "text", "md"].includes(fileType)) return "Note";
     return "Bundle";
 };
+
+/** Title shown in lists and previews: linq for bundles, no extension for notes. */
+export const getDisplayFileName = (name, type) => {
+    if (name == null || name === "") return name;
+    if (name === "Bundle") return "linq";
+    if (getFileType(type) === "Note") return name.replace(/\.(txt|md|text)$/i, "");
+    return name;
+};

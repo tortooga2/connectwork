@@ -1,12 +1,13 @@
 "use client"
 
+import type { CSSProperties } from "react"
 import type { entryTable } from "@/db/schema";
 import type { FileUrlResult } from "@/lib/server/getFileUrl";
 import { useFileStore } from "@/app/components/State Manager/appManager";
-import { getFileType } from "@/lib/client/getFileType";
+import { getFileType, getDisplayFileName } from "@/lib/client/getFileType";
 import { FileType } from "@/app/components/TypeTags";
-import { useEffect, useRef, useState } from "react";
-import { DocumentViewer } from "react-documents";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { getViewerDetails } from "docviewhelper";
 import { Copy, Check } from "lucide-react";
 
 const formatCreatedAt = (value: unknown) => {
@@ -44,18 +45,33 @@ const NoteView = ({fileUrl}: {fileUrl: string}) => {
 
 
 // renders inline content for a single linked file based on its type
+const documentIframeStyle: CSSProperties = {
+    width: "100%",
+    aspectRatio: "1/1.1",
+    borderRadius: "var(--border-rad)",
+    objectFit: "contain",
+    border: "none",
+}
+
 const InlineContent = ({ file, url }: { file: EntryRow; url?: string }) => {
     const videoRef = useRef<HTMLVideoElement>(null)
     const safeUrl = typeof url === "string" && url.trim() !== "" ? url : undefined
+    const googleViewerSrc = useMemo(() => {
+        if (!safeUrl) return null
+        const { url: viewerUrl, externalViewer } = getViewerDetails(safeUrl, "google", "hl=Nl", "")
+        return externalViewer && viewerUrl.trim() !== "" ? viewerUrl : null
+    }, [safeUrl])
 
     switch (getFileType(file.type)) {
         case "Document":
-            if (!safeUrl) return <div style={{ fontSize: "0.8rem", opacity: 0.6 }}>Loading...</div>
+            if (!safeUrl || !googleViewerSrc) {
+                return <div style={{ fontSize: "0.8rem", opacity: 0.6 }}>Loading...</div>
+            }
             return (
-                <DocumentViewer
-                    queryParams="hl=Nl"
-                    url={safeUrl}
-                    style={{ width: "100%", aspectRatio: "1/1.1", borderRadius: "var(--border-rad)", objectFit: "contain" }}
+                <iframe
+                    title="Document preview"
+                    src={googleViewerSrc}
+                    style={documentIframeStyle}
                 />
             )
         case "Image":
@@ -80,7 +96,7 @@ const LinkedFileCard = ({ file, url }: { file: EntryRow; url?: string }) => {
     const previewUrl = typeof window !== "undefined"
         ? `${window.location.origin}${previewPath}`
         : previewPath
-    const displayName = file.name === "Bundle" ? "linq" : file.name
+    const displayName = getDisplayFileName(file.name, file.type)
 
     const copyUrl = async () => {
         await navigator.clipboard.writeText(previewUrl)

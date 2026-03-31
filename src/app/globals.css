@@ -91,7 +91,7 @@ a {
   position: relative;
   border-radius: 0rem;
   display : grid;
-  /* checkbox + five equal columns (ID, Created, Type, Creator, Name) */
+  /* checkbox + five equal columns (View, When, Type, Who, What) */
   grid-template-columns:
       minmax(3rem, auto)
       repeat(5, minmax(0, 1fr));
