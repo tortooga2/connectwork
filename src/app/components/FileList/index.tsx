@@ -3,10 +3,10 @@ import { useEffect, useMemo, useRef, useCallback, useState } from "react"
 import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
-import { Search, X, SlidersHorizontal, ChevronUp, ChevronDown } from "lucide-react"
+import { Search, X, Filter, ChevronUp, ChevronDown } from "lucide-react"
 import Box from "@mui/material/Box"
 import LinearProgress from "@mui/material/LinearProgress"
-import { getFileType } from "@/lib/client/getFileType"
+import { getFileType, getDisplayFileName } from "@/lib/client/getFileType"
 
 const FILE_TYPE_OPTIONS = [
     { label: "linq",      value: "Bundle"    },
@@ -22,6 +22,8 @@ const TIME_OPTIONS = [
     { label: "This Month", value: "month"  },
     { label: "This Year",  value: "year"   },
 ]
+
+const SEARCH_SUMMARY_CAP = 5
 
 function getTimeStart(option: string): Date {
     const now = new Date()
@@ -58,8 +60,12 @@ export const FilesList = () => {
     const searchLoading = useFileStore((state)=>state.searchLoading)
     const actionLoading = useFileStore((state)=>state.actionLoading)
     const actionLabel = useFileStore((state)=>state.actionLabel)
+    const SetPreviewedFile = useFileStore((state) => state.SetPreviewedFile)
+    const SetLayoutState = useFileStore((state) => state.SetLayoutState)
 
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    /** Bumps on every search input change so in-flight fetches can be ignored. */
+    const searchGenRef = useRef(0)
     const filterRef = useRef<HTMLDivElement>(null)
     /** Last row clicked without Shift — anchor for shift+click range selection */
     const selectionAnchorRef = useRef<string | null>(null)
@@ -70,6 +76,7 @@ export const FilesList = () => {
     const [filterTypes, setFilterTypes] = useState<Set<string>>(new Set())
     const [filterTime, setFilterTime] = useState<string | null>(null)
     const [filterOpen, setFilterOpen] = useState(false)
+    const [searchSummaryExpanded, setSearchSummaryExpanded] = useState(false)
 
     const hasActiveFilters = filterTypes.size > 0 || filterTime !== null
 
@@ -83,6 +90,10 @@ export const FilesList = () => {
         document.addEventListener("mousedown", handler)
         return () => document.removeEventListener("mousedown", handler)
     }, [])
+
+    useEffect(() => {
+        setSearchSummaryExpanded(false)
+    }, [searchQuery, searchResults])
 
     useEffect(()=>{
         const getFiles = async () => {
@@ -105,22 +116,37 @@ export const FilesList = () => {
         }
 
         debounceRef.current = setTimeout(async () => {
+            const g = searchGenRef.current
+            const q = query.trim()
             useFileStore.setState({ searchLoading: true })
             try {
-                const res = await fetch(`/api/files/search?q=${encodeURIComponent(query)}`)
+                const res = await fetch(`/api/files/search?q=${encodeURIComponent(q)}`)
                 const { data } = await res.json()
+                if (g !== searchGenRef.current) return
+                const current = useFileStore.getState().searchQuery.trim()
+                if (current !== q) return
                 SetSearchResults(data)
             } catch {
+                if (g !== searchGenRef.current) return
+                const current = useFileStore.getState().searchQuery.trim()
+                if (current !== q) return
                 SetSearchResults(null)
             } finally {
-                useFileStore.setState({ searchLoading: false })
+                if (g === searchGenRef.current) {
+                    useFileStore.setState({ searchLoading: false })
+                }
             }
         }, 400)
     }, [SetSearchResults])
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value
+        searchGenRef.current += 1
         SetSearchQuery(val)
+        if (val.trim()) {
+            SetSearchResults(null)
+            useFileStore.setState({ searchLoading: false })
+        }
         runSearch(val)
     }
 
@@ -153,13 +179,17 @@ export const FilesList = () => {
 
     const isSearchActive = searchQuery.trim().length > 0
 
-    // base list: search results or all sorted files
+    // base list: search results or all sorted files (null results while query is changing = show nothing, not stale rows)
     const baseFiles = useMemo(() => {
-        if (isSearchActive && searchResults) {
-            return searchResults.map(r => r.file)
-        }
-        return sortedFiles
-    }, [isSearchActive, searchResults, sortedFiles])
+        if (!isSearchActive) return sortedFiles
+        if (searchResults === null) return []
+        const fromSearch = searchResults.map((r) => r.file)
+        return [...fromSearch].sort((a, b) => {
+            const dateA = new Date(a.createdAt).getTime()
+            const dateB = new Date(b.createdAt).getTime()
+            return sortOrder === "asc" ? dateA - dateB : dateB - dateA
+        })
+    }, [isSearchActive, searchResults, sortedFiles, sortOrder])
 
     // apply type + time filters on top of base list
     const displayFiles = useMemo(() => {
@@ -173,6 +203,18 @@ export const FilesList = () => {
         }
         return result
     }, [baseFiles, filterTypes, filterTime])
+
+    const searchSummaryRows = useMemo(() => {
+        if (!searchResults?.length) return []
+        if (searchSummaryExpanded || searchResults.length <= SEARCH_SUMMARY_CAP) return searchResults
+        return searchResults.slice(0, SEARCH_SUMMARY_CAP)
+    }, [searchResults, searchSummaryExpanded])
+
+    const searchSummaryHasMore = (searchResults?.length ?? 0) > SEARCH_SUMMARY_CAP
+    const searchSummaryHiddenCount =
+        searchResults && searchResults.length > SEARCH_SUMMARY_CAP
+            ? searchResults.length - SEARCH_SUMMARY_CAP
+            : 0
 
     const handleListCheckboxChange = useCallback(
         (payload: { fileId: string; rowIndex: number; shiftKey: boolean; checked: boolean }) => {
@@ -200,7 +242,17 @@ export const FilesList = () => {
     )
 
     return(
-        <VerticalDiv style={{borderRadius : "var(--border-rad)", padding : "1rem"}} color="var(--accent-color)" padding="0rem" gap="0.5rem">
+        <VerticalDiv
+            style={{
+                borderRadius: "var(--border-rad)",
+                padding: "1rem",
+                overscrollBehaviorY: "none",
+                scrollbarGutter: "stable",
+            }}
+            color="var(--accent-color)"
+            padding="0rem"
+            gap="0.5rem"
+        >
 
             {/* search bar + filter button row */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0" }}>
@@ -213,7 +265,7 @@ export const FilesList = () => {
                     style={{
                         flex: 1,
                         padding: "0.4rem 0.5rem",
-                        border: "1px solid var(--foreground)",
+                        border: "none",
                         borderRadius: "var(--border-rad)",
                         background: "rgba(255, 255, 255, 0.08)",
                         color: "var(--foreground)",
@@ -230,23 +282,24 @@ export const FilesList = () => {
                 {/* filter button */}
                 <div ref={filterRef} style={{ position: "relative" }}>
                     <button
+                        type="button"
+                        aria-label={filterOpen ? "Close filters" : "Open filters"}
+                        aria-expanded={filterOpen}
                         onClick={() => setFilterOpen(v => !v)}
                         style={{
                             display: "flex",
                             alignItems: "center",
-                            gap: "0.3rem",
-                            padding: "0.4rem 0.65rem",
-                            border: `1px solid ${hasActiveFilters ? "var(--bundle-color-2)" : "var(--foreground)"}`,
-                            borderRadius: "var(--border-rad)",
-                            background: hasActiveFilters ? "rgba(var(--bundle-color-2-rgb, 120,80,255), 0.15)" : "rgba(255,255,255,0.08)",
+                            justifyContent: "center",
+                            gap: "0.25rem",
+                            padding: "0.25rem",
+                            border: "none",
+                            background: "transparent",
                             color: hasActiveFilters ? "var(--bundle-color-2)" : "var(--foreground)",
                             cursor: "pointer",
-                            fontSize: "0.85rem",
-                            whiteSpace: "nowrap",
+                            outline: "none",
                         }}
                     >
-                        <SlidersHorizontal size={14} />
-                        Filter
+                        <Filter size={18} strokeWidth={2} aria-hidden />
                         {hasActiveFilters && (
                             <span style={{
                                 display: "inline-flex",
@@ -342,35 +395,54 @@ export const FilesList = () => {
             </div>
 
             {/* search status */}
-            {searchLoading && <span style={{ fontSize: "0.8rem", opacity: 0.6 }}>Searching...</span>}
-            {isSearchActive && searchResults && !searchLoading && (
-                <span style={{ fontSize: "0.8rem", opacity: 0.6 }}>
-                    {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} for &quot;{searchQuery}&quot;
-                </span>
-            )}
-
-            {/* snippet badges for search results */}
+            {searchLoading && <span className="filelist-search-meta">Searching…</span>}
             {isSearchActive && searchResults && searchResults.length > 0 && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", marginBottom: "0.25rem" }}>
-                    {searchResults.map((r) => (
-                        <div key={r.file.id} style={{ fontSize: "0.75rem", opacity: 0.7, padding: "0.2rem 0.4rem", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }}>
-                            <strong>{r.file.name}</strong>
-                            <span style={{ marginLeft: "0.5rem", fontStyle: "italic" }}>
-                                matched in {r.matchedIn}
-                                {r.matchedChildName ? ` (${r.matchedChildName})` : ""}
-                            </span>
-                            {r.snippet && r.matchedIn !== "name" && (
-                                <span style={{ marginLeft: "0.5rem", opacity: 0.8 }}>&quot;{r.snippet}&quot;</span>
-                            )}
-                        </div>
-                    ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", marginBottom: "0.4rem" }}>
+                    {searchSummaryRows.map((r) => {
+                        const displayName = getDisplayFileName(r.file.name, r.file.type)
+                        return (
+                            <div
+                                key={`${r.file.id}-${r.matchedIn}-${r.matchedChildName ?? ""}-${r.snippet ?? ""}`}
+                                className="filelist-search-hit-row"
+                            >
+                                <span className="filelist-search-hit-query">
+                                    &quot;{searchQuery.trim()}&quot; in{" "}
+                                </span>
+                                <button
+                                    type="button"
+                                    className="filelist-search-hit-name"
+                                    onClick={() => {
+                                        SetPreviewedFile(r.file)
+                                        SetLayoutState(1)
+                                    }}
+                                    aria-label={`Open preview for ${displayName ?? "file"}`}
+                                >
+                                    {displayName}
+                                </button>
+                            </div>
+                        )
+                    })}
+                    {searchSummaryHasMore && (
+                        <button
+                            type="button"
+                            className="filelist-search-more"
+                            onClick={() => setSearchSummaryExpanded((v) => !v)}
+                            aria-label={
+                                searchSummaryExpanded
+                                    ? "Show fewer search results"
+                                    : `Show ${searchSummaryHiddenCount} more search results`
+                            }
+                        >
+                            {searchSummaryExpanded ? "see less" : `see ${searchSummaryHiddenCount} more`}
+                        </button>
+                    )}
                 </div>
             )}
 
             {/* empty search state */}
             {isSearchActive && searchResults && searchResults.length === 0 && !searchLoading && (
-                <div style={{ fontSize: "0.85rem", opacity: 0.7, padding: "0.5rem 0.25rem" }}>
-                    No matches found for &quot;{searchQuery}&quot;.
+                <div className="filelist-search-meta" style={{ padding: "0.25rem 0" }}>
+                    No matches for &quot;{searchQuery.trim()}&quot;.
                 </div>
             )}
 

@@ -28,7 +28,11 @@ export const DeleteButton = () => {
                 color: isActive ? "#fff" : "var(--foreground)",
                 opacity: isActive ? 1 : 0.6,
                 cursor: isActive ? "pointer" : "not-allowed",
-                border: isActive ? "none" : "1px solid rgba(255,255,255,0.25)",
+                /* Keep 1px border in both states so dock height does not shift when selection toggles */
+                border: isActive
+                    ? "1px solid var(--delete-color-2)"
+                    : "1px solid rgba(255,255,255,0.25)",
+                boxSizing: "border-box",
             }}
             onMouseEnter={(e) => {
                 if (isActive) {
@@ -41,8 +45,17 @@ export const DeleteButton = () => {
             disabled={!isActive}
         >
             <div className="but-content" style={{ display: "flex", alignItems: "center" }}>
-                <Trash size={18} style={{ marginRight: "0.25rem" }} />
-                <span>{selectedFiles.size}</span>
+                <Trash size={18} style={{ marginRight: "0.25rem", flexShrink: 0 }} />
+                <span
+                    style={{
+                        minWidth: "2ch",
+                        display: "inline-block",
+                        textAlign: "center",
+                        fontVariantNumeric: "tabular-nums",
+                    }}
+                >
+                    {selectedFiles.size}
+                </span>
             </div>
         </button>
     )

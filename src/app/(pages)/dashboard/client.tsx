@@ -40,7 +40,14 @@ export const Dashboard = ({}) => {
                         </div>
                             
                         <VerticalDiv padding="0rem" style={{height: `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`}}>    
-                            <HorizontalDiv style={{position: "relative", height: `100%`, zIndex : "1", transition : "width 0.2s, left 0.2s, right 0.2s"}} layouts={[
+                            <HorizontalDiv style={{
+                                position: "relative",
+                                height: `100%`,
+                                zIndex: 2,
+                                isolation: "isolate",
+                                backgroundColor: "var(--accent-color)",
+                                transition: "width 0.2s, left 0.2s, right 0.2s",
+                            }} layouts={[
                                     {
                                         left : 0,
                                         width : "100%",
@@ -113,7 +120,7 @@ export const Dashboard = ({}) => {
                 
                     
                 
-                <VerticalDiv style={{position : "absolute", top : "0", left : "0", width : "100%"}} >
+                <VerticalDiv style={{ position: "absolute", top: "0", left: "0", width: "100%", zIndex: 0 }} >
                 <HorizontalDiv style={{position : "relative", left : "0", top : `calc(${heightOfTopBar} + 1rem)`, height : `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`}}>
                     
                     <VerticalDiv style={{position : "absolute", right : "0", width : "calc(40% - 1rem)", borderRadius : "var(--border-rad)"}} padding="1rem" color="var(--accent-color)">

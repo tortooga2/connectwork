@@ -13,12 +13,14 @@ const ListItem = ({ index, name, remove, percentage = 0 }) => {
             style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "1rem",
+                gap: "0.65rem",
                 position: "relative",
                 overflowX: "hidden",
-                padding: "0.5rem",
-                paddingLeft: "1rem",
-                paddingRight: "1rem",
+                padding: "0.45rem 0.65rem 0.55rem",
+                margin: "0 -0.15rem",
+                borderRadius: "calc(var(--border-rad) * 0.65)",
+                transition: "background-color 0.15s ease",
+                backgroundColor: isHovered ? "rgba(255,255,255,0.06)" : "transparent",
             }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -50,13 +52,25 @@ const ListItem = ({ index, name, remove, percentage = 0 }) => {
             >
                 −
             </button>
-            <div style={{ opacity: isHovered ? 0 : 1, minWidth: "1.25rem" }}>{index}</div>
+            <div
+                style={{
+                    minWidth: "1.35rem",
+                    fontSize: "0.7rem",
+                    fontWeight: 600,
+                    opacity: isHovered ? 0 : 0.45,
+                    textAlign: "center",
+                    flexShrink: 0,
+                }}
+            >
+                {index}
+            </div>
             <span
                 style={{
                     overflowX: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                     flex: 1,
+                    fontSize: "0.84rem",
                 }}
             >
                 {name}
@@ -138,30 +152,77 @@ const UploadArea = ({ onClose }) => {
         }
     }
 
+    const secondaryBtn = {
+        background: "rgba(255,255,255,0.08)",
+        color: "var(--foreground)",
+        border: "1px solid rgba(255,255,255,0.14)",
+        borderRadius: "var(--border-rad)",
+        padding: "0.4rem 0.75rem",
+        fontSize: "0.82rem",
+        fontWeight: 500,
+        cursor: "pointer",
+        transition: "background-color 0.15s ease, border-color 0.15s ease",
+    }
+
     return (
         <div
             style={{
-                border: "var(--border-width) solid var(--foreground)",
-                padding: "1rem",
+                border: "1px solid rgba(255,255,255,0.12)",
+                padding: "1.25rem",
                 borderRadius: "var(--border-rad)",
                 backgroundColor: "var(--accent-color)",
-                minWidth: "320px",
+                minWidth: "340px",
+                maxWidth: "440px",
+                boxSizing: "border-box",
+                boxShadow: "0 16px 48px rgba(0,0,0,0.28)",
             }}
         >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                <span style={{ fontWeight: 600 }}>File Upload</span>
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    gap: "0.75rem",
+                    marginBottom: "1rem",
+                    paddingBottom: "0.85rem",
+                    borderBottom: "1px solid rgba(255,255,255,0.08)",
+                }}
+            >
+                <div style={{ minWidth: 0 }}>
+                    <div
+                        style={{
+                            fontWeight: 600,
+                            fontSize: "1.05rem",
+                            letterSpacing: "-0.02em",
+                            color: "var(--foreground)",
+                        }}
+                    >
+                        File upload
+                    </div>
+                    <div style={{ fontSize: "0.72rem", opacity: 0.48, marginTop: "0.25rem", lineHeight: 1.35 }}>
+                        Up to 10 files per batch
+                    </div>
+                </div>
                 {onClose && (
                     <button
                         type="button"
                         onClick={onClose}
                         style={{
-                            background: "transparent",
+                            flexShrink: 0,
+                            width: "2rem",
+                            height: "2rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "rgba(255,255,255,0.06)",
                             border: "none",
+                            borderRadius: "var(--border-rad)",
                             color: "var(--foreground)",
                             cursor: "pointer",
-                            padding: "0.25rem 0.5rem",
-                            fontSize: "1.25rem",
+                            fontSize: "1.2rem",
                             lineHeight: 1,
+                            opacity: 0.75,
+                            transition: "background-color 0.15s ease, opacity 0.15s ease",
                         }}
                         aria-label="Close"
                     >
@@ -169,7 +230,22 @@ const UploadArea = ({ onClose }) => {
                     </button>
                 )}
             </div>
-            <div style={{ display: "flex", flexDirection: "column", overflowY: "auto", maxHeight: "240px" }}>
+
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                    maxHeight: "220px",
+                    minHeight: files.length ? undefined : "5.5rem",
+                    padding: "0.35rem 0.15rem",
+                    marginBottom: "1rem",
+                    borderRadius: "calc(var(--border-rad) * 0.75)",
+                    background: "rgba(0,0,0,0.18)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                }}
+            >
                 {files.map((f, i) => (
                     <ListItem
                         key={`${f.name}-${i}`}
@@ -180,18 +256,20 @@ const UploadArea = ({ onClose }) => {
                     />
                 ))}
             </div>
-            <div
-                style={{
-                    padding: "0.5rem",
-                    border: "var(--border-width) solid var(--foreground)",
-                    marginTop: "0.5rem",
-                    borderRadius: "var(--border-rad)",
-                }}
-            >
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                        <button type="button" onClick={handleAddClick}>
-                            Add
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        gap: "0.6rem",
+                    }}
+                >
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", flexWrap: "wrap" }}>
+                        <button type="button" onClick={handleAddClick} style={secondaryBtn}>
+                            Add files
                         </button>
                         <input
                             ref={fileInputRef}
@@ -200,13 +278,52 @@ const UploadArea = ({ onClose }) => {
                             style={{ visibility: "hidden", position: "absolute", width: 0, height: 0 }}
                             onChange={handleFileChange}
                         />
-                        <button type="button" onClick={() => { setFiles([]); setProgress({}) }}>
-                            Clear
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setFiles([])
+                                setProgress({})
+                            }}
+                            style={{
+                                ...secondaryBtn,
+                                opacity: files.length ? 1 : 0.4,
+                            }}
+                        >
+                            Clear all
                         </button>
                     </div>
-                    <span>{files.length}/10</span>
+                    <span
+                        style={{
+                            fontSize: "0.72rem",
+                            fontWeight: 600,
+                            letterSpacing: "0.04em",
+                            textTransform: "uppercase",
+                            opacity: 0.45,
+                            padding: "0.2rem 0.5rem",
+                            borderRadius: "999px",
+                            background: "rgba(255,255,255,0.06)",
+                        }}
+                    >
+                        {files.length} / 10
+                    </span>
                 </div>
-                <button type="button" style={{ marginTop: "0.5rem" }} onClick={handleUpload}>
+                <button
+                    type="button"
+                    onClick={handleUpload}
+                    style={{
+                        width: "100%",
+                        padding: "0.65rem 1rem",
+                        fontSize: "0.92rem",
+                        fontWeight: 600,
+                        border: "none",
+                        borderRadius: "var(--border-rad)",
+                        cursor: "pointer",
+                        backgroundColor: "var(--bundle-color-2)",
+                        color: "#fff",
+                        transition: "filter 0.15s ease, opacity 0.15s ease",
+                        opacity: files.length ? 1 : 0.45,
+                    }}
+                >
                     Upload
                 </button>
             </div>
