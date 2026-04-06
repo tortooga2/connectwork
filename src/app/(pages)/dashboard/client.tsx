@@ -3,6 +3,9 @@ import { useState } from "react"
 import { NewPage, VerticalDiv, HorizontalDiv } from "@/app/components/UILayout"
 import { UserButton } from "@clerk/nextjs"
 import { FilesList } from "@/app/components/FileList"
+import { DashboardSearchField } from "@/app/components/FileList/DashboardSearchField"
+import { DashboardFilterButton } from "@/app/components/FileList/DashboardFilterButton"
+import { FileListFilterProvider } from "@/app/components/FileList/fileListFilterContext"
 import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
 import { LinqButton } from "@/app/components/LinqButton"
@@ -30,22 +33,46 @@ export const Dashboard = ({}) => {
     const createdUtc = previewCreatedAt && !Number.isNaN(previewCreatedAt.getTime()) ? previewCreatedAt.toISOString() : "Unknown";
     return (       
         <NewPage>    
-            <VerticalDiv style={{position : "relative", borderWidth: "0px", borderColor: "transparent"}} padding="1rem">
+            <VerticalDiv style={{position : "relative", borderWidth: "0px", borderColor: "transparent", height: "100%", minHeight: 0, overflow: "hidden", overscrollBehavior: "none" }} padding="1rem">
                     
-                    <VerticalDiv padding="1rem" gap="0rem">
-                        <div style={{height: heightOfTopBar, minHeight: `calc(${heightOfTopBar} + 1rem)`, width : "100%", padding: "0rem 2rem", marginBottom: "1rem", display : "flex", alignItems : "center", justifyContent : "space-between", boxSizing : "border-box", zIndex : "2"}}>
-                            <h1 style={{fontSize : "2rem", color: "var(--bundle-color-2)", margin: 0}}>Linquiq</h1>
-                            <UserButton/>
-                                
+                    <FileListFilterProvider>
+                    <VerticalDiv
+                        padding="1rem"
+                        gap="0rem"
+                        style={{
+                            flex: "1 1 auto",
+                            minHeight: 0,
+                            height: "100%",
+                            overflow: "hidden",
+                            overscrollBehavior: "none",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <div style={{ position: "relative", zIndex: 20, height: heightOfTopBar, minHeight: `calc(${heightOfTopBar} + 1rem)`, width: "100%", padding: "0rem 2rem", marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", boxSizing: "border-box" }}>
+                            <h1 style={{ fontSize: "2rem", color: "var(--bundle-color-2)", margin: 0, flexShrink: 0 }}>Linquiq</h1>
+                            <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                <DashboardSearchField />
+                                <DashboardFilterButton />
+                            </div>
+                            <div style={{ flexShrink: 0 }}>
+                                <UserButton />
+                            </div>
                         </div>
                             
-                        <VerticalDiv padding="0rem" style={{height: `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`}}>    
+                        <VerticalDiv padding="0rem" style={{ position: "relative", zIndex: 1, height: `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", pointerEvents: "none" }}>    
                             <HorizontalDiv style={{
                                 position: "relative",
                                 height: `100%`,
+                                minHeight: 0,
+                                flex: "1 1 auto",
                                 zIndex: 2,
                                 isolation: "isolate",
                                 backgroundColor: "var(--accent-color)",
+                                borderRadius: "var(--border-rad)",
+                                overflow: "hidden",
+                                alignItems: "stretch",
+                                pointerEvents: "auto",
                                 transition: "width 0.2s, left 0.2s, right 0.2s",
                             }} layouts={[
                                     {
@@ -117,14 +144,15 @@ export const Dashboard = ({}) => {
                             </div>
                         </div>
                     </VerticalDiv>
+                    </FileListFilterProvider>
                 
                     
                 
-                <VerticalDiv style={{ position: "absolute", top: "0", left: "0", width: "100%", zIndex: 0 }} >
-                <HorizontalDiv style={{position : "relative", left : "0", top : `calc(${heightOfTopBar} + 1rem)`, height : `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`}}>
+                <VerticalDiv style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%", zIndex: 0, overflow: "hidden", overscrollBehavior: "none" }} >
+                <HorizontalDiv style={{position : "relative", left : "0", top : `calc(${heightOfTopBar} + 1rem)`, height : `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`, minHeight: 0, overflow: "hidden", overscrollBehavior: "none" }}>
                     
-                    <VerticalDiv style={{position : "absolute", right : "0", width : "calc(40% - 1rem)", borderRadius : "var(--border-rad)"}} padding="1rem" color="var(--accent-color)">
-                        <div style={{display : "flex", flexDirection : "column", gap : "1rem", width : "100%", boxSizing : "border-box", borderBottomLeftRadius : "var(--border-rad)", borderBottomRightRadius : "var(--border-rad)"}}>
+                    <VerticalDiv style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: "calc(40% - 1rem)", height: "100%", minHeight: 0, borderRadius: "var(--border-rad)", overflow: "hidden", display: "flex", flexDirection: "column" }} padding="1rem" color="var(--accent-color)">
+                        <div style={{display : "flex", flexDirection : "column", gap : "1rem", width : "100%", flexShrink: 0, boxSizing : "border-box", borderBottomLeftRadius : "var(--border-rad)", borderBottomRightRadius : "var(--border-rad)"}}>
                             <div style={{display : "flex", flexDirection : "row", width : "100%", justifyContent : "space-between", alignItems : "center"}}>
                                 <h1 style={{fontSize : "2rem", whiteSpace : "nowrap", overflow : "hidden", textOverflow : "ellipsis"}}>{previewName}</h1>
                                 <button
@@ -199,10 +227,12 @@ export const Dashboard = ({}) => {
                                 <span><span style={{fontWeight : "bold"}}>Creator:</span> {previewedFile?.creator_email}</span>
                             </div>
                         </div>
-                        <Preview />
+                        <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                            <Preview />
+                        </div>
                     </VerticalDiv>
 
-                    <VerticalDiv style={{position : "absolute", left : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)", borderRadius : "var(--border-rad)", display : "flex", flexDirection : "column", height : "100%", minHeight : 0}} color="var(--accent-color)" padding="1rem">
+                    <VerticalDiv style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "calc(40% - 1rem)", borderRadius: "var(--border-rad)", overflow: "hidden", display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }} color="var(--accent-color)" padding="1rem">
                         <div className="note-editor-header-bar">
                             <div className="note-editor-header-type">
                                 {FileType("md")}

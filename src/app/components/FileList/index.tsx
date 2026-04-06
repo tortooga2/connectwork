@@ -3,50 +3,18 @@ import { useEffect, useMemo, useRef, useCallback, useState } from "react"
 import { useFileStore } from "../State Manager/appManager"
 import { VerticalDiv } from "../UILayout"
 import { FileItem } from "@/app/components/FileItem"
-import { Search, X, Filter, ChevronUp, ChevronDown } from "lucide-react"
+import { ChevronUp, ChevronDown, X } from "lucide-react"
 import Box from "@mui/material/Box"
 import LinearProgress from "@mui/material/LinearProgress"
 import { getFileType, getDisplayFileName } from "@/lib/client/getFileType"
-
-const FILE_TYPE_OPTIONS = [
-    { label: "linq",      value: "Bundle"    },
-    { label: "Document",  value: "Document"  },
-    { label: "Note",      value: "Note"      },
-    { label: "Recording", value: "Recording" },
-    { label: "Image",     value: "Image"     },
-]
-
-const TIME_OPTIONS = [
-    { label: "Today",      value: "today"  },
-    { label: "This Week",  value: "week"   },
-    { label: "This Month", value: "month"  },
-    { label: "This Year",  value: "year"   },
-]
+import {
+    FILE_TYPE_OPTIONS,
+    TIME_OPTIONS,
+    getTimeStart,
+    useFileListFilters,
+} from "./fileListFilterContext"
 
 const SEARCH_SUMMARY_CAP = 5
-
-function getTimeStart(option: string): Date {
-    const now = new Date()
-    switch (option) {
-        case "today": {
-            const d = new Date(now); d.setHours(0, 0, 0, 0); return d
-        }
-        case "week": {
-            const d = new Date(now)
-            d.setDate(d.getDate() - d.getDay())
-            d.setHours(0, 0, 0, 0)
-            return d
-        }
-        case "month": {
-            return new Date(now.getFullYear(), now.getMonth(), 1)
-        }
-        case "year": {
-            return new Date(now.getFullYear(), 0, 1)
-        }
-        default:
-            return new Date(0)
-    }
-}
 
 export const FilesList = () => {
     const files = useFileStore((state)=>state.files)
@@ -54,42 +22,28 @@ export const FilesList = () => {
     const layout = useFileStore((state)=>state.layoutState)
 
     const searchQuery = useFileStore((state)=>state.searchQuery)
-    const SetSearchQuery = useFileStore((state)=>state.SetSearchQuery)
     const searchResults = useFileStore((state)=>state.searchResults)
-    const SetSearchResults = useFileStore((state)=>state.SetSearchResults)
     const searchLoading = useFileStore((state)=>state.searchLoading)
     const actionLoading = useFileStore((state)=>state.actionLoading)
     const actionLabel = useFileStore((state)=>state.actionLabel)
     const SetPreviewedFile = useFileStore((state) => state.SetPreviewedFile)
     const SetLayoutState = useFileStore((state) => state.SetLayoutState)
 
-    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-    /** Bumps on every search input change so in-flight fetches can be ignored. */
-    const searchGenRef = useRef(0)
-    const filterRef = useRef<HTMLDivElement>(null)
+    const {
+        filterTypes,
+        filterTime,
+        filterOpen,
+        toggleType,
+        setFilterTime,
+        hasActiveFilters,
+    } = useFileListFilters()
+
     /** Last row clicked without Shift — anchor for shift+click range selection */
     const selectionAnchorRef = useRef<string | null>(null)
 
-    // sort & filter state (local to this component)
     // asc = oldest at top → newest at bottom (ChevronDown active); desc = newest at top (ChevronUp active)
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
-    const [filterTypes, setFilterTypes] = useState<Set<string>>(new Set())
-    const [filterTime, setFilterTime] = useState<string | null>(null)
-    const [filterOpen, setFilterOpen] = useState(false)
     const [searchSummaryExpanded, setSearchSummaryExpanded] = useState(false)
-
-    const hasActiveFilters = filterTypes.size > 0 || filterTime !== null
-
-    // close dropdown when clicking outside
-    useEffect(() => {
-        const handler = (e: MouseEvent) => {
-            if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
-                setFilterOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handler)
-        return () => document.removeEventListener("mousedown", handler)
-    }, [])
 
     useEffect(() => {
         setSearchSummaryExpanded(false)
@@ -105,69 +59,6 @@ export const FilesList = () => {
 
         getFiles()
     }, [SetFiles])
-
-    // debounced search — waits 400ms after user stops typing
-    const runSearch = useCallback((query: string) => {
-        if (debounceRef.current) clearTimeout(debounceRef.current)
-
-        if (!query.trim()) {
-            SetSearchResults(null)
-            return
-        }
-
-        debounceRef.current = setTimeout(async () => {
-            const g = searchGenRef.current
-            const q = query.trim()
-            useFileStore.setState({ searchLoading: true })
-            try {
-                const res = await fetch(`/api/files/search?q=${encodeURIComponent(q)}`)
-                const { data } = await res.json()
-                if (g !== searchGenRef.current) return
-                const current = useFileStore.getState().searchQuery.trim()
-                if (current !== q) return
-                SetSearchResults(data)
-            } catch {
-                if (g !== searchGenRef.current) return
-                const current = useFileStore.getState().searchQuery.trim()
-                if (current !== q) return
-                SetSearchResults(null)
-            } finally {
-                if (g === searchGenRef.current) {
-                    useFileStore.setState({ searchLoading: false })
-                }
-            }
-        }, 400)
-    }, [SetSearchResults])
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value
-        searchGenRef.current += 1
-        SetSearchQuery(val)
-        if (val.trim()) {
-            SetSearchResults(null)
-            useFileStore.setState({ searchLoading: false })
-        }
-        runSearch(val)
-    }
-
-    const clearSearch = () => {
-        SetSearchQuery("")
-        SetSearchResults(null)
-    }
-
-    const toggleType = (value: string) => {
-        setFilterTypes(prev => {
-            const next = new Set(prev)
-            if (next.has(value)) next.delete(value)
-            else next.add(value)
-            return next
-        })
-    }
-
-    const clearFilters = () => {
-        setFilterTypes(new Set())
-        setFilterTime(null)
-    }
 
     const sortedFiles = useMemo(() => {
         return Array.from(files.values()).sort((a, b) => {
@@ -244,8 +135,11 @@ export const FilesList = () => {
     return(
         <VerticalDiv
             style={{
-                borderRadius: "var(--border-rad)",
                 padding: "1rem",
+                height: "100%",
+                minHeight: 0,
+                minWidth: 0,
+                flex: "1 1 auto",
                 overscrollBehaviorY: "none",
                 scrollbarGutter: "stable",
             }}
@@ -253,146 +147,6 @@ export const FilesList = () => {
             padding="0rem"
             gap="0.5rem"
         >
-
-            {/* search bar + filter button row */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.25rem 0" }}>
-                <Search size={16} style={{ opacity: 0.5 }} />
-                <input
-                    type="text"
-                    placeholder="Search files..."
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    style={{
-                        flex: 1,
-                        padding: "0.4rem 0.5rem",
-                        border: "none",
-                        borderRadius: "var(--border-rad)",
-                        background: "rgba(255, 255, 255, 0.08)",
-                        color: "var(--foreground)",
-                        fontSize: "0.9rem",
-                        outline: "none",
-                    }}
-                />
-                {searchQuery && (
-                    <button onClick={clearSearch} style={{ background: "transparent", border: "none", color: "var(--foreground)", cursor: "pointer", display: "flex", alignItems: "center" }}>
-                        <X size={16} />
-                    </button>
-                )}
-
-                {/* filter button */}
-                <div ref={filterRef} style={{ position: "relative" }}>
-                    <button
-                        type="button"
-                        aria-label={filterOpen ? "Close filters" : "Open filters"}
-                        aria-expanded={filterOpen}
-                        onClick={() => setFilterOpen(v => !v)}
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "0.25rem",
-                            padding: "0.25rem",
-                            border: "none",
-                            background: "transparent",
-                            color: hasActiveFilters ? "var(--bundle-color-2)" : "var(--foreground)",
-                            cursor: "pointer",
-                            outline: "none",
-                        }}
-                    >
-                        <Filter size={18} strokeWidth={2} aria-hidden />
-                        {hasActiveFilters && (
-                            <span style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: "16px",
-                                height: "16px",
-                                borderRadius: "50%",
-                                background: "var(--bundle-color-2)",
-                                color: "var(--background)",
-                                fontSize: "0.65rem",
-                                fontWeight: "bold",
-                            }}>
-                                {filterTypes.size + (filterTime ? 1 : 0)}
-                            </span>
-                        )}
-                    </button>
-
-                    {filterOpen && (
-                        <div style={{
-                            position: "absolute",
-                            top: "calc(100% + 0.4rem)",
-                            right: 0,
-                            zIndex: 500,
-                            background: "var(--accent-color)",
-                            border: "1px solid var(--foreground)",
-                            borderRadius: "var(--border-rad)",
-                            padding: "0.75rem",
-                            minWidth: "180px",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "0.6rem",
-                        }}>
-                            {/* type filters */}
-                            <div style={{ fontSize: "0.75rem", opacity: 0.55, fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>File Type</div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                                {FILE_TYPE_OPTIONS.map(opt => (
-                                    <label key={opt.value} style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem" }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={filterTypes.has(opt.value)}
-                                            onChange={() => toggleType(opt.value)}
-                                            style={{ accentColor: "var(--bundle-color-2)", cursor: "pointer" }}
-                                        />
-                                        {opt.label}
-                                    </label>
-                                ))}
-                            </div>
-
-                            <div style={{ height: "1px", background: "rgba(255,255,255,0.12)" }} />
-
-                            {/* time filters */}
-                            <div style={{ fontSize: "0.75rem", opacity: 0.55, fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>Time Range</div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                                {TIME_OPTIONS.map(opt => (
-                                    <label key={opt.value} style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem" }}>
-                                        <input
-                                            type="radio"
-                                            name="filter-time"
-                                            checked={filterTime === opt.value}
-                                            onChange={() => setFilterTime(filterTime === opt.value ? null : opt.value)}
-                                            onClick={() => { if (filterTime === opt.value) setFilterTime(null) }}
-                                            style={{ accentColor: "var(--bundle-color-2)", cursor: "pointer" }}
-                                        />
-                                        {opt.label}
-                                    </label>
-                                ))}
-                            </div>
-
-                            {hasActiveFilters && (
-                                <>
-                                    <div style={{ height: "1px", background: "rgba(255,255,255,0.12)" }} />
-                                    <button
-                                        onClick={clearFilters}
-                                        style={{
-                                            background: "transparent",
-                                            border: "1px solid var(--foreground)",
-                                            color: "var(--foreground)",
-                                            borderRadius: "var(--border-rad)",
-                                            padding: "0.3rem 0.5rem",
-                                            cursor: "pointer",
-                                            fontSize: "0.8rem",
-                                            opacity: 0.7,
-                                        }}
-                                    >
-                                        Clear filters
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    )}
-                </div>
-            </div>
 
             {/* search status */}
             {searchLoading && <span className="filelist-search-meta">Searching…</span>}

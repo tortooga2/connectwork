@@ -182,7 +182,7 @@ export const Preview = () => {
 
 
     return (
-        <VerticalDiv style={{width : "100%", height : "100%", padding : "1rem", boxSizing : "border-box", overflowY : "auto"}}> 
+        <VerticalDiv style={{width : "100%", height : "100%", minHeight : 0, padding : "1rem", boxSizing : "border-box", overflowY : "auto", overscrollBehaviorY : "none"}}> 
             
             {fileType==="Bundle" && fileUrl !== undefined ? (
                     <Bundle bundle_data={fileUrl} />
