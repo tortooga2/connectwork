@@ -3,8 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@clerk/nextjs/server";
 
-import { isFileOwner } from "@/lib/server/getFileOwnership";
-import { getFileData } from "@/lib/server/getFileData";
+import { getFileDataForUser } from "@/lib/server/getFileData";
 
 
 
@@ -30,14 +29,10 @@ export async function GET(
     // 2. Await the params
     const { file_id } = await params;
 
-    const isOwner = await isFileOwner(file_id, userId);
-    if (!isOwner) {
-        return NextResponse.json({ "message": "You do not have permission..." }, { status: 403 });
-    }
-
-    const fileData = await getFileData(file_id);
+    const fileData = await getFileDataForUser(file_id, userId);
     if (!fileData) {
-        return NextResponse.json({ "message": "Failed to get File Data" }, { status: 501 });
+       //changed from 403 to 404 to prevent leaking information about the existence of the file
+        return NextResponse.json({ "message": "Not found" }, { status: 404 });
     }
 
     const fileUrl = await getFileUrl({
@@ -62,17 +57,11 @@ export async function DELETE(request : NextRequest, {params} : {params : Promise
     }
 
     const { file_id } = await params;
-    const isOwner = await isFileOwner(file_id, userId);
 
-    if(!isOwner){
-        return NextResponse.json({"message" : "You do not have permission to access this file."}, {status : 403})
-    }
-
-    // Get file id from database
-    const fileData = await getFileData(file_id);
+    const fileData = await getFileDataForUser(file_id, userId);
 
     if(!fileData){
-        return NextResponse.json({"message" : "Failed to get File Data"}, {status : 501})
+        return NextResponse.json({"message" : "Not found"}, {status : 404})
     }
 
     const file_bucket_id = fileData.file_id;

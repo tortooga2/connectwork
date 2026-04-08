@@ -43,7 +43,7 @@ export default async function Home() {
             </main>
 
             <footer className={styles.landingFooter}>
-                © 2025 Bundle, <em>Networking Application</em>. All rights reserved.
+                © 2025 linq, <em>Networking Application</em>. All rights reserved.
             </footer>
         </div>
     );

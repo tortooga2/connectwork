@@ -13,6 +13,13 @@ export type File = {
     creator_email : string | null
 }
 
+export type SearchResult = {
+    file: File,
+    matchedIn: "name" | "content" | "linked-content",
+    snippet: string | null,
+    matchedChildName?: string
+}
+
 interface FileManagerState {
     layoutState: number,
     SetLayoutState: (layoutNum: number) => void,
@@ -25,11 +32,20 @@ interface FileManagerState {
     SetLoading: (loading: boolean) => void,
     selectedFiles: Set<string>,
     SelectFile: (fileId: string, selected: boolean) => void,
+    SetSelectionForIds: (fileIds: string[], selected: boolean) => void,
     ClearSelection: () => void,
     previewedFile : File | undefined,
     SetPreviewedFile : (file : File | undefined) => void,
     error: string | null,
     SetError: (error: string | null) => void,
+    searchQuery: string,
+    SetSearchQuery: (query: string) => void,
+    searchResults: SearchResult[] | null,
+    SetSearchResults: (results: SearchResult[] | null) => void,
+    searchLoading: boolean,
+    actionLoading: boolean,
+    actionLabel: string,
+    SetActionLoading: (loading: boolean, label?: string) => void,
 }
 
 export const useFileStore = create<FileManagerState>()((set, get) => ({
@@ -72,6 +88,16 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
             return { selectedFiles: newSelectedFiles };
         });
     },
+    SetSelectionForIds: (fileIds, selected) => {
+        set((state) => {
+            const next = new Set(state.selectedFiles);
+            for (const id of fileIds) {
+                if (selected) next.add(id);
+                else next.delete(id);
+            }
+            return { selectedFiles: next };
+        });
+    },
     ClearSelection: () => set({ selectedFiles: new Set() }),
 
 
@@ -85,6 +111,15 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
 
     error: null,
     SetError: (error) => set({ error }),
+
+    searchQuery: "",
+    SetSearchQuery: (query) => set({ searchQuery: query }),
+    searchResults: null,
+    SetSearchResults: (results) => set({ searchResults: results }),
+    searchLoading: false,
+    actionLoading: false,
+    actionLabel: "",
+    SetActionLoading: (loading, label = "") => set({ actionLoading: loading, actionLabel: label }),
 
     uploadFiles: async (files, onProgress = null) => {
         const { SetLoading, SetError, UpdateFiles } = get();

@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
     const body: RequestBody = await request.json();
     const { keys, fileNames } = body;
 
-    // Use Drizzle transaction
-    const result = await db.transaction(async (tx) => {
+    // Use Drizzle transaction to ensure atomicity (all or nothing) of the operation
+    const result = await db.transaction(async () => {
       const sentFiles: FileData[] = [];
 
       if (!Array.isArray(keys) || !Array.isArray(fileNames)) {

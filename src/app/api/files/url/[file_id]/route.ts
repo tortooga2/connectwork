@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { genPresignedUrl } from "@/lib/server/s3/module.genPresignedUrl"; // Adjust path as needed
-import { getFileData } from "@/lib/server/getFileData";
+import { getFileDataForUser } from "@/lib/server/getFileData";
 
 export async function GET(
     request: NextRequest, 
@@ -16,7 +16,7 @@ export async function GET(
     // 2. Await the params
     const { file_id } = await params;
 
-    const fileData = await getFileData(file_id);
+    const fileData = await getFileDataForUser(file_id, userId);
     if (!fileData) {
         return NextResponse.json({ message: "File not found" }, { status: 404 });
     }

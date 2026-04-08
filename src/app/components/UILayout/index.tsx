@@ -1,17 +1,34 @@
 "use client";
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import Lenis from "lenis"
 
 export const NewPage = ({ children }) => {
     useEffect(() => {
         const root = document.getElementById("root");
         root?.style.setProperty("width", "100vw");
         root?.style.setProperty("height", "100vh");
+        root?.style.setProperty("max-height", "100dvh");
         root?.style.setProperty("box-sizing", "border-box");
         root?.style.setProperty("overflow", "hidden");
+        root?.style.setProperty("overscroll-behavior", "none");
     }, []);
 
-    return <div style={{ width: "100%", height: "100%" }}>{children}</div>;
+    return (
+        <div
+            style={{
+                width: "100%",
+                height: "100%",
+                maxHeight: "100dvh",
+                minHeight: 0,
+                overflow: "hidden",
+                overscrollBehavior: "none",
+                display: "flex",
+                flexDirection: "column",
+                boxSizing: "border-box",
+            }}
+        >
+            {children}
+        </div>
+    );
 };
 
 
@@ -66,6 +83,8 @@ export const VerticalDiv = ({
         setIsTransitioning(state);
     }, [state]);
 
+    // Intentionally sync layout from state transitions only (not every mainStyle/layouts change)
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         setStyleState({
             ...mainStyle,
@@ -73,6 +92,7 @@ export const VerticalDiv = ({
         });
 
     }, [isTransitioning]);
+    /* eslint-enable react-hooks/exhaustive-deps */
 
     const scrollableRef = useRef(null);
 
@@ -179,12 +199,14 @@ export const HorizontalDiv = ({
         // };
     });
 
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         setStyleState({
             ...mainStyle,
             ...layouts[isTransitioning],
         });
     }, [isTransitioning]);
+    /* eslint-enable react-hooks/exhaustive-deps */
 
     return (
         <div

@@ -3,6 +3,9 @@ import { useState } from "react"
 import { NewPage, VerticalDiv, HorizontalDiv } from "@/app/components/UILayout"
 import { UserButton } from "@clerk/nextjs"
 import { FilesList } from "@/app/components/FileList"
+import { DashboardSearchField } from "@/app/components/FileList/DashboardSearchField"
+import { DashboardFilterButton } from "@/app/components/FileList/DashboardFilterButton"
+import { FileListFilterProvider } from "@/app/components/FileList/fileListFilterContext"
 import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
 import { LinqButton } from "@/app/components/LinqButton"
@@ -11,30 +14,67 @@ import { TextEditor } from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
 import { DeleteButton } from "@/app/components/DeleteButton"
 import { PencilLine, Upload, X, SquareArrowOutUpRight } from "lucide-react"
+import { getDisplayFileName } from "@/lib/client/getFileType"
 
 
 export const Dashboard = ({}) => {
     const layoutState = useFileStore((state)=>state.layoutState)
     const setLayoutState = useFileStore((state)=>state.SetLayoutState)
     const previewedFile = useFileStore((state)=>state.previewedFile)
-    const SetLayoutState = useFileStore((state)=>state.SetLayoutState)
     const [uploadPopupOpen, setUploadPopupOpen] = useState(false)
 
     const heightOfDock = "6.5%";
     const heightOfTopBar = "3%";
+    // avoid server-side window access
+    const previewUrl = previewedFile?.id ? `/preview/${previewedFile.id}` : "#";
+    const previewName = getDisplayFileName(previewedFile?.name, previewedFile?.type);
+    const previewCreatedAt = previewedFile?.createdAt ? new Date(previewedFile.createdAt) : null;
+    const createdLocal = previewCreatedAt && !Number.isNaN(previewCreatedAt.getTime()) ? previewCreatedAt.toLocaleString() : "Unknown";
+    const createdUtc = previewCreatedAt && !Number.isNaN(previewCreatedAt.getTime()) ? previewCreatedAt.toISOString() : "Unknown";
     return (       
         <NewPage>    
-            <VerticalDiv style={{position : "relative", borderWidth: "0px", borderColor: "transparent"}} padding="1rem">
+            <VerticalDiv style={{position : "relative", borderWidth: "0px", borderColor: "transparent", height: "100%", minHeight: 0, overflow: "hidden", overscrollBehavior: "none" }} padding="1rem">
                     
-                    <VerticalDiv padding="1rem" gap="0rem">
-                        <div style={{height: heightOfTopBar, minHeight: `calc(${heightOfTopBar} + 1rem)`, width : "100%", padding: "0rem 2rem", marginBottom: "1rem", display : "flex", alignItems : "center", justifyContent : "space-between", boxSizing : "border-box", zIndex : "2"}}>
-                            <h1 style={{fontSize : "2rem", color: "var(--bundle-color-2)", margin: 0}}>Linquiq</h1>
-                            <UserButton/>
-                                
+                    <FileListFilterProvider>
+                    <VerticalDiv
+                        padding="1rem"
+                        gap="0rem"
+                        style={{
+                            flex: "1 1 auto",
+                            minHeight: 0,
+                            height: "100%",
+                            overflow: "hidden",
+                            overscrollBehavior: "none",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <div style={{ position: "relative", zIndex: 20, height: heightOfTopBar, minHeight: `calc(${heightOfTopBar} + 1rem)`, width: "100%", padding: "0rem 2rem", marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", boxSizing: "border-box" }}>
+                            <h1 style={{ fontSize: "2rem", color: "var(--bundle-color-2)", margin: 0, flexShrink: 0 }}>Linquiq</h1>
+                            <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                <DashboardSearchField />
+                                <DashboardFilterButton />
+                            </div>
+                            <div style={{ flexShrink: 0 }}>
+                                <UserButton />
+                            </div>
                         </div>
                             
-                        <VerticalDiv padding="0rem">    
-                            <HorizontalDiv style={{position: "relative", height: `100%`, zIndex : "1", transition : "width 0.2s, left 0.2s, right 0.2s"}} layouts={[
+                        <VerticalDiv padding="0rem" style={{ position: "relative", zIndex: 1, height: `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", pointerEvents: "none" }}>    
+                            <HorizontalDiv style={{
+                                position: "relative",
+                                height: `100%`,
+                                minHeight: 0,
+                                flex: "1 1 auto",
+                                zIndex: 2,
+                                isolation: "isolate",
+                                backgroundColor: "var(--accent-color)",
+                                borderRadius: "var(--border-rad)",
+                                overflow: "hidden",
+                                alignItems: "stretch",
+                                pointerEvents: "auto",
+                                transition: "width 0.2s, left 0.2s, right 0.2s",
+                            }} layouts={[
                                     {
                                         left : 0,
                                         width : "100%",
@@ -88,9 +128,9 @@ export const Dashboard = ({}) => {
                                 )}
                                 <button className={"but new-note"} onClick={()=>{
                                     if (layoutState !== 2)
-                                    SetLayoutState(2);
+                                    setLayoutState(2);
                                     else
-                                    SetLayoutState(0);
+                                    setLayoutState(0);
 
                                 }}> 
                                     <div className={"but-content"} style={{display : "flex", alignItems : "center"}}>
@@ -104,51 +144,118 @@ export const Dashboard = ({}) => {
                             </div>
                         </div>
                     </VerticalDiv>
+                    </FileListFilterProvider>
                 
                     
                 
-                <VerticalDiv style={{position : "absolute", top : "0", left : "0", width : "100%"}} >
-                <HorizontalDiv style={{position : "relative", left : "0", top : `calc(${heightOfTopBar} + 1rem)`, height : `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`}}>
+                <VerticalDiv style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%", zIndex: 0, overflow: "hidden", overscrollBehavior: "none" }} >
+                <HorizontalDiv style={{position : "relative", left : "0", top : `calc(${heightOfTopBar} + 1rem)`, height : `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`, minHeight: 0, overflow: "hidden", overscrollBehavior: "none" }}>
                     
-                    <VerticalDiv style={{position : "absolute", right : "0", width : "calc(40% - 1rem)", borderRadius : "var(--border-rad)"}} padding="1rem" color="var(--accent-color)">
-                        <div style={{display : "flex", flexDirection : "column", gap : "1rem", width : "100%", boxSizing : "border-box", borderBottomLeftRadius : "var(--border-rad)", borderBottomRightRadius : "var(--border-rad)"}}>
+                    <VerticalDiv style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: "calc(40% - 1rem)", height: "100%", minHeight: 0, borderRadius: "var(--border-rad)", overflow: "hidden", display: "flex", flexDirection: "column" }} padding="1rem" color="var(--accent-color)">
+                        <div style={{display : "flex", flexDirection : "column", gap : "1rem", width : "100%", flexShrink: 0, boxSizing : "border-box", borderBottomLeftRadius : "var(--border-rad)", borderBottomRightRadius : "var(--border-rad)"}}>
                             <div style={{display : "flex", flexDirection : "row", width : "100%", justifyContent : "space-between", alignItems : "center"}}>
-                                <h1 style={{fontSize : "2rem", whiteSpace : "nowrap", overflow : "hidden", textOverflow : "ellipsis"}}>{previewedFile?.name}</h1>
-                                <div>
-                                    <button onClick={()=>SetLayoutState(0)} style={{  }}>Close</button>
-                                </div>
+                                <h1 style={{fontSize : "2rem", whiteSpace : "nowrap", overflow : "hidden", textOverflow : "ellipsis"}}>{previewName}</h1>
+                                <button
+                                    onClick={() => setLayoutState(0)}
+                                    style={{
+                                        background: "transparent",
+                                        border: "none",
+                                        color: "var(--foreground)",
+                                        cursor: "pointer",
+                                        padding: "0.5rem",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                    aria-label="Close preview"
+                                >
+                                    <X size={24} />
+                                </button>
                             </div>
                             <div style={{display : "flex", flexDirection : "column", gap : "0.5rem"}}>
                                 {FileType(previewedFile?.type, true, false)}
                                 <span title={previewedFile?.id}><span style={{fontWeight : "bold"}}>File ID:</span> {previewedFile?.id}</span>
-                                <span><span style={{fontWeight : "bold"}}>File Url:</span><div><div className={"url preview"} onClick={() => window.open(`http://${window.location.host}/preview/${previewedFile?.id}`, "_blank")}>{<a>{`http://${window.location.host}/preview/${previewedFile?.id}`}</a>}<SquareArrowOutUpRight size={12}/></div></div></span>
-                                <span title={previewedFile?.createdAt}><span style={{fontWeight : "bold"}}>Created:</span > {new Date(previewedFile?.createdAt as string).toLocaleString()}</span>
+                                <span
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        flexWrap: "nowrap",
+                                        gap: "0.35rem",
+                                        width: "100%",
+                                        minWidth: 0,
+                                    }}
+                                >
+                                    <span style={{ fontWeight: "bold", flexShrink: 0 }}>File Url:</span>
+                                    <div
+                                        className="url preview"
+                                        style={{
+                                            flex: "1 1 0",
+                                            minWidth: 0,
+                                            width: "auto",
+                                        }}
+                                    >
+                                        <a
+                                            href={previewUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            title={previewUrl}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "0.35rem",
+                                                minWidth: 0,
+                                                maxWidth: "100%",
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap",
+                                                    minWidth: 0,
+                                                }}
+                                            >
+                                                {previewUrl}
+                                            </span>
+                                            <SquareArrowOutUpRight size={12} aria-hidden style={{ flexShrink: 0 }} />
+                                        </a>
+                                    </div>
+                                </span>
+                                <span title={previewedFile?.createdAt}><span style={{fontWeight : "bold"}}>Created:</span> {createdLocal}</span>
+                                <span><span style={{fontWeight : "bold"}}>UTC:</span> {createdUtc}</span>
                                 <span><span style={{fontWeight : "bold"}}>Creator:</span> {previewedFile?.creator_email}</span>
                             </div>
                         </div>
-                        <Preview />
+                        <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                            <Preview />
+                        </div>
                     </VerticalDiv>
 
-                    <VerticalDiv style={{position : "absolute", left : "0", top : "0", bottom : "0", width : "calc(40% - 1rem)",borderRadius : "var(--border-rad)"}} color="var(--accent-color)" padding="1rem">    
-                        <button
-                            onClick={() => setLayoutState(0)}
-                            style={{
-                                position: "absolute",
-                                top: "0.5rem",
-                                right: "0.5rem",
-                                background: "transparent",
-                                border: "none",
-                                color: "var(--foreground)",
-                                cursor: "pointer",
-                                padding: "0.5rem",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                            aria-label="Close editor"
-                        >
-                            <X size={24} />
-                        </button>
+                    <VerticalDiv style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "calc(40% - 1rem)", borderRadius: "var(--border-rad)", overflow: "hidden", display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }} color="var(--accent-color)" padding="1rem">
+                        <div className="note-editor-header-bar">
+                            <div className="note-editor-header-type">
+                                {FileType("md")}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setLayoutState(0)}
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    color: "var(--foreground)",
+                                    cursor: "pointer",
+                                    padding: "0.35rem",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    flexShrink: 0,
+                                }}
+                                aria-label="Close editor"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
                         <TextEditor />
                     </VerticalDiv>
 

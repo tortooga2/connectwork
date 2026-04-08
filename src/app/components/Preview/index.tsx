@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react";
+import type { File } from "../State Manager/appManager";
 import { useFileStore } from "../State Manager/appManager";
-import { getFileUrl } from "@/lib/server/getFileUrl";
+import { getFileUrl, type FileUrlResult } from "@/lib/server/getFileUrl";
 import { getFileType } from "@/lib/client/getFileType"
 import { VerticalDiv } from "../UILayout";
 import Bundle from "./Views/Bundle";
@@ -52,7 +53,7 @@ export const Preview = () => {
     const previewedFile = useFileStore((state) => state.previewedFile)
     const layoutState = useFileStore((state)=>state.layoutState)
 
-    const [fileUrl, SetFileUrl] = useState<{url: string | undefined, data: any}[] | undefined>([{url: "", data: null}]);
+    const [fileUrl, SetFileUrl] = useState<FileUrlResult[] | undefined>([{ url: "", data: null }]);
     const [fileType, SetFileType] = useState<string>(getFileType(previewedFile?.name || ""))
 
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -64,7 +65,7 @@ export const Preview = () => {
 
     useEffect(()=>{
 
-        const GetFileUrl = async (file) => {
+        const GetFileUrl = async (file: File) => {
             console.log(file)
             const file_url = await getFileUrl(file, false);
             const file_type = getFileType(file.type);
@@ -132,7 +133,7 @@ export const Preview = () => {
 
             case "Image" : {
                 return (
-                    <img src={fileUrl[0].url as string} style={{
+                    <img src={fileUrl[0].url as string} alt="" style={{
                         width : "100%",
                         borderRadius : "var(--border-rad)",
                         objectFit : "contain",
@@ -181,11 +182,11 @@ export const Preview = () => {
 
 
     return (
-        <VerticalDiv style={{width : "100%", height : "100%", padding : "1rem", boxSizing : "border-box", overflowY : "auto"}}> 
+        <VerticalDiv style={{width : "100%", height : "100%", minHeight : 0, padding : "1rem", boxSizing : "border-box", overflowY : "auto", overscrollBehaviorY : "none"}}> 
             
             {fileType==="Bundle" && fileUrl !== undefined ? (
-                    DisplayFile()
-                ) : (<Bundle bundle_data={fileUrl || undefined} />)}
+                    <Bundle bundle_data={fileUrl} />
+                ) : (DisplayFile())}
                 
             
         </VerticalDiv>
