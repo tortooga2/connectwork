@@ -23,7 +23,7 @@ export const Dashboard = ({}) => {
     const previewedFile = useFileStore((state)=>state.previewedFile)
     const [uploadPopupOpen, setUploadPopupOpen] = useState(false)
 
-    const heightOfDock = "6.8%";
+    const heightOfDock = "5.5%";
     const heightOfTopBar = "3%";
     /** In-flow file list: reserve space for dock + top bar (see dock div + header). */
     const mainContentHeight = `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`;
