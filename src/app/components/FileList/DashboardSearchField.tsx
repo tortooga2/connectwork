@@ -1,11 +1,11 @@
 "use client"
 
-import { Search, X } from "lucide-react"
+import { Search } from "lucide-react"
 import { useDebouncedFileSearch } from "./useDebouncedFileSearch"
 
 /** Search input for the top dashboard bar (Linquiq header). */
 export function DashboardSearchField() {
-    const { searchQuery, handleSearchChange, clearSearch } = useDebouncedFileSearch()
+    const { searchQuery, handleSearchChange } = useDebouncedFileSearch()
 
     return (
         <div
@@ -13,7 +13,8 @@ export function DashboardSearchField() {
                 display: "flex",
                 alignItems: "center",
                 gap: "0.5rem",
-                flex: 1,
+                flex: "0 1 50%",
+                maxWidth: "50%",
                 minWidth: 0,
             }}
         >
@@ -37,24 +38,6 @@ export function DashboardSearchField() {
                 autoComplete="off"
                 aria-label="Search files"
             />
-            {searchQuery ? (
-                <button
-                    type="button"
-                    onClick={clearSearch}
-                    style={{
-                        background: "transparent",
-                        border: "none",
-                        color: "var(--foreground)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        flexShrink: 0,
-                    }}
-                    aria-label="Clear search"
-                >
-                    <X size={16} />
-                </button>
-            ) : null}
         </div>
     )
 }

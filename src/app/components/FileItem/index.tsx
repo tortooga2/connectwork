@@ -1,10 +1,10 @@
 "use client"
-import {useState, useEffect, useRef} from "react"
+import { useState, useEffect, useRef } from "react"
 import type { File } from "../State Manager/appManager"
 import { useFileStore } from "../State Manager/appManager"
 import {FileType} from "../TypeTags"
 import { getDisplayFileName } from "@/lib/client/getFileType"
-import { SquareArrowOutUpRight } from "lucide-react"
+import { SquareArrowOutUpRight, Eye } from "lucide-react"
 
 
 
@@ -47,6 +47,10 @@ export const FileItem = ({
 
     const SetLayoutState = useFileStore((state)=>state.SetLayoutState);
     const layoutState = useFileStore((state)=> state.layoutState);
+    const previewedFile = useFileStore((state) => state.previewedFile)
+
+    const peekOpenForThisFile =
+        layoutState === 1 && previewedFile?.id === file.id
 
 
     useEffect(()=>{
@@ -63,14 +67,19 @@ export const FileItem = ({
 
     const displayName = getDisplayFileName(file.name, file.type)
 
-    const openSidePreview = () => {
+    const togglePeek = () => {
+        if (peekOpenForThisFile) {
+            SetLayoutState(0)
+            SetPreviewFile(undefined)
+            return
+        }
         SetPreviewFile(file)
         SetLayoutState(1)
     }
 
     return (
         <div>
-            <div className={`row${isSelected ? " row-selected" : ""}`} onClick={openSidePreview}>
+            <div className={`row${isSelected ? " row-selected" : ""}`} style={{ cursor: "default" }}>
                 <label className={"select-column"} onClick={(e) => e.stopPropagation()}>
                     <input
                         type={"checkbox"}
@@ -87,17 +96,47 @@ export const FileItem = ({
                         }}
                     />
                 </label>
-                <div className={"column"}>
-                    <div
-                        className={"url"}
-                        title="Open In New Tab"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            window.open(`http://${window.location.host}/preview/${file.id}`, "_blank")
-                        }}
-                    >
-                        <span>Open In New Tab</span>
-                        <SquareArrowOutUpRight size={12}/>
+                <div
+                    className={"column column--file-actions"}
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        minWidth: 0,
+                    }}
+                >
+                    <div className="file-item-actions" role="group" aria-label="File actions">
+                        <button
+                            type="button"
+                            className="file-item-action"
+                            title="Open in new tab"
+                            aria-label={`Open ${displayName} in new tab`}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                window.open(`${window.location.origin}/preview/${file.id}`, "_blank")
+                            }}
+                        >
+                            <span>Open</span>
+                            <SquareArrowOutUpRight size={13} strokeWidth={2.25} aria-hidden />
+                        </button>
+                        <button
+                            type="button"
+                            className="file-item-action"
+                            title={peekOpenForThisFile ? "Close peek" : "Peek — side preview"}
+                            aria-label={
+                                peekOpenForThisFile
+                                    ? `Close peek for ${displayName}`
+                                    : `Peek ${displayName} in side panel`
+                            }
+                            aria-pressed={peekOpenForThisFile}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                togglePeek()
+                            }}
+                        >
+                            <span>Peek</span>
+                            <Eye size={13} strokeWidth={2.25} aria-hidden />
+                        </button>
                     </div>
                 </div>
                 <div className={"column"}>{new Date(file.createdAt).toLocaleString()}</div>
