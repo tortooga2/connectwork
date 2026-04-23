@@ -7,6 +7,7 @@ import { getFileUrl } from "@/lib/server/getFileUrl";
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { UserButton } from "@clerk/nextjs";
+import type { CSSProperties } from "react";
 
 // 1. Update the type to expect a Promise
 export default async function PreviewPage({ 
@@ -14,8 +15,6 @@ export default async function PreviewPage({
 }: { 
     params: Promise<{ file_id: string }> 
 }) {
-    
-    const heightOfTopBar = "3%";
     const { userId } = await auth();
     
     if(!userId){
@@ -39,19 +38,47 @@ export default async function PreviewPage({
     }
 
     const fileUrl = await getFileUrl(fileData, false);
+    const topBarStyle: CSSProperties = {
+        width: "100%",
+        maxWidth: "980px",
+        minHeight: "56px",
+        padding: "0 clamp(0.35rem, 2vw, 0.75rem)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        boxSizing: "border-box",
+        gap: "0.75rem",
+        zIndex: 2,
+    };
+
+    const titleStyle: CSSProperties = {
+        fontSize: "clamp(1.4rem, 4vw, 2rem)",
+        color: "var(--bundle-color-2)",
+        margin: 0,
+        whiteSpace: "nowrap",
+    };
+
+    const previewBodyStyle: CSSProperties = {
+        width: "100%",
+        padding: "clamp(0.75rem, 2vw, 1rem)",
+        boxSizing: "border-box",
+        backgroundColor: "var(--accent-color)",
+        borderRadius: "var(--border-rad)",
+        overflowY: "auto",
+        maxHeight: "calc(100dvh - 10.5rem)",
+    };
 
     return (
         <NewPage>
-            <VerticalDiv style={{alignItems: "center"}} padding="1rem">
-                <div style={{height: heightOfTopBar, minHeight: `calc(${heightOfTopBar} + 1rem)`, width : "100%", padding: "0rem 2rem", display : "flex", alignItems : "center", justifyContent : "space-between", boxSizing : "border-box", zIndex : "2"}}>
-                            <h1 style={{fontSize : "2rem", color: "var(--bundle-color-2)", margin: 0}}>Linquiq</h1>
-                            <UserButton/>
-                                
+            <VerticalDiv style={{ alignItems: "center", gap: "0.75rem" }} padding="0.75rem">
+                <div style={topBarStyle}>
+                    <h1 style={titleStyle}>Linquiq</h1>
+                    <UserButton />
                 </div>
-                <VerticalDiv width="65%" padding="0rem">
+                <VerticalDiv width="100%" style={{ maxWidth: "980px" }} padding="0rem">
                     <FileData fileData={fileData} />
-                    <VerticalDiv  style={{borderRadius: "var(--border-rad)", scrollbarWidth : "auto", }} padding="0rem" gap="1rem">
-                        <div style={{padding: "1rem", boxSizing : "border-box", backgroundColor : "var(--accent-color)", borderRadius : "var(--border-rad)", overflowY : "auto"}}>
+                    <VerticalDiv style={{ borderRadius: "var(--border-rad)", scrollbarWidth: "auto" }} padding="0rem" gap="0.75rem">
+                        <div style={previewBodyStyle}>
                             {fileData.type.toLowerCase() === "bundle" ? (
                                 <Bundle bundle_data={fileUrl || undefined} />
                             ) : (

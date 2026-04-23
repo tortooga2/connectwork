@@ -48,6 +48,58 @@ interface FileManagerState {
     SetActionLoading: (loading: boolean, label?: string) => void,
 }
 
+type UploadJob = {
+    displayName: string,
+    uploadFile: globalThis.File,
+    storedName: string,
+}
+
+const isHeicFile = (file: globalThis.File): boolean => {
+    const extension = file.name.split(".").pop()?.toLowerCase();
+    const mimeType = file.type.toLowerCase();
+
+    return (
+        extension === "heic" ||
+        extension === "heif" ||
+        mimeType === "image/heic" ||
+        mimeType === "image/heif"
+    );
+};
+
+const toJpgName = (name: string): string => {
+    return name.replace(/\.[^.]+$/, ".jpg");
+};
+
+const convertHeicToJpeg = async (file: globalThis.File): Promise<UploadJob> => {
+    if (!isHeicFile(file)) {
+        return {
+            displayName: file.name,
+            uploadFile: file,
+            storedName: file.name,
+        };
+    }
+
+    const heic2anyModule = await import("heic2any");
+    const conversionResult = await heic2anyModule.default({
+        blob: file,
+        toType: "image/jpeg",
+        quality: 0.9,
+    });
+
+    const convertedBlob = Array.isArray(conversionResult) ? conversionResult[0] : conversionResult;
+    const jpgName = toJpgName(file.name);
+    const convertedFile = new globalThis.File([convertedBlob], jpgName, {
+        type: "image/jpeg",
+        lastModified: file.lastModified,
+    });
+
+    return {
+        displayName: file.name,
+        uploadFile: convertedFile,
+        storedName: jpgName,
+    };
+};
+
 export const useFileStore = create<FileManagerState>()((set, get) => ({
     layoutState: 0,
     SetLayoutState: (layoutNum) => set(() => ({ layoutState: layoutNum })),
@@ -127,16 +179,16 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
         SetLoading(true);
         SetError(null);
 
-        // Separate name from each file
-        const fileNames: string[] = [];
-        for (let index = 0; index < files.length; index++) {
-            fileNames.push(files[index].name);
-        }
-
         try {
+            const uploadJobs = await Promise.all(
+                Array.from(files).map(async (file) => {
+                    return await convertHeicToJpeg(file);
+                })
+            );
+
             // Get presigned URLs
             const response = await fetch(
-                `/api/files/upload-helper?count=${files.length}`,
+                `/api/files/upload-helper?count=${uploadJobs.length}`,
                 {
                     method: "GET",
                     credentials: "include",
@@ -150,15 +202,16 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
             const { urls, keys } = await response.json();
 
             // Upload each file to S3
-            const uploadPromises = files.length > 0 ? Array.from(files).map(async (file, index) => {
+            const uploadPromises = uploadJobs.length > 0 ? uploadJobs.map(async (uploadJob, index) => {
                 return new Promise<void>((resolve, reject) => {
                     const xhr = new XMLHttpRequest();
                     xhr.open("PUT", urls[index]);
+                    xhr.setRequestHeader("Content-Type", uploadJob.uploadFile.type || "application/octet-stream");
 
                     xhr.onload = async () => {
                         if (xhr.status === 200) {
                             if (onProgress) {
-                                onProgress(file.name, 100);
+                                onProgress(uploadJob.displayName, 100);
                             }
                             
                             const fileVerResponse = await fetch("/api/files/verify", {
@@ -169,7 +222,7 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
                                                     },
                                                     body: JSON.stringify({
                                                         keys: [keys[index]],
-                                                        fileNames: [fileNames[index]],
+                                                        fileNames: [uploadJob.storedName],
                                                     }),
                                                 })
 
@@ -195,22 +248,22 @@ export const useFileStore = create<FileManagerState>()((set, get) => ({
                                             
                             resolve()
                         } else {
-                            reject(new Error(`Failed to upload ${file.name}`));
+                            reject(new Error(`Failed to upload ${uploadJob.displayName}`));
                         }
                     };
 
                     xhr.onerror = () => {
-                        reject(new Error(`XHR error for ${file.name}`));
+                        reject(new Error(`XHR error for ${uploadJob.displayName}`));
                     };
 
                     xhr.upload.onprogress = (event) => {
                         if (event.lengthComputable && onProgress) {
                             const percent = (event.loaded / event.total) * 100;
-                            onProgress(file.name, percent);
+                            onProgress(uploadJob.displayName, percent);
                         }
                     };
 
-                    xhr.send(file);
+                    xhr.send(uploadJob.uploadFile);
                 });
             }) : [];
 

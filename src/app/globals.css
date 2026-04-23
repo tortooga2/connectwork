@@ -171,10 +171,14 @@ a {
   position: relative;
   border-radius: 0rem;
   display : grid;
-  /* checkbox + five equal columns (View, When, Type, Who, What) */
+  /* checkbox + View (actions) + When + Type + Who + What — View needs a real min so Open/Peek never spills into When */
   grid-template-columns:
       minmax(3rem, auto)
-      repeat(5, minmax(0, 1fr));
+      minmax(11.25rem, 1fr)
+      minmax(7.5rem, 1.1fr)
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      minmax(0, 1.15fr);
   gap: 1.25rem;
   padding : 0.5rem 0.75rem;
   align-items: center;
@@ -205,8 +209,8 @@ a {
   .row{
     grid-template-columns:
       minmax(2.85rem, auto)     /* checkbox + hit area */
-      minmax(30px, 1fr)
-      minmax(50px, 1fr)
+      minmax(10.5rem, 1fr)      /* View — Open + Peek */
+      minmax(6.5rem, 1fr)      /* When */
       2rem
       0fr
       0fr;
@@ -238,6 +242,11 @@ a {
   color : var(--foreground);
 }
 
+.column--file-actions {
+  /* keep Open/Peek on one line inside the grid track */
+  white-space: nowrap;
+}
+
 .url {
   display: flex;
   align-items: center;
@@ -264,6 +273,57 @@ a {
 
 .url > a {
   text-decoration: underline;
+}
+
+/* File row — Open / Peek as two clear controls */
+.file-item-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.file-item-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: calc(var(--border-rad) * 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+  white-space: nowrap;
+}
+
+.file-item-action:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(215, 130, 126, 0.45);
+}
+
+.file-item-action:focus-visible {
+  outline: 2px solid var(--bundle-color-2);
+  outline-offset: 2px;
+}
+
+.file-item-action[aria-pressed="true"] {
+  background: rgba(215, 130, 126, 0.18);
+  border-color: rgba(215, 130, 126, 0.55);
+}
+
+.file-item-action svg {
+  flex-shrink: 0;
+  opacity: 0.9;
 }
 
 

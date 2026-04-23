@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, type CSSProperties } from "react"
 import { NewPage, VerticalDiv, HorizontalDiv } from "@/app/components/UILayout"
 import { UserButton } from "@clerk/nextjs"
 import { FilesList } from "@/app/components/FileList"
@@ -23,8 +23,41 @@ export const Dashboard = ({}) => {
     const previewedFile = useFileStore((state)=>state.previewedFile)
     const [uploadPopupOpen, setUploadPopupOpen] = useState(false)
 
-    const heightOfDock = "6.5%";
+    const heightOfDock = "5.5%";
     const heightOfTopBar = "3%";
+    /** In-flow file list: reserve space for dock + top bar (see dock div + header). */
+    const mainContentHeight = `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`;
+    const mainContentSlotStyle = {
+        position: "relative" as const,
+        zIndex: 1,
+        height: mainContentHeight,
+        minHeight: 0,
+        overflow: "hidden" as const,
+        display: "flex" as const,
+        flexDirection: "column" as const,
+        pointerEvents: "none" as const,
+    };
+    /**
+     * Overlay slot: use top + bottom (not height %) so panels end above the dock.
+     * Plain div — VerticalDiv only syncs layout styles when `state` changes, so dynamic height here was ignored.
+     * bottom includes dock minHeight + its paddingTop.
+     */
+    const overlayContentSlotStyle: CSSProperties = {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        width: "100%",
+        top: `calc(${heightOfTopBar} + 1rem)`,
+        /** Align overlay panel bottoms with the in-flow list panel (dock row + extra spacing in this column stack). */
+        bottom: `calc(${heightOfDock} + 1rem)`,
+        minHeight: 0,
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        pointerEvents: "none",
+        zIndex: 1,
+        boxSizing: "border-box",
+    };
     // avoid server-side window access
     const previewUrl = previewedFile?.id ? `/preview/${previewedFile.id}` : "#";
     const previewName = getDisplayFileName(previewedFile?.name, previewedFile?.type);
@@ -51,7 +84,7 @@ export const Dashboard = ({}) => {
                     >
                         <div style={{ position: "relative", zIndex: 20, height: heightOfTopBar, minHeight: `calc(${heightOfTopBar} + 1rem)`, width: "100%", padding: "0rem 2rem", marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", boxSizing: "border-box" }}>
                             <h1 style={{ fontSize: "2rem", color: "var(--bundle-color-2)", margin: 0, flexShrink: 0 }}>Linquiq</h1>
-                            <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
                                 <DashboardSearchField />
                                 <DashboardFilterButton />
                             </div>
@@ -60,7 +93,7 @@ export const Dashboard = ({}) => {
                             </div>
                         </div>
                             
-                        <VerticalDiv padding="0rem" style={{ position: "relative", zIndex: 1, height: `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", pointerEvents: "none" }}>    
+                        <VerticalDiv padding="0rem" style={mainContentSlotStyle}>    
                             <HorizontalDiv style={{
                                 position: "relative",
                                 height: `100%`,
@@ -149,11 +182,32 @@ export const Dashboard = ({}) => {
                     
                 
                 <VerticalDiv style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%", zIndex: 0, overflow: "hidden", overscrollBehavior: "none" }} >
-                <HorizontalDiv style={{position : "relative", left : "0", top : `calc(${heightOfTopBar} + 1rem)`, height : `calc(100% - ${heightOfDock} - ${heightOfTopBar} - 1rem)`, minHeight: 0, overflow: "hidden", overscrollBehavior: "none" }}>
+                <div style={overlayContentSlotStyle}>
+                <HorizontalDiv style={{position : "relative", left : "0", height : "100%", minHeight: 0, flex: "1 1 auto", overflow: "hidden", overscrollBehavior: "none" }}>
                     
-                    <VerticalDiv style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: "calc(40% - 1rem)", height: "100%", minHeight: 0, borderRadius: "var(--border-rad)", overflow: "hidden", display: "flex", flexDirection: "column" }} padding="1rem" color="var(--accent-color)">
+                    <VerticalDiv
+                        padding="0rem"
+                        color="var(--accent-color)"
+                        style={{
+                            position: "absolute",
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            width: "calc(40% - 1rem)",
+                            height: "100%",
+                            minHeight: 0,
+                            borderRadius: "var(--border-rad)",
+                            overflow: "hidden",
+                            display: "flex",
+                            flexDirection: "column",
+                            pointerEvents: "auto",
+                            zIndex: 2,
+                            boxSizing: "border-box",
+                            padding: "0.35rem 1rem 1rem",
+                        }}
+                    >
                         <div style={{display : "flex", flexDirection : "column", gap : "1rem", width : "100%", flexShrink: 0, boxSizing : "border-box", borderBottomLeftRadius : "var(--border-rad)", borderBottomRightRadius : "var(--border-rad)"}}>
-                            <div style={{display : "flex", flexDirection : "row", width : "100%", justifyContent : "space-between", alignItems : "center"}}>
+                            <div style={{display : "flex", flexDirection : "row", width : "100%", height : "57px", justifyContent : "space-between", alignItems : "center"}}>
                                 <h1 style={{fontSize : "2rem", whiteSpace : "nowrap", overflow : "hidden", textOverflow : "ellipsis"}}>{previewName}</h1>
                                 <button
                                     onClick={() => setLayoutState(0)}
@@ -232,7 +286,7 @@ export const Dashboard = ({}) => {
                         </div>
                     </VerticalDiv>
 
-                    <VerticalDiv style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "calc(40% - 1rem)", borderRadius: "var(--border-rad)", overflow: "hidden", display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }} color="var(--accent-color)" padding="1rem">
+                    <VerticalDiv style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "calc(40% - 1rem)", borderRadius: "var(--border-rad)", overflow: "hidden", display: "flex", flexDirection: "column", height: "100%", minHeight: 0, pointerEvents: "auto", zIndex: 2 }} color="var(--accent-color)" padding="1rem">
                         <div className="note-editor-header-bar">
                             <div className="note-editor-header-type">
                                 {FileType("md")}
@@ -260,6 +314,7 @@ export const Dashboard = ({}) => {
                     </VerticalDiv>
 
                 </HorizontalDiv>
+                </div>
                 </VerticalDiv>
                 
 
