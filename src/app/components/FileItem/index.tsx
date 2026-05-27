@@ -4,7 +4,7 @@ import type { File } from "../State Manager/appManager"
 import { useFileStore } from "../State Manager/appManager"
 import {FileType} from "../TypeTags"
 import { getDisplayFileName } from "@/lib/client/getFileType"
-import { SquareArrowOutUpRight, Eye } from "lucide-react"
+import { SquareArrowOutUpRight, Eye, Copy, Check } from "lucide-react"
 
 
 
@@ -27,6 +27,7 @@ export const FileItem = ({
 
     const [onEnter, SetOnEnter] = useState({width : "100%"})
     const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0)
+    const [copied, setCopied] = useState(false)
 
     useEffect(() => {
         const handleResize = () => {
@@ -118,6 +119,26 @@ export const FileItem = ({
                         >
                             <span>Open</span>
                             <SquareArrowOutUpRight size={13} strokeWidth={2.25} aria-hidden />
+                        </button>
+                        <button
+                            type="button"
+                            className="file-item-action"
+                            title={copied ? "Copied!" : "Copy file URL"}
+                            aria-label={copied ? "Copied!" : `Copy link to ${displayName}`}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                navigator.clipboard.writeText(
+                                    `${window.location.origin}/preview/${file.id}`
+                                ).then(() => {
+                                    setCopied(true)
+                                    setTimeout(() => setCopied(false), 1500)
+                                })
+                            }}
+                        >
+                            {copied
+                                ? <Check size={13} strokeWidth={2.25} aria-hidden />
+                                : <Copy size={13} strokeWidth={2.25} aria-hidden />
+                            }
                         </button>
                         <button
                             type="button"

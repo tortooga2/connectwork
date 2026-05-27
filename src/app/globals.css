@@ -173,7 +173,7 @@ a {
   display : grid;
   /* checkbox + View (actions) + When + Type + Who + What — View needs a real min so Open/Peek never spills into When */
   grid-template-columns:
-      minmax(3rem, auto)
+      4.5rem
       minmax(11.25rem, 1fr)
       minmax(7.5rem, 1.1fr)
       minmax(0, 1fr)
@@ -208,7 +208,7 @@ a {
 @media (width < 768px) {
   .row{
     grid-template-columns:
-      minmax(2.85rem, auto)     /* checkbox + hit area */
+      4.5rem                    /* checkbox / linq — fixed so header+rows align */
       minmax(10.5rem, 1fr)      /* View — Open + Peek */
       minmax(6.5rem, 1fr)      /* When */
       2rem

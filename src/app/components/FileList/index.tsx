@@ -13,6 +13,7 @@ import {
     getTimeStart,
     useFileListFilters,
 } from "./fileListFilterContext"
+import { LinqButton } from "@/app/components/LinqButton"
 
 const SEARCH_SUMMARY_CAP = 5
 
@@ -231,7 +232,9 @@ export const FilesList = () => {
             )}
 
             <div className={"row header"}>
-                <div className={"column header"}></div>
+                <div className={"column header"} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <LinqButton compact />
+                </div>
                 <div className={"column header"}>View:</div>
                 <div
                     className={"column header"}
