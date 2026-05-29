@@ -8,7 +8,6 @@ import { DashboardFilterButton } from "@/app/components/FileList/DashboardFilter
 import { FileListFilterProvider } from "@/app/components/FileList/fileListFilterContext"
 import { useFileStore } from "@/app/components/State Manager/appManager"
 import { Preview } from "@/app/components/Preview"
-import { LinqButton } from "@/app/components/LinqButton"
 import UploadArea from "@/app/components/Uploads/UploadArea"
 import { TextEditor } from "@/app/components/TextEditor"
 import { FileType } from "@/app/components/TypeTags"
@@ -132,7 +131,6 @@ export const Dashboard = ({}) => {
                         <div style={{minHeight: heightOfDock, backgroundColor : "var(--background)", zIndex : "999", paddingTop : "1rem"}}>
                             {/*Dock - Action Buttons */}
                             <div className={"dock"} style={{position: "relative", width : "fit-content", top : "50%", left: "50%", transform: "translate(-50%, -50%)", display : "flex", alignItems : "center", justifyContent : "center"}}>
-                                <LinqButton/>
                                 <button type="button" className={"but upload"} onClick={() => setUploadPopupOpen(true)}>
                                     <div className={"but-content"} style={{display : "flex", alignItems : "center"}}>
                                         <Upload size={16} style={{marginRight : "0.25rem"}}/>
