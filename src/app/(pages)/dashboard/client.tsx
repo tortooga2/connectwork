@@ -82,7 +82,8 @@ export const Dashboard = ({}) => {
                         }}
                     >
                         <div style={{ position: "relative", zIndex: 20, height: heightOfTopBar, minHeight: `calc(${heightOfTopBar} + 1rem)`, width: "100%", padding: "0rem 2rem", marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", boxSizing: "border-box" }}>
-                            <h1 style={{ fontSize: "2rem", color: "var(--bundle-color-2)", margin: 0, flexShrink: 0 }}>Linquiq</h1>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/Linquiq title.png" alt="Linquiq" style={{ height: "37px", width: "107px", objectFit: "contain", flexShrink: 0 }} />
                             <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
                                 <DashboardSearchField />
                                 <DashboardFilterButton />
