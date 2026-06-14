@@ -34,8 +34,8 @@ export const LinqButton = ({ compact }: { compact?: boolean } = {}) => {
         }}
     >
         <div className={"but-content"} style={{display : "flex", alignItems : "center"}}>
-            <Cable size={compact ? 13 : 16} style={{marginRight : "0.25rem"}}/>
-            <span>Linq</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <Cable size={18} strokeWidth={2} aria-hidden style={{color : "black"}} />
         </div>
         
     </button>)

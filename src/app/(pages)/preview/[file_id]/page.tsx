@@ -72,7 +72,8 @@ export default async function PreviewPage({
         <NewPage>
             <VerticalDiv style={{ alignItems: "center", gap: "0.75rem" }} padding="0.75rem">
                 <div style={topBarStyle}>
-                    <h1 style={titleStyle}>Linquiq</h1>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/Linquiq title.png" alt="Linquiq" style={{ height: "37px", width: "107px", objectFit: "contain", flexShrink: 0 }} />
                     <UserButton />
                 </div>
                 <VerticalDiv width="100%" style={{ maxWidth: "980px" }} padding="0rem">
