@@ -1,7 +1,6 @@
 "use client"
 import type { File } from "@/app/components/State Manager/appManager"
 import { useFileStore } from "../../components/State Manager/appManager"
-import {Cable} from "lucide-react"
 import Bundle from "@/lib/server/Bundle/bundle"
 
 
@@ -15,7 +14,8 @@ export const LinqButton = ({ compact }: { compact?: boolean } = {}) => {
 
     <button
         className={selectedFiles.size > 0 ? "but linq active" : "but linq"}
-        style={compact ? { marginRight: 0, padding: "0.25rem 0.55rem", fontSize: "0.75rem" } : undefined}
+        aria-label="Linq"
+        style={{ ...(compact ? { marginRight: 0, padding: "0.25rem 0.4rem" } : {}), position: "relative" }}
         onClick={async () => {
             if(selectedFiles.size > 0) {
                 SetActionLoading(true, "Linqing files...")
@@ -33,10 +33,21 @@ export const LinqButton = ({ compact }: { compact?: boolean } = {}) => {
             }
         }}
     >
-        <div className={"but-content"} style={{display : "flex", alignItems : "center"}}>
+        <div className={"but-content"} style={{ display: "flex", alignItems: "center" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <Cable size={18} strokeWidth={2} aria-hidden style={{color : "black"}} />
+            <img
+                src="/linq btn black.png"
+                alt=""
+                aria-hidden
+                style={{
+                    height: compact ? "18px" : "22px",
+                    width: "auto",
+                    display: "block",
+                    objectFit: "contain",
+                }}
+            />
         </div>
+        <span className="linq-tooltip">Linq</span>
         
     </button>)
 }

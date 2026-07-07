@@ -13,7 +13,12 @@ export default async function Home() {
     return (
         <div className={styles.page}>
             <header className={styles.authHeader}>
-                <h1 className={styles.authTitle}>Linquiq</h1>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src="/Linquiq title.png"
+                    alt="Linquiq"
+                    className={styles.authLogo}
+                />
                 <div className={styles.authButtons}>
                     <SignedOut>
                         <SignInButton>
