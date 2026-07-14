@@ -113,6 +113,16 @@
   font-style: italic;
 }
 
+.footerLink {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footerLink:hover {
+  opacity: 1;
+}
+
 @media (prefers-color-scheme: dark) {
   .page {
     --gray-rgb: 255, 255, 255;

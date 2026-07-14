@@ -2,6 +2,7 @@
 import { useState, type CSSProperties } from "react"
 import { NewPage, VerticalDiv, HorizontalDiv } from "@/app/components/UILayout"
 import { UserButton } from "@clerk/nextjs"
+import { PrivacyHeaderActions } from "@/app/components/PrivacyHeaderActions"
 import { FilesList } from "@/app/components/FileList"
 import { DashboardSearchField } from "@/app/components/FileList/DashboardSearchField"
 import { DashboardFilterButton } from "@/app/components/FileList/DashboardFilterButton"
@@ -88,9 +89,9 @@ export const Dashboard = ({}) => {
                                 <DashboardSearchField />
                                 <DashboardFilterButton />
                             </div>
-                            <div style={{ flexShrink: 0 }}>
+                            <PrivacyHeaderActions>
                                 <UserButton />
-                            </div>
+                            </PrivacyHeaderActions>
                         </div>
                             
                         <VerticalDiv padding="0rem" style={mainContentSlotStyle}>    

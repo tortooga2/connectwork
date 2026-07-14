@@ -48,7 +48,10 @@ export default async function Home() {
             </main>
 
             <footer className={styles.landingFooter}>
-                © 2025 linq, <em>Networking Application</em>. All rights reserved.
+                © 2026 GLOBIDEA LLC. Linquiq.{" "}
+                <a href="/privacy" className={styles.footerLink}>
+                    Privacy Policy
+                </a>
             </footer>
         </div>
     );
