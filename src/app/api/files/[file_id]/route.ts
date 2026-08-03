@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@clerk/nextjs/server";
@@ -21,9 +20,7 @@ export async function GET(
     const { userId } = await auth();
     
     if (!userId) {
-        // Note: Using redirect in a GET API route is okay, 
-        // but often returning a 401 JSON response is cleaner for APIs.
-        redirect("/");
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     // 2. Await the params
