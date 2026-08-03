@@ -7,6 +7,7 @@ import { getFileUrl } from "@/lib/server/getFileUrl";
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { UserButton } from "@clerk/nextjs";
+import { PrivacyHeaderActions } from "@/app/components/PrivacyHeaderActions";
 import type { CSSProperties } from "react";
 
 // 1. Update the type to expect a Promise
@@ -74,7 +75,9 @@ export default async function PreviewPage({
                 <div style={topBarStyle}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/Linquiq title.png" alt="Linquiq" style={{ height: "37px", width: "107px", objectFit: "contain", flexShrink: 0 }} />
-                    <UserButton />
+                    <PrivacyHeaderActions>
+                        <UserButton />
+                    </PrivacyHeaderActions>
                 </div>
                 <VerticalDiv width="100%" style={{ maxWidth: "980px" }} padding="0rem">
                     <FileData fileData={fileData} />
