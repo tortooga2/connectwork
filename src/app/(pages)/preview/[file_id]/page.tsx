@@ -52,13 +52,6 @@ export default async function PreviewPage({
         zIndex: 2,
     };
 
-    const titleStyle: CSSProperties = {
-        fontSize: "clamp(1.4rem, 4vw, 2rem)",
-        color: "var(--bundle-color-2)",
-        margin: 0,
-        whiteSpace: "nowrap",
-    };
-
     const previewBodyStyle: CSSProperties = {
         width: "100%",
         padding: "clamp(0.75rem, 2vw, 1rem)",

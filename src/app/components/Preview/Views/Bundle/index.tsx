@@ -9,6 +9,7 @@ import { FileType } from "@/app/components/TypeTags";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getViewerDetails } from "docviewhelper";
 import { Copy, Check } from "lucide-react";
+import { sanitizeHtml } from "@/lib/client/sanitizeHtml";
 
 const formatCreatedAt = (value: unknown) => {
     if (!value) return "Unknown"
@@ -29,7 +30,7 @@ const NoteView = ({fileUrl}: {fileUrl: string}) => {
     useEffect(()=>{
         const GetFileSrc = async () => {
             const text = await (await fetch(fileUrl)).text()
-            setFileSrc(text)
+            setFileSrc(sanitizeHtml(text))
         }
         GetFileSrc()
     }, [fileUrl])

@@ -25,7 +25,7 @@ export const getFileUrl = async (file: FileUrlSource, is_bundle: boolean): Promi
     }
 
     if (file.type.toLowerCase() === "bundle" && !is_bundle) {
-        const bundle_contents = await getBundle(file.id, userId)
+        const bundle_contents = await getBundle(file.id)
         return bundle_contents
     }
 

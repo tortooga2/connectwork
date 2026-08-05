@@ -7,6 +7,7 @@ import { getFileUrl, type FileUrlResult } from "@/lib/server/getFileUrl";
 import { getFileType } from "@/lib/client/getFileType"
 import { VerticalDiv } from "../UILayout";
 import Bundle from "./Views/Bundle";
+import { sanitizeHtml } from "@/lib/client/sanitizeHtml";
 
 import { DocumentViewer } from 'react-documents';
 
@@ -21,7 +22,7 @@ const NoteView = ({fileUrl}: {fileUrl: string}) => {
         const GetFileSrc = async () => {
             const fileSrc = await fetch(fileUrl as string)
             const fileText = await fileSrc.text()
-            setFileSrc(fileText)
+            setFileSrc(sanitizeHtml(fileText))
         }
         GetFileSrc()
     }, [fileUrl])

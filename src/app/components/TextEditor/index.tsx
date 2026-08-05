@@ -10,6 +10,7 @@ import { all, createLowlight } from "lowlight"
 import React from "react"
 
 import { useFileStore } from "@/app/components/State Manager/appManager"
+import { sanitizeHtml } from "@/lib/client/sanitizeHtml"
 
 const lowlight = createLowlight(all)
 
@@ -46,7 +47,7 @@ export const TextEditor = () => {
                 type="button"
                 className="text-editor-save"
                 onClick={async () => {
-                    const noteText = editor.getHTML()
+                    const noteText = sanitizeHtml(editor.getHTML())
                     const plainText = editor.getText().replace(/\s+/g, " ").trim()
                     const fallbackTitle =
                         plainText.length >= 15

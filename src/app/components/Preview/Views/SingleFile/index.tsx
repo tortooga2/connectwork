@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { DocumentViewer } from "react-documents";
 import { getFileType } from "@/lib/client/getFileType";
+import { sanitizeHtml } from "@/lib/client/sanitizeHtml";
 
 const NoteView = ({ fileUrl }: { fileUrl: string }) => {
     const [fileSrc, setFileSrc] = useState<string | undefined>(undefined);
@@ -11,7 +12,7 @@ const NoteView = ({ fileUrl }: { fileUrl: string }) => {
         const getFileSrc = async () => {
             const fileSrcRes = await fetch(fileUrl);
             const fileText = await fileSrcRes.text();
-            setFileSrc(fileText);
+            setFileSrc(sanitizeHtml(fileText));
         };
         getFileSrc();
     }, [fileUrl]);

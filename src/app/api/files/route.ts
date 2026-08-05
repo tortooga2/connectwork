@@ -1,16 +1,26 @@
 import { auth } from "@clerk/nextjs/server"
-
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { entryTable } from "@/db/schema";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     const { userId } = await auth();
+    const authHeader = req.headers.get("authorization");
+    const hasBearer = Boolean(authHeader?.toLowerCase().startsWith("bearer "));
 
     if (!userId) {
-        // Mobile / API clients need JSON — never redirect to an HTML page.
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        // Help debug mobile: token missing vs token rejected by Clerk secret mismatch.
+        return NextResponse.json(
+            {
+                message: "Unauthorized",
+                hasBearer,
+                hint: hasBearer
+                    ? "Bearer token was sent but Clerk rejected it. Vercel CLERK_SECRET_KEY must match the same instance as the mobile publishable key; sign out/in after key changes."
+                    : "No Authorization Bearer token on the request. Mobile getToken() returned null — sign in again.",
+            },
+            { status: 401 }
+        );
     }
 
     const files = await db.select({
